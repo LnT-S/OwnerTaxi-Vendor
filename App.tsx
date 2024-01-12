@@ -5,8 +5,7 @@
  * @format
  */
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -16,103 +15,96 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import { ContextProvider } from './src/context/ContextProvider';
+// import { NavigationContainer } from '@react-navigation/native';
+// import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import HomePage from './src/components/home/Home';
+import ProfilePage from './src/components/profile/Profile';
+import SplashScreen from './src/screens/static/SplashScreen';
+import LoginPage from './src/components/Login/Login';
+import SignupScreen from './src/components/Login/SignUp';
+import Forget from './src/components/Login/Forget';
+import { BgColor } from './src/styles/colors';
+import OtpScreen from './src/components/Login/OTP';
+import NewPassword from './src/components/Login/NewPassword';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+const Stack = createNativeStackNavigator()
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+function App() {
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const [isLoading, setIsLoading] = useState(true);
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false); // Set isLoading to false when the loading task is complete
+    }, 2500); // Simulate loading for 2 seconds, replace this with your actual loading logic
+  }, []);
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
+    <SafeAreaView style={styles.mainContainer}>
+      <ContextProvider>
+        <NavigationContainer >
+          <StatusBar barStyle="dark-content" backgroundColor="#ffea00" />
+          {isLoading ? (
+            <SplashScreen />
+          ) : (<Stack.Navigator
+            initialRouteName="HomeScreen" 
+            screenOptions={{
+              gestureEnabled: true,
+              gestureDirection: 'horizontal',
+              
+            }}
+          >
+            <Stack.Screen
+              name='LoginScreen'
+              component={LoginPage}
+              options={{ headerShown: false}}
+            />
+            <Stack.Screen
+              name='ForgetScreen'
+              component={Forget}
+              options={{ headerShown: false}}
+            />
+             <Stack.Screen
+              name='OTPScreen'
+              component={OtpScreen}
+              options={{ headerShown: false}}
+            />
+            <Stack.Screen
+              name='NewPassScreen'
+              component={NewPassword}
+              options={{ headerShown: false}}
+            />
+             <Stack.Screen
+              name='SignupScreen'
+              component={SignupScreen}
+              options={{ headerShown: false}}
+            />
+            <Stack.Screen
+              name='HomeSceen'
+              component={HomePage}
+              options={{ headerShown: false}}
+            />
+            <Stack.Screen
+              name='ProfileScreen'
+              component={ProfilePage}
+              options={{ headerShown: true, headerTitle: 'Shruti' }}
+            />
+          </Stack.Navigator>)}
+        </NavigationContainer>
+      </ContextProvider>
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+  mainContainer: {
+    flex: 1,
+    backgroundColor : BgColor
+  }
+})
 
 export default App;
