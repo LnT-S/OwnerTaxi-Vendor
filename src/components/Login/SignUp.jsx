@@ -16,10 +16,12 @@ import UserInput from '../../adOns/atoms/UserInput';
 import PassInput from '../../adOns/atoms/PassInput';
 import CheckbocTC from '../../adOns/atoms/CheckbocT&C';
 import global from '../../styles/global'
+import { isEnabled } from 'react-native/Libraries/Performance/Systrace';
 const SignupScreen = () => {
 
     const navigation = useNavigation()
     const [selectedOption, setSelectedOption] = useState('')
+    const [isChecked, setIsChecked] = useState(false);
 
     useEffect(() => {
         console.log('Option is Changing', selectedOption)
@@ -76,6 +78,8 @@ const SignupScreen = () => {
                         />
                         <CheckbocTC
                             placeholder="I accept all Terms & Conditions"
+                            setIsChecked = {setIsChecked}
+                            isChecked = {isChecked}
                         />
                         <PressButton
                             name="Continue"

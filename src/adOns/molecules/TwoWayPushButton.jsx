@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 const TwoWayPushButton = (props) => {
 
-    const {option1 , option2 ,  setter}  = props
+    const { option1, option2, setter } = props
     const [isOption1, setOption1] = useState(true)
 
     const handlePressed = (v) => {
@@ -16,23 +16,29 @@ const TwoWayPushButton = (props) => {
         setter(v)
     }
 
-    useEffect(()=>{
-        setTimeout(()=>setter(option1) , 1000)
-    },[])
+    useEffect(() => {
+        setTimeout(() => setter(option1), 1000)
+    }, [])
 
     return (
-        
+
         <SafeAreaView>
             <View style={styles.pushbtn}>
                 <TouchableOpacity
                     onPress={() => handlePressed(option1)}
+                    style={{ width: '50%' }}
                 >
-                    <Text style={isOption1 ? styles.pushstyle : styles.defaultpushstyle}>{option1}</Text>
+                    <View style={isOption1 ? styles.pushstyle : styles.defaultpushstyle}>
+                        <Text style={isOption1 ? styles.selectedButton : styles.defaultBottonText}>{option1}</Text>
+                    </View>
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => handlePressed(option2)}
+                    style={{ width: '50%' }}
                 >
-                    <Text style={!isOption1 ? styles.pushstyle : styles.defaultpushstyle}>{option2}</Text>
+                    <View style={!isOption1 ? styles.pushstyle : styles.defaultpushstyle}>
+                        <Text style={!isOption1 ? styles.selectedButton : styles.defaultBottonText}>{option2}</Text>
+                    </View>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -43,34 +49,36 @@ const styles = StyleSheet.create({
     pushbtn: {
         display: `flex`,
         flexDirection: `row`,
-        justifyContent: `center`,
+        justifyContent: `space-around`,
+        alignItems: 'center',
         backgroundColor: `black`,
-        paddingTop: 7,
-        paddingBottom: 7,
-        paddingLeft: 7,
-        paddingRight: 7,
         borderRadius: 20,
+        padding : 7,
         margin: 20,
-        width: '50%'
+        width: '60%'
     },
     defaultpushstyle: {
-        fontSize: 20,
-        fontWeight: `700`,
         color: `white`,
-        justifyContent: `center`,
-        alignItems: `center`,
         borderRadius: 5,
-        paddingLeft: 15,
-        paddingRight: 15,
     },
     pushstyle: {
         backgroundColor: `white`,
-        fontSize: 20,
         color: `black`,
-        fontWeight: `500`,
-        paddingLeft: 15,
-        paddingRight: 15,
         borderRadius: 12,
+    },
+    defaultBottonText : {
+        fontSize: 20,
+        textAlign: 'center',
+        fontWeight: `700`,
+        color : 'white',
+        flexWrap : 'nowrap'
+    },
+    selectedButton : {
+        fontSize: 20,
+        textAlign: 'center',
+        fontWeight: `500`,
+        color : 'black',
+        flexWrap : 'nowrap'
     }
 })
 

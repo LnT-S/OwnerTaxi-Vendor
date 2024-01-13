@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Image, StyleSheet, View, Text, Pressable, KeyboardAvoidingView, BackHandler } from 'react-native'
-import { getResponsiveValue } from '../../styles/responsive';
+import { Image, StyleSheet, View, Text, Pressable, KeyboardAvoidingView, BackHandler, ScrollView, StatusBar } from 'react-native'
+import { getResponsiveValue, height } from '../../styles/responsive';
 import { BgColor } from '../../styles/colors';
 import TwoWayPushButton from '../../adOns/molecules/TwoWayPushButton';
 import PressButton from '../../adOns/atoms/PressButton';
@@ -8,17 +8,18 @@ import { useNavigation } from '@react-navigation/native';
 import UserInput from '../../adOns/atoms/UserInput';
 import PassInput from '../../adOns/atoms/PassInput';
 import YesNoModal from '../../adOns/molecules/YesNoModal';
+import { SafeAreaView } from 'react-native';
 
 const LoginPage = () => {
 
     const navigation = useNavigation()
     const [selectedOption, setSelectedOption] = useState('')
-    const [showModal , setShowModal ] = useState(false)
+    const [showModal, setShowModal] = useState(false)
 
     const handleYes = async () => {
         setShowModal(false);
         BackHandler.exitApp();
-      };
+    };
     const SignUpPage = () => {
         navigation.navigate('SignupScreen')
     }
@@ -32,88 +33,95 @@ const LoginPage = () => {
         console.log('Option is Changing', selectedOption)
     }, [selectedOption])
 
-    useEffect(()=>{
-        const backFuntion = ()=>{
-            if(showModal){
+    useEffect(() => {
+        const backFuntion = () => {
+            if (showModal) {
                 setShowModal(false)
-            }else{
+            } else {
                 setShowModal(true)
                 return true
             }
         }
 
         console.log('BACKHANDLER ATTACHED')
-        const backHandler = BackHandler.addEventListener('hardwareBackPress',backFuntion)
-        return ()=>{
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backFuntion)
+        return () => {
             console.log('BACKHANDLER REMOVED')
             backHandler.remove()
         }
-    },[])
+    }, [])
 
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={{ flex: 1 }}>
-            <View style={styles.loginpage}>
-            <YesNoModal 
-            show = {showModal}
-            setShow = {setShowModal}
-            title = {'EXIT ?'}
-            message = {'Are You Sure Want To Exit ?'}
-            handleYes = {handleYes} 
-            yesText = {'Exit'} 
-            noText = {'Cancel'}/>
-                <View style={styles.logoPart}>
-                    <Image
-                        source={require('../../assets/imgaes/DriverAppLogo.png')}
-                        style={{ width: 300, height: 100 }}
-                    />
-                    <Text style={styles.title}>LogIn</Text>
-                </View>
-
-                <TwoWayPushButton option1={'Traveller'} option2={'Driver'} setter={setSelectedOption} />
-
-                <View style={styles.formpart}>
-                    <UserInput
-                        style={[styles.input]}
-                        placeholder='UserName or Phone No.'
-                        icon={'person'}
-                    />
-
-                    <PassInput
-                        placeholder='Password'
-                    />
-                    <View>
-                        <Pressable onPress={ForgetPage}>
-                            <Text style={styles.link}>Forgot Password?</Text>
-                        </Pressable>
+            <ScrollView style={{ flex: 1 }}>
+            <SafeAreaView style={{ flex: 1 }}>
+                <View style={styles.loginpage}>
+                    <YesNoModal
+                        show={showModal}
+                        setShow={setShowModal}
+                        title={'EXIT ?'}
+                        message={'Are You Sure Want To Exit ?'}
+                        handleYes={handleYes}
+                        yesText={'Exit'}
+                        noText={'Cancel'} />
+                    <View style={styles.logoPart}>
+                        <Image
+                            source={require('../../assets/imgaes/DriverAppLogo.png')}
+                            style={{ width: 300, height: 100 }}
+                        />
+                        <Text style={styles.title}>LogIn</Text>
                     </View>
-                    <PressButton
-                        name='Log In'
-                        onPress = {handleLogin}
-                    />
-                    <View style={styles.content}>
-                        <View style={styles.signupContainer}>
-                            <Text style={styles.createAccount}>Don't have an account?</Text>
-                            <Pressable onPress={SignUpPage}>
-                                <Text style={styles.link}>Sign Up</Text>
+
+                    <TwoWayPushButton option1={'Traveller'} option2={'Driver'} setter={setSelectedOption} />
+
+                    <View style={styles.formpart}>
+                        <UserInput
+                            style={[styles.input]}
+                            placeholder='UserName or Phone No.'
+                            icon={'person'}
+                        />
+
+                        <PassInput
+                            placeholder='Password'
+                        />
+                        <View>
+                            <Pressable onPress={ForgetPage}>
+                                <Text style={styles.link}>Forgot Password?</Text>
                             </Pressable>
+                        </View>
+                        <PressButton
+                            name='Log In'
+                            onPress={handleLogin}
+                        />
+                        <View style={styles.content}>
+                            <View style={styles.signupContainer}>
+                                <Text style={styles.createAccount}>Don't have an account?</Text>
+                                <Pressable onPress={SignUpPage}>
+                                    <Text style={styles.link}>Sign Up</Text>
+                                </Pressable>
+                            </View>
                         </View>
                     </View>
                 </View>
-            </View>
+            </SafeAreaView>
+            </ScrollView>
         </KeyboardAvoidingView>
     )
 }
 const styles = StyleSheet.create({
     loginpage: {
-        flex: 1,
+        display: 'flex',
         justifyContent: `center`,
         alignItems: 'center',
-        backgroundColor: BgColor
+        backgroundColor: BgColor,
+        height : height + StatusBar.currentHeight,
+        gap : 25
 
     },
     logoPart: {
+        display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
@@ -125,6 +133,7 @@ const styles = StyleSheet.create({
         fontWeight: `500`,
     },
     formpart: {
+        display: 'flex',
         justifyContent: 'center',
         alignItems: 'center'
     },

@@ -30,6 +30,7 @@ import Forget from './src/components/Login/Forget';
 import { BgColor } from './src/styles/colors';
 import OtpScreen from './src/components/Login/OTP';
 import NewPassword from './src/components/Login/NewPassword';
+import AuthenticatedLayout from './src/screens/layout/AuthenticatedLayout';
 
 const Stack = createNativeStackNavigator()
 
@@ -51,48 +52,48 @@ function App() {
           {isLoading ? (
             <SplashScreen />
           ) : (<Stack.Navigator
-            initialRouteName="HomeScreen" 
+            initialRouteName="LoginScreen"
             screenOptions={{
               gestureEnabled: true,
               gestureDirection: 'horizontal',
-              
+
             }}
           >
             <Stack.Screen
               name='LoginScreen'
               component={LoginPage}
-              options={{ headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name='ForgetScreen'
               component={Forget}
-              options={{ headerShown: false}}
+              options={{ headerShown: false }}
             />
-             <Stack.Screen
+            <Stack.Screen
               name='OTPScreen'
               component={OtpScreen}
-              options={{ headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name='NewPassScreen'
               component={NewPassword}
-              options={{ headerShown: false}}
+              options={{ headerShown: false }}
             />
-             <Stack.Screen
+            <Stack.Screen
               name='SignupScreen'
               component={SignupScreen}
-              options={{ headerShown: false}}
+              options={{ headerShown: false }}
             />
-            <Stack.Screen
-              name='HomeSceen'
-              component={HomePage}
-              options={{ headerShown: false}}
-            />
-            <Stack.Screen
-              name='ProfileScreen'
-              component={ProfilePage}
-              options={{ headerShown: true, headerTitle: 'Shruti' }}
-            />
+              <Stack.Screen
+                name='HomeSceen'
+                component={HomePage}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name='ProfileScreen'
+                component={ProfilePage}
+                options={{ headerShown: false }}
+              />
           </Stack.Navigator>)}
         </NavigationContainer>
       </ContextProvider>
@@ -103,7 +104,7 @@ function App() {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor : BgColor
+    backgroundColor: BgColor
   }
 })
 

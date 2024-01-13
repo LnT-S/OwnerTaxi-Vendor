@@ -6,19 +6,17 @@ import { BgColor } from '../../styles/colors';
 
 const CheckbocTC = (props) => {
 
-    const [isChecked, setChecked] = useState(false);
-
-    const handleCheckboxChange = () => {
-        setChecked(!isChecked);
-    };
+   const {isChecked , setIsChecked} = props
 
     return (
         <View style={styles.container}>
             <CheckBox
                 title={props.placeholder}
                 checked={isChecked}
-                onPress={handleCheckboxChange}
+                onPress={()=>setIsChecked(!isChecked)}
                 containerStyle={styles.checkbox}
+                activeOpacity={1}
+
             />
         </View>
     )

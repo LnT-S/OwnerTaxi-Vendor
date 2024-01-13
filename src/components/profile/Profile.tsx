@@ -1,13 +1,16 @@
 import React from 'react'
 import { Text, View } from 'react-native'
+import AuthenticatedLayout from '../../screens/layout/AuthenticatedLayout'
 
 const ProfilePage = () => {
   return (
-    <View>
+    <AuthenticatedLayout>
+      <View>
         <Text>
-            ProfilePage
+          ProfilePage
         </Text>
-    </View>
+      </View>
+    </AuthenticatedLayout>
   )
 }
 

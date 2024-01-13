@@ -1,32 +1,60 @@
-import React, { useState } from 'react'
-import { Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { BackHandler, ScrollView, Text, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import SearchBox from '../../adOns/atoms/Search'
+import AuthenticatedLayout from '../../screens/layout/AuthenticatedLayout'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { height } from '../../styles/responsive'
 
 const HomePage = () => {
     const navigation = useNavigation()
-    const profilePage = () => {
-        navigation.navigate('ProfileScreen')
-    }
 
-    const [searchText, setSearchText] = useState('');
+    const [showSearchResult , setShowSearchResults] = useState(true)
+    const [searchArray, setSearchArray] = useState(['item1', 'ghantu', 'kalyaanimaam', 'shrutimaam','herapheri','kgf'])
 
-    const handleSearch = (text) => {
-        setSearchText(text);
-        // Perform your search logic here using the 'text' variable
-    };
 
+
+    useEffect(() => {
+        const backAction = () => {
+            navigation.goBack()
+            return true
+        }
+        console.log("BACKHANDLER SET IN HOME PAGE")
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+        return () => {
+            console.log('BACKHANDLER REMOVED FROM HOME PAGE')
+            backHandler.remove()
+        };
+    }, []);
 
     return (
-        <View>
-            <SearchBox onSearch={handleSearch} />
-            <Text>
-                HomePage
-            </Text>
-            <Text onPress={profilePage}>
-                Profile
-            </Text>
-        </View>
+        <AuthenticatedLayout title={'Home'}>
+            <ScrollView >
+                <View style={{ position: 'relative' }}>
+                    <View style= {{zIndex : 2}}>
+                        <SearchBox searchArray={searchArray}/>
+                    </View>
+                    <View style={{ position: 'relative', zIndex: 1 }}>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                    </View>
+                </View>
+            </ScrollView>
+        </AuthenticatedLayout>
     )
 }
 
