@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -15,6 +15,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { ContextProvider } from './src/context/ContextProvider';
 // import { NavigationContainer } from '@react-navigation/native';
 // import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -31,14 +32,55 @@ import { BgColor } from './src/styles/colors';
 import OtpScreen from './src/components/Login/OTP';
 import NewPassword from './src/components/Login/NewPassword';
 import AuthenticatedLayout from './src/screens/layout/AuthenticatedLayout';
-
+import HomePageDriver from './src/Driver/HomepageDriver';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Settting from './src/Driver/components/Settting';
+import Wallet from './src/Driver/components/Wallet';
+import Header from './src/common/header/Header';
+import CustomDrawerContent from './src/Driver/components/CustomDrawerContent';
+import Documents from './src/Driver/components/Documents';
+import Activity from './src/Driver/components/Activity';
+import History from './src/Driver/components/History';
 const Stack = createNativeStackNavigator()
+const Drawer = createDrawerNavigator();
+
+function DrawerNavigator() {
+
+  return (
+    <Drawer.Navigator initialRouteName='Home' drawerContent={(props) => <CustomDrawerContent {...props} />}>
+      <Drawer.Screen name="Setting" component={Settting} options={{ headerShown: false }} />
+      <Drawer.Screen name="Wallet" component={Wallet} options={{ headerShown: false }} />
+      <Drawer.Screen name="Home" component={HomePageDriver} options={{ headerShown: false }} />
+      <Drawer.Screen name="Document" component={Documents} options={{ headerShown: false }} />
+      <Drawer.Screen name="Activity" component={Activity} options={{ headerShown: false }} />
+      <Drawer.Screen name="History" component={History} options={{ headerShown: false }} />
+    </Drawer.Navigator>
+  );
+}
 
 function App() {
 
+
   const [isLoading, setIsLoading] = useState(true);
+  const [initialRoute, setInitialRoute] = useState('LoginScreen')
+
+  const userIs = async function () {
+    let temp = await AsyncStorage.getItem('userIs')
+    return temp
+  }
 
   useEffect(() => {
+    // userIs().then(data => {
+    //   console.log('USER TYPE IS ', data)
+    //   if (data === 'Traveller') {
+    //     setInitialRoute('HomeSceen')
+    //   }
+    //   if (data === 'Driver') {
+    //     setInitialRoute('HomeSceenDriver')
+    //   }
+    // }).catch(err => {
+    //   console.log('ERROR IN RESOLVING USER TYPEs')
+    // })
     setTimeout(() => {
       setIsLoading(false); // Set isLoading to false when the loading task is complete
     }, 2500); // Simulate loading for 2 seconds, replace this with your actual loading logic
@@ -52,7 +94,7 @@ function App() {
           {isLoading ? (
             <SplashScreen />
           ) : (<Stack.Navigator
-            initialRouteName="LoginScreen"
+            initialRouteName={initialRoute || "LoginScreen"}
             screenOptions={{
               gestureEnabled: true,
               gestureDirection: 'horizontal',
@@ -84,17 +126,24 @@ function App() {
               component={SignupScreen}
               options={{ headerShown: false }}
             />
-              <Stack.Screen
-                name='HomeSceen'
-                component={HomePage}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name='ProfileScreen'
-                component={ProfilePage}
-                options={{ headerShown: false }}
-              />
+            <Stack.Screen
+              name='HomeSceen'
+              component={HomePage}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name='HomeSceenDriver'
+              component={DrawerNavigator}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name='ProfileScreen'
+              component={ProfilePage}
+              options={{ headerShown: false }}
+            />
+
           </Stack.Navigator>)}
+
         </NavigationContainer>
       </ContextProvider>
     </SafeAreaView>

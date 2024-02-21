@@ -9,6 +9,7 @@ import UserInput from '../../adOns/atoms/UserInput';
 import PassInput from '../../adOns/atoms/PassInput';
 import YesNoModal from '../../adOns/molecules/YesNoModal';
 import { SafeAreaView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginPage = () => {
 
@@ -26,8 +27,13 @@ const LoginPage = () => {
     const ForgetPage = () => {
         navigation.navigate('ForgetScreen')
     }
-    const handleLogin = () => {
-        navigation.navigate('HomeSceen')
+    const handleLogin = async() => {
+        await AsyncStorage.setItem('userIs',selectedOption)
+        if(selectedOption === 'Traveller'){
+            navigation.navigate('HomeSceen')
+        }else if(selectedOption === 'Driver'){
+            navigation.navigate('HomeSceenDriver')
+        }
     }
     useEffect(() => {
         console.log('Option is Changing', selectedOption)

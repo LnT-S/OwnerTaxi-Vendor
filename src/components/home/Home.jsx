@@ -35,6 +35,8 @@ const HomePage = () => {
                         <SearchBox searchArray={searchArray}/>
                     </View>
                     <View style={{ position: 'relative', zIndex: 1 }}>
+                        
+                    <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
                         <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
                         <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
                         <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
@@ -51,6 +53,37 @@ const HomePage = () => {
                         <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
                         <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
                         <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>HIHIHIHIHIHI</Text>
+                        <Text style={{ color: 'red' }}>Shruti</Text>
                     </View>
                 </View>
             </ScrollView>

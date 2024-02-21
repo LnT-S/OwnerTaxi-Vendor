@@ -1,10 +1,10 @@
 import React from 'react'
-import { 
-    SafeAreaView, 
-    StyleSheet, 
+import {
+    SafeAreaView,
+    StyleSheet,
     View,
     KeyboardAvoidingView
- } from 'react-native'
+} from 'react-native'
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { Text } from 'react-native-elements';
 import Header from '../../common/header/Header';
@@ -23,7 +23,7 @@ const AuthenticatedLayout = (props) => {
             <SafeAreaView>
                 <View style={styles.layout}>
                     {/*NAVIGATION */}
-                    <View>
+                    <View style={styles.header}>
                         <Header title={props.title} />
                     </View>
                     {/*BODY*/}
@@ -43,10 +43,13 @@ const AuthenticatedLayout = (props) => {
 const styles = StyleSheet.create({
     layout: {
         position: 'relative',
-        height: '100%'
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
     },
     body: {
         flex: 1,
+        marginBottom: 52
     },
     footer: {
         position: 'absolute',
