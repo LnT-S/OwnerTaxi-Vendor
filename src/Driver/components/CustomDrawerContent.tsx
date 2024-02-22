@@ -19,7 +19,9 @@ const CustomDrawerContent: React.FC<CustomDrawerProps> = ({ state, navigation })
 
   return (
     <DrawerContentScrollView contentContainerStyle={styles.container}>
-
+      <View style={{ display: 'flex', alignItems: 'flex-end', marginRight: 15, marginTop: 10 }}>
+        <Icon name="settings" size={24} color="white" onPress={() => handleNavigation('Setting')}/>
+      </View>
       <View style={styles.profileContainer}>
         <Icon name="person" size={50} color="#ffea00" />
         <Text style={styles.profileText}>Person name</Text>
@@ -34,13 +36,13 @@ const CustomDrawerContent: React.FC<CustomDrawerProps> = ({ state, navigation })
           styles.text,
           activeRouteName === 'Home' && styles.activeItemColor,
         ]}>
-        Home</Text>
+          Home</Text>
       </TouchableOpacity>
       <TouchableOpacity
-       style={[
-        activeRouteName === 'Document' && styles.activeItemBackground,
-      ]}
-      onPress={() => handleNavigation('Document')}>
+        style={[
+          activeRouteName === 'Document' && styles.activeItemBackground,
+        ]}
+        onPress={() => handleNavigation('Document')}>
         <Text style={[
           styles.text,
           activeRouteName === 'Document' && styles.activeItemColor,
@@ -77,10 +79,10 @@ const CustomDrawerContent: React.FC<CustomDrawerProps> = ({ state, navigation })
         ]}>History</Text>
       </TouchableOpacity>
       <TouchableOpacity
-       style={[
-        activeRouteName === 'Setting' && styles.activeItemBackground,
-      ]}
-      onPress={() => handleNavigation('Setting')}>
+        style={[
+          activeRouteName === 'Setting' && styles.activeItemBackground,
+        ]}
+        onPress={() => handleNavigation('Setting')}>
         <Text style={[
           styles.text,
           activeRouteName === 'Setting' && styles.activeItemColor,
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#ffea00',
     marginLeft: 20,
-    marginVertical:5,
+    marginVertical: 5,
   },
   profileText: {
     fontSize: 16,
@@ -148,7 +150,8 @@ const styles = StyleSheet.create({
   },
   activeItemBackground: {
     backgroundColor: '#e9f285',
-    color: 'black'// Your active item background color
+    color: 'black',// Your active item background color
+    marginHorizontal: 10
   },
 });
 

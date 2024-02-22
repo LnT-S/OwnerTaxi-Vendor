@@ -10,7 +10,7 @@ const Header = (props) => {
     const { title } = props
 
     const openDrawer = () => {
-      navigation.openDrawer()
+        navigation.openDrawer()
     };
 
     return (
@@ -23,6 +23,12 @@ const Header = (props) => {
                     <Text style={{ fontSize: 20, paddingLeft: 10, color: 'black', fontWeight: '600' }}>{title}</Text>
                 </View>
                 <View style={styles.right}>
+                    <TouchableOpacity style={{ marginRight: 10 }}>
+                        <Icon name="chat-bubble" size={26} color="black" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{ marginRight: 10 }}>
+                        <Icon name="notifications" size={26} color="black" />
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={openDrawer}>
                         <Icon name="menu" size={30} color="#000" />
                     </TouchableOpacity>
@@ -47,7 +53,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     right: {
-        marginRight: 10
+        marginRight: 10,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     }
 })
 

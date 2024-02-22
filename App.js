@@ -41,16 +41,17 @@ import CustomDrawerContent from './src/Driver/components/CustomDrawerContent';
 import Documents from './src/Driver/components/Documents';
 import Activity from './src/Driver/components/Activity';
 import History from './src/Driver/components/History';
+
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator();
 
 function DrawerNavigator() {
 
   return (
-    <Drawer.Navigator initialRouteName='Home' drawerContent={(props) => <CustomDrawerContent {...props} />}>
-      <Drawer.Screen name="Setting" component={Settting} options={{ headerShown: false }} />
-      <Drawer.Screen name="Wallet" component={Wallet} options={{ headerShown: false }} />
+    <Drawer.Navigator initialRouteName='Home' drawerContent={(props) => <CustomDrawerContent {...props} />} backBehavior="history">
       <Drawer.Screen name="Home" component={HomePageDriver} options={{ headerShown: false }} />
+      <Drawer.Screen name="Wallet" component={Wallet} options={{ headerShown: false }} />
+      <Drawer.Screen name="Setting" component={Settting} options={{ headerShown: false }} />
       <Drawer.Screen name="Document" component={Documents} options={{ headerShown: false }} />
       <Drawer.Screen name="Activity" component={Activity} options={{ headerShown: false }} />
       <Drawer.Screen name="History" component={History} options={{ headerShown: false }} />
@@ -72,7 +73,7 @@ function App() {
   useEffect(() => {
     // userIs().then(data => {
     //   console.log('USER TYPE IS ', data)
-    //   if (data === 'Traveller') {
+    //   if (data === 'Vendor') {
     //     setInitialRoute('HomeSceen')
     //   }
     //   if (data === 'Driver') {

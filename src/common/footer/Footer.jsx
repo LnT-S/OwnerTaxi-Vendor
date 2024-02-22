@@ -27,7 +27,7 @@ const Footer = () => {
                     <Icon name="home" size={40} color="#000" />
                 </View>
                 <View style={styles.icons}>
-                    <Icon name="description" size={40} color="#000" />
+                    <Icon name="event" size={40} color="#000" />
                 </View>
                 <View style={styles.icons}>
                     <Icon name="account-balance-wallet" size={40} color="#000" />

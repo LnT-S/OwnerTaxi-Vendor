@@ -59,7 +59,7 @@ const SignupScreen = () => {
                         <Text style={styles.title}>Sign Up</Text>
                     </View>
 
-                    <TwoWayPushButton option1={'Traveller'} option2={'Driver'} setter={setSelectedOption} />
+                    <TwoWayPushButton option1={'Vendor'} option2={'Driver'} setter={setSelectedOption} />
 
                     <View style={styles.logoPart}>
                         <UserInput

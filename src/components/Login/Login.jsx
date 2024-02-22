@@ -29,7 +29,7 @@ const LoginPage = () => {
     }
     const handleLogin = async() => {
         await AsyncStorage.setItem('userIs',selectedOption)
-        if(selectedOption === 'Traveller'){
+        if(selectedOption === 'Vendor'){
             navigation.navigate('HomeSceen')
         }else if(selectedOption === 'Driver'){
             navigation.navigate('HomeSceenDriver')
@@ -80,7 +80,7 @@ const LoginPage = () => {
                         <Text style={styles.title}>LogIn</Text>
                     </View>
 
-                    <TwoWayPushButton option1={'Traveller'} option2={'Driver'} setter={setSelectedOption} />
+                    <TwoWayPushButton option1={'Vendor'} option2={'Driver'} setter={setSelectedOption} />
 
                     <View style={styles.formpart}>
                         <UserInput
