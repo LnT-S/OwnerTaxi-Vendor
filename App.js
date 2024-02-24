@@ -22,7 +22,7 @@ import { ContextProvider } from './src/context/ContextProvider';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
-import HomePage from './src/components/home/Home';
+import HomePage from './src/Vendor/home/Home';
 import ProfilePage from './src/components/profile/Profile';
 import SplashScreen from './src/screens/static/SplashScreen';
 import LoginPage from './src/components/Login/Login';
@@ -31,16 +31,16 @@ import Forget from './src/components/Login/Forget';
 import { BgColor } from './src/styles/colors';
 import OtpScreen from './src/components/Login/OTP';
 import NewPassword from './src/components/Login/NewPassword';
-import AuthenticatedLayout from './src/screens/layout/AuthenticatedLayout';
-import HomePageDriver from './src/Driver/HomepageDriver';
+import HomePageDriver from './src/Driver/components/home/HomepageDriver';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Settting from './src/Driver/components/Settting';
-import Wallet from './src/Driver/components/Wallet';
-import Header from './src/common/header/Header';
-import CustomDrawerContent from './src/Driver/components/CustomDrawerContent';
-import Documents from './src/Driver/components/Documents';
-import Activity from './src/Driver/components/Activity';
-import History from './src/Driver/components/History';
+import Settting from './src/Driver/components/setting/Settting';
+import Wallet from './src/Driver/components/Wallet/Wallet';
+import CustomDrawerContent from './src/Driver/common/drawer/CustomDrawerContent';
+import Documents from './src/Driver/components/documents/Documents';
+import History from './src/Driver/components/history/History';
+import Message from './src/Driver/components/Message/Message';
+import Notification from './src/Driver/components/Notification/Notification';
+import MessageScreen from './src/Driver/components/Message/MessageScreen';
 
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator();
@@ -53,8 +53,10 @@ function DrawerNavigator() {
       <Drawer.Screen name="Wallet" component={Wallet} options={{ headerShown: false }} />
       <Drawer.Screen name="Setting" component={Settting} options={{ headerShown: false }} />
       <Drawer.Screen name="Document" component={Documents} options={{ headerShown: false }} />
-      <Drawer.Screen name="Activity" component={Activity} options={{ headerShown: false }} />
       <Drawer.Screen name="History" component={History} options={{ headerShown: false }} />
+      <Drawer.Screen name='message' component={Message} options={{ headerShown: false }} />
+      <Drawer.Screen name='notification' component={Notification} options={{ headerShown: false }} />
+      <Drawer.Screen name='messageScreen' component={MessageScreen} options={{ headerShown: false }} />
     </Drawer.Navigator>
   );
 }
@@ -137,6 +139,7 @@ function App() {
               component={DrawerNavigator}
               options={{ headerShown: false }}
             />
+
             <Stack.Screen
               name='ProfileScreen'
               component={ProfilePage}

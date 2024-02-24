@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { BackHandler, ScrollView, Text, View, TouchableOpacity, StyleSheet, FlatList } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import SearchBox from '../adOns/atoms/Search'
-import AuthenticatedLayout from '../screens/layout/AuthenticatedLayout'
+import SearchBox from '../../../adOns/atoms/Search'
+import AuthenticatedLayout from '../../../common/AuthenticatedLayout'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 // const LazyLoadActiveRequestCard = React.lazy(() => import('../Driver/components/ActiveRequestCard.js'))
-import LazyLoadActiveRequestCard from './components/ActiveRequestCard'
-import TwoWayPushButton from '../adOns/molecules/TwoWayPushButton'
+import LazyLoadActiveRequestCard from './ActiveRequestCard'
+import TwoWayPushButton from '../../../adOns/molecules/TwoWayPushButton'
+import RefreshButton from '../../../adOns/molecules/RefreshButton'
 const HomePageDriver = () => {
 
     const activeList = [
@@ -74,10 +75,8 @@ const HomePageDriver = () => {
 
                 <View style={styles.viewStyle}>
                     <View style={styles.liststyle}>
-                        <Text style={styles.textStyle}>Active Request</Text>
-                        <TouchableOpacity>
-                            <Icon name="refresh" size={30} color="#000" />
-                        </TouchableOpacity>
+                        <Text style={styles.textStyle}>LIVE FEED REQUESTS</Text>
+                        <RefreshButton/>
                     </View>
                     <View style={{display: 'flex',justifyContent:'center',alignItems:'center'}}>
                         <TwoWayPushButton option1={'Local'} option2={'InterCity'} setter={setSelectedOption} />
@@ -111,6 +110,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     textStyle: {
+        letterSpacing : 1.3,
         color: 'red',
         fontSize: 20,
         fontWeight: "900"

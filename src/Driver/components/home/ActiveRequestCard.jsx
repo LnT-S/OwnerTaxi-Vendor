@@ -9,7 +9,7 @@ const ActiveRequestCard = (props) => {
     return (
         <TouchableOpacity>
             <View style={styles.activeBar}>
-                <View><Text style={[styles.textColor, styles.textHeading]}>{item.customerID}</Text></View>
+                <View><Text style={[styles.textColor, styles.textHeading]}>Customer ID : {item.customerID}</Text></View>
                 <View style={[styles.horizontalstatus, styles.borderTop]}>
                     <View style={styles.activeBarmarginRight}>
                         <View>

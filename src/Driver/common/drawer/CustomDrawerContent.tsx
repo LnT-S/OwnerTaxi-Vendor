@@ -58,16 +58,7 @@ const CustomDrawerContent: React.FC<CustomDrawerProps> = ({ state, navigation })
           activeRouteName === 'Wallet' && styles.activeItemColor,
         ]}>Wallet</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={[
-          activeRouteName === 'Activity' && styles.activeItemBackground,
-        ]}
-        onPress={() => handleNavigation('Activity')}>
-        <Text style={[
-          styles.text,
-          activeRouteName === 'Activity' && styles.activeItemColor,
-        ]}>Activity</Text>
-      </TouchableOpacity>
+      
       <TouchableOpacity
         style={[
           activeRouteName === 'History' && styles.activeItemBackground,

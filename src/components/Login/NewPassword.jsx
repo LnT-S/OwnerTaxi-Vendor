@@ -16,7 +16,7 @@ const NewPassword = () => {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={{ flex: 1, backgroundColor: BgColor }}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Icon name="arrow-back" style={global.backIcon} size={30} />
+                <Icon name="arrow-back" style={global.backIcon} size={30} color="black"/>
             </TouchableOpacity>
 
             <View style={styles.newPasscontainer}>

@@ -14,7 +14,7 @@ const PassInput = (props) => {
 
   return (
     <View style={styles.inputContainer}>
-      <Icon name="lock" size={24} style={styles.icon} />
+      <Icon name="lock" size={24} color="black" style={styles.icon} />
       <TextInput
         style={styles.input}
         placeholder={props.placeholder}
@@ -27,6 +27,7 @@ const PassInput = (props) => {
         <Icon
           name={passwordVisibility ? 'visibility' : 'visibility-off'}
           size={24}
+          color="black"
           style={styles.icon}
         />
       </TouchableOpacity>
