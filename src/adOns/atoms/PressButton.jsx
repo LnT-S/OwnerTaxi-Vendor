@@ -1,14 +1,15 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, Text, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text, View, ActivityIndicator } from 'react-native';
 import { getResponsiveValue, screenWidth } from '../../styles/responsive';
 import { BgColor } from '../../styles/colors';
 
 
 const PressButton = (props) => {
+    const {loading} = props
     return (
         <TouchableOpacity style={[styles.buttonContainer]} {...props}>
             <View style={[styles.button]} >
-                <Text style={styles.text}>{props.name}</Text>
+                {(loading===undefined || loading===false) ? <Text style={styles.text}>{props.name}</Text> : <ActivityIndicator style={styles.text}/>}
             </View>
         </TouchableOpacity>
     );

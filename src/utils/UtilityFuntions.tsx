@@ -1,3 +1,6 @@
+import DocumentPicker from 'react-native-document-picker';
+
+
 type messageObject = {
     ts: Number,
     message: String,
@@ -43,4 +46,21 @@ export const activeMessageArray = (selfUserArray: Array<messageObject>, otherUse
     }
 
     return finalArray;
+}
+
+
+export const documentPicker = async(documentName : String)=>{
+        try {
+            const res = await DocumentPicker.pick({
+                type: [DocumentPicker.types.allFiles],
+                allowMultiSelection: false
+            });
+            return {...res[0] , documentName  : documentName}
+        } catch (err) {
+            if (DocumentPicker.isCancel(err)) {
+                console.log('USER CANCELLED PICKING DOCUMENT');
+            } else {
+                console.log('UNKNOWN ERROR IN DOCUMENT PICKER  ::', err);
+            }
+        }
 }
