@@ -1,8 +1,12 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const RefreshButton = () => {
+const RefreshButton = (props) => {
+
+    // const {loading , setLoading} = props
+    const [loading , setLoading ] = useState(false)
+
     const rotation = useRef(new Animated.Value(0)).current;
 
     const startRotation = () => {
@@ -18,8 +22,31 @@ const RefreshButton = () => {
 
     const rotate = rotation.interpolate({
         inputRange: [0, 1],
-        outputRange: ['0deg', '360deg'],
+        outputRange: ['0deg', `${360}deg`],
     });
+
+    setTimeout(()=>{
+        setLoading(false)
+        console.log('LOADING SETLOADING TO FALSE')
+    },6000)
+    let intervalId = setInterval(()=>{
+        if(loading===true){
+            startRotation()
+        }
+    },1001)
+
+
+    useEffect(()=>{
+        if(loading===false){
+            setLoading(false)
+            clearInterval(intervalId)
+        }
+
+        return ()=>{
+            setLoading(false)
+            clearInterval(intervalId)
+        }
+    },[loading])
 
     return (
         <TouchableOpacity onPress={startRotation}>

@@ -25,6 +25,7 @@ const AuthenticatedLayout = (props) => {
         showHMIcon,
         showMessageIcon,
         show3DotIcon,
+        threeDotOptionObject,
         leftCenterJsx,
         headerStyles,
         headerTextStyles
@@ -48,6 +49,7 @@ const AuthenticatedLayout = (props) => {
                             leftCenterJsx={leftCenterJsx}
                             headerStyles={headerStyles}
                             headerTextStyles={headerTextStyles}
+                            threeDotOptionObject={threeDotOptionObject}
                         />
                     </View> : ''}
                     {/*BODY*/}

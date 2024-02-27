@@ -7,9 +7,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const CustomDocumentPicker = (props) => {
 
-    const { documentName } = props
+    const { documentName , visible , setVisible } = props
 
-    const [modalVisible, setModalVisible] = useState(false);
     const [document, setDocument] = useState(null)
     const [isDocumentUploading, setIsDocumentUploading] = useState(false)
 
@@ -34,7 +33,7 @@ const CustomDocumentPicker = (props) => {
     const uploadDocument = () => {
         // API CALL FOR DOCUMENT UPLOAD
         setIsDocumentUploading(true)
-        setTimeout(() => { setIsDocumentUploading(false); setModalVisible(false) }, 2000)
+        setTimeout(() => { setIsDocumentUploading(false); setVisible(false) }, 2000)
         console.log('DOCUMENT UPLOADED SUCCESSFULLY')
         setDocument(null)
     }
@@ -42,21 +41,17 @@ const CustomDocumentPicker = (props) => {
     const cancelUpload = () => {
         console.log('UPLOAD CANCELLED')
         setDocument(null)
-        setModalVisible(false)
+        setVisible(false)
     }
-
-    useEffect(() => {
-        console.log('DOCUMENT UPDATED ', document)
-    }, [document])
 
     return (
         <View style={styles.container}>
             <Modal
                 animationType="slide"
                 transparent={true}
-                visible={modalVisible}
+                visible={visible}
                 onRequestClose={() => {
-                    setModalVisible(!modalVisible);
+                    setVisible(!visible);
                 }}
             >
                 <View style={styles.modalContainer}>
@@ -73,13 +68,6 @@ const CustomDocumentPicker = (props) => {
                     </View>
                 </View>
             </Modal>
-
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
-                    <View style={styles.circle}>
-                        <Icon name="add" size={24} color="black" />
-                    </View>
-            
-            </TouchableOpacity>
         </View>
     );
 };

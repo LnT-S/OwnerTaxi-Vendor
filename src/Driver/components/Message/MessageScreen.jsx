@@ -15,12 +15,12 @@ const MessageScreen = (props) => {
     const scrollViewRef = useRef();
     const { image, name, lastMessage } = route.params.item
 
-    const [dummyChatData, setDummyChatData] = useState({
+    const [chatData, setchatData] = useState({
         user1: [{ ts: 1, message: 'hi' }, { ts: 0, message: 'how are you' }],
         user2: [{ ts: 6, message: 'user2' }, { ts: 2, message: 'hello' }, { ts: 1, message: 'fine' }]
     })
-    const [msgRenderArray, setmsgRenderArray] = useState([])
 
+    const [msgRenderArray, setmsgRenderArray] = useState([])
     const [isKeyboardVisible, setIsKeyboardVisible] = useState(false)
 
     const sendMessage = async (message) => {
@@ -31,8 +31,8 @@ const MessageScreen = (props) => {
             ts: ts,
             message: message
         }
-        let newArr = [msgObj, ...dummyChatData.user1]
-        setDummyChatData({ ...dummyChatData, user1: newArr })
+        let newArr = [msgObj, ...chatData.user1]
+        setchatData({ ...chatData, user1: newArr })
     }
 
     useEffect(() => {
@@ -62,14 +62,37 @@ const MessageScreen = (props) => {
 
     useEffect(() => {
         scrollViewRef.current.scrollToEnd({ animated: true });
-        console.log('New Message Added', dummyChatData)
-        let temp = activeMessageArray(dummyChatData.user1, dummyChatData.user2)
+        console.log('New Message Added', chatData)
+        let temp = activeMessageArray(chatData.user1, chatData.user2)
         console.log('MESSAGE RENDER ARRAY', temp)
         setmsgRenderArray(temp)
-    }, [dummyChatData])
+    }, [chatData])
 
 
     const dp = <Image source={image} style={{ height: 50, width: 50, marginLeft: 5 }} />
+    const optionObject = {
+        option1 : {
+            name : 'Delete All Message',
+            action : ()=>{
+                // API CALL TO DELETE ALL MESSAGES OF CURRENT USER
+                console.log('ALL MESSAGES DELETED')
+            }
+        },
+        option2: {
+            name : `Block`,
+            action : ()=>{
+                //API CALL TO BLOCK THE USER
+                console.log('USER BLOCKED')
+            }
+        },
+        option3 : {
+            name : 'Report',
+            action : ()=>{
+                //API CALL TO BLOCK THE USER
+                console.log('REPORT SUCCESSFULL')
+            }
+        }
+    }
 
     return (
         <AuthenticatedLayout
@@ -79,6 +102,7 @@ const MessageScreen = (props) => {
             showNotification={false}
             showHMIcon={false}
             show3DotIcon={true}
+            threeDotOptionObject={optionObject}
             leftCenterJsx={dp}
             headerStyles={styles.customHeaderStyle}
             headerTextStyles={styles.customHeaderTextStyle}
