@@ -25,10 +25,10 @@ const RefreshButton = (props) => {
         outputRange: ['0deg', `${360}deg`],
     });
 
-    setTimeout(()=>{
-        setLoading(false)
-        console.log('LOADING SETLOADING TO FALSE')
-    },6000)
+    // setTimeout(()=>{
+    //     setLoading(false)
+    //     console.log('LOADING SETLOADING TO FALSE')
+    // },6000)
     let intervalId = setInterval(()=>{
         if(loading===true){
             startRotation()

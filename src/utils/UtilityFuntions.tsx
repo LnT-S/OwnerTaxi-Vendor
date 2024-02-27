@@ -18,14 +18,14 @@ export const activeMessageArray = (selfUserArray: Array<messageObject>, otherUse
 
     for (; i<selfUserArray.length && j <otherUserArray.length; index++) {
         if (selfUserArray[i].ts >= otherUserArray[j].ts) {
-            console.log('0')
+            // console.log('0')
             msgObject = selfUserArray[i]
             msgObject.user = 'self'
             finalArray.push(msgObject)
             i++;
         }
         if (selfUserArray[i].ts < otherUserArray[j].ts) {
-            console.log('1')
+            // console.log('1')
             msgObject = otherUserArray[j]
             msgObject.user = 'other'
             finalArray.push(msgObject)
@@ -33,13 +33,13 @@ export const activeMessageArray = (selfUserArray: Array<messageObject>, otherUse
         }
     }
     while (i < selfUserArray.length) {
-        console.log('2')
+        // console.log('2')
         msgObject = selfUserArray[i++]
         msgObject.user = 'self'
         finalArray.push(msgObject)
     }
     while (j < otherUserArray.length) {
-        console.log('3')
+        // console.log('3')
         msgObject = otherUserArray[j++]
         msgObject.user = 'other'
         finalArray.push(msgObject)

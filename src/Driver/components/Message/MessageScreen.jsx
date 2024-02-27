@@ -64,7 +64,7 @@ const MessageScreen = (props) => {
         scrollViewRef.current.scrollToEnd({ animated: true });
         console.log('New Message Added', chatData)
         let temp = activeMessageArray(chatData.user1, chatData.user2)
-        console.log('MESSAGE RENDER ARRAY', temp)
+        // console.log('MESSAGE RENDER ARRAY', temp)
         setmsgRenderArray(temp)
     }, [chatData])
 
