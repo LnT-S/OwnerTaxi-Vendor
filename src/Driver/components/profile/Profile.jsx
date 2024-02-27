@@ -1,40 +1,40 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View , TouchableOpacity, ScrollView} from 'react-native'
+import { StyleSheet, Text, View , TouchableOpacity, ScrollView } from 'react-native'
 import AuthenticatedLayout from '../../../common/AuthenticatedLayout'
 import Semicircle from '../../../adOns/atoms/SemiCircle'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 
-const Setting = () => {
+const Profile = () => {
 
   const navigation = useNavigation()
   const profileDetails = {
     image : '',
-    name: 'Shruti',
+    name: 'Shruti Mishra',
     phoneNumber: '1234567891',
-    email: ''
+    email: 'smsihra.ninja9252@gmail.com'
   }
 
   return (
-    <AuthenticatedLayout title={'Setting'}>
-    <Semicircle item = {profileDetails} editMode={false}/>
+    <AuthenticatedLayout title={'Profile'}>
+      <Semicircle item = {profileDetails} editMode={true}/>
       <View style={{flex : 1 ,display : 'flex', flexDirection : 'column',justifyContent : 'space-between' , width : '100%'}}>
         <View style={styles.settingBox}>
-          <TouchableOpacity style={styles.listItem1} onPress = {() => navigation.navigate('profileScreen')}>
-            <Icon name="edit" size={30} color="#ffea00" />
-            <Text style={styles.text}>Edit Profile</Text>
+          <TouchableOpacity style={styles.listItem1}>
+            <Icon name="visibility" size={30} color="#ffea00" />
+            <Text style={styles.text}>Show My Name To Customer</Text>
           </TouchableOpacity>
           <View style={styles.listItem1}>
-            <Icon name="delete" size={30} color="#ffea00" />
-            <Text style={styles.text}>Delete My Account</Text>
+            <Icon name="visibility" size={30} color="#ffea00" />
+            <Text style={styles.text}>Show My Email ID To Customer</Text>
           </View>
           <View style={styles.listItem2}>
-            <Icon name="exit-to-app" size={30} color="#ffea00" />
-            <Text style={styles.text}>Log Out</Text>
+            <Icon name="visibility" size={30} color="#ffea00" />
+            <Text style={styles.text}>Show My Profile Image To Customer</Text>
           </View>
         </View>
         <TouchableOpacity style={{width : '100%'}}>
-          <Text style={styles.textStyle}>Terms and Conditions</Text>
+          <Text style={styles.textStyle}>Privacy Policy</Text>
         </TouchableOpacity>
       </View>
     </AuthenticatedLayout>
@@ -78,4 +78,4 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline'
   }
 })
-export default Setting
+export default Profile

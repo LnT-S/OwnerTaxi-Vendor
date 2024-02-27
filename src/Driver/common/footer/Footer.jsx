@@ -41,7 +41,7 @@ const Footer = () => {
                         <Icon name="account-balance-wallet" size={40} color="#000" />
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
+                <TouchableOpacity onPress={() => navigation.navigate('profileScreen')}>
                     <View style={styles.icons}>
                         <Icon name="person" size={40} color="#000" />
                     </View>

@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
         position: 'relative'
     },
     left: {
-        width: '50%',
+        width: '70%',
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center'

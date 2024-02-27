@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Text, FlatList, ActivityIndicator, TouchableOpacity, RefreshControl } from 'react-native';
 import NotificationBox from './NotificationBox';
 import AuthenticatedLayout from '../../../common/AuthenticatedLayout';
+import { useNavigation } from '@react-navigation/native';
 
 const Notification = () => {
+
+    const navigation = useNavigation()
 
     const NotificationList = [
         {
             notificationType: 'Vendor Notification',
-            content: 'This is just a example of Vendor Notification Click here to see more Notification related to vendor',
+            content: 'This is just a example of Vendor Notification Click here to see more Notification related to vendor This is just a example of Vendor Notification Click here to see more Notification related to vendor',
             time: '10:00 PM'
         },
         {
@@ -80,6 +83,9 @@ const Notification = () => {
 
     }
 
+    const handleNotificationPage = (item) => {
+        navigation.navigate('notificationScreen',{item})
+    }
     return (
         <AuthenticatedLayout title={'Notification'} showNotification={false}>
             <View style={{ marginTop: 10 }}>
@@ -89,7 +95,7 @@ const Notification = () => {
                     keyExtractor={(item, index) => (index)}
                     data={NotificationList}
                     renderItem={({ item }) => {
-                        return <TouchableOpacity>
+                        return <TouchableOpacity onPress={()=>handleNotificationPage(item)}>
                             <View style={styles.FlatListviewStyle}>
                                 <NotificationBox item={item} />
                             </View>

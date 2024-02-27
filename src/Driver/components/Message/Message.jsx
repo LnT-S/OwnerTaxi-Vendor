@@ -10,7 +10,7 @@ import LoadingScreen from '../../../adOns/organisms/LoadingScreen';
 const Message = () => {
 
     const navigation = useNavigation()
-    const [pageIsLoading , setPageIsLoading] = useState(true)
+    const [pageIsLoading , setPageIsLoading] = useState(false)
     const [selectedOption, setSelectedOption] = useState('')
     const [isRefreshing, setIsRefreshing] = useState(false)
 

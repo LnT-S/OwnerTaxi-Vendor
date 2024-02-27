@@ -23,7 +23,6 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
 import HomePage from './src/Vendor/home/Home';
-import ProfilePage from './src/components/profile/Profile';
 import SplashScreen from './src/screens/static/SplashScreen';
 import LoginPage from './src/components/Login/Login';
 import SignupScreen from './src/components/Login/SignUp';
@@ -41,6 +40,8 @@ import History from './src/Driver/components/history/History';
 import Message from './src/Driver/components/Message/Message';
 import Notification from './src/Driver/components/Notification/Notification';
 import MessageScreen from './src/Driver/components/Message/MessageScreen';
+import NotificationFullPage from './src/Driver/components/Notification/NotificationFullPage';
+import Profile from './src/Driver/components/profile/Profile';
 
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator();
@@ -56,7 +57,9 @@ function DrawerNavigator() {
       <Drawer.Screen name="History" component={History} options={{ headerShown: false }} />
       <Drawer.Screen name='message' component={Message} options={{ headerShown: false }} />
       <Drawer.Screen name='notification' component={Notification} options={{ headerShown: false }} />
+      <Drawer.Screen name='notificationScreen' component={NotificationFullPage} options={{ headerShown: false }} />
       <Drawer.Screen name='messageScreen' component={MessageScreen} options={{ headerShown: false }} />
+      <Drawer.Screen name='profileScreen' component={Profile} options={{ headerShown: false }} />
     </Drawer.Navigator>
   );
 }
@@ -137,12 +140,6 @@ function App() {
             <Stack.Screen
               name='HomeSceenDriver'
               component={DrawerNavigator}
-              options={{ headerShown: false }}
-            />
-
-            <Stack.Screen
-              name='ProfileScreen'
-              component={ProfilePage}
               options={{ headerShown: false }}
             />
 
