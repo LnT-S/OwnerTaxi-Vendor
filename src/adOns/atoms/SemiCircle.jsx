@@ -111,6 +111,7 @@ const InvertedPersonInfoSemicircle = (props) => {
 
 const styles = StyleSheet.create({
   container: {
+    position: 'relative',
     alignItems: 'center',
     justifyContent: 'flex-end',
     marginBottom: 30, // Adjust as needed
