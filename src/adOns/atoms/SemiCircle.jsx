@@ -1,69 +1,49 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Image, Text, StyleSheet, Pressable, TextInput } from 'react-native';
 import CroppedImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import PressButton from './PressButton';
 import { getResponsiveValue } from '../../styles/responsive';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { imagePicker } from '../../utils/UtilityFuntions';
 
 const InvertedPersonInfoSemicircle = (props) => {
 
   const { image, name, phoneNumber, email } = props.item
   const editMode = props.editMode
 
-  const selectImage = async () => {
-    let selectedImage = {
-      fileName: `OwerTaxi${new Date().getTime()}`,
-      fileSize: 0,
-      height: 0,
-      type: "image/png",
-      uri: '',
-      width: 0
-    }
-    if (editMode) {
-      try {
-        const response = await CroppedImagePicker.openPicker({
-          mediaType: 'photo',
-          cropping: true, // Enable cropping
-          cropperCircleOverlay: false, // Set to true if you want a circular crop overlay
-          freeStyleCropEnabled: true, // Enable free-style cropping
-          aspectRatio: [1, 1], // Set the aspect ratio for cropping (1:1 in this example)
-          includeBase64: true,
-          multiple: false, // Set to true if you want to allow multiple selection
-          cropperToolbarTitle: 'Crop Image',
-        });
-        //  console.log(response)
-        selectedImage.fileSize = response.size,
-          selectedImage.height = response.cropRect.height,
-          selectedImage.width = response.cropRect.width,
-          selectedImage.type = response.mime,
-          selectedImage.uri = response.path
-        selectedImage.data = response.data
-        //  console.log(selectedImage)
-        console.log("Image Selected")
-      } catch (error) {
-        if (error) {
-          console.log('ERROR  : Error Picking Image', error)
-        }
-      }
-    }
-  };
+  const [selectedImage, setSelectedImage] = useState(image)
+
+  useEffect(() => {
+    console.log('SELECTED IMAGE IS ', selectedImage?.uri)
+  }, [selectedImage])
+
   const handleChange = (v) => {
     console.log(v)
   }
   return (
     <View style={styles.container}>
       <View style={styles.semicircle}>
-        <Pressable onPress={selectImage} style={styles.imageContainer}>
+        <View style={styles.imageContainer}>
           <Image
-
-            source={(image === '' || image === undefined) ?
+            source={(selectedImage === '' || selectedImage === undefined || selectedImage === null) ?
               require('../../assets/imgaes/Profile.png') :
-              image
+              { uri: selectedImage.uri }
             }
             style={styles.image}
           />
-          {editMode ? (<Icon name="edit" size={24} color="#ffea00" style={styles.imageEditIcon} />) : ("")}
-        </Pressable>
+          {editMode ? (<TouchableOpacity onPress={async () => {
+            imagePicker('Select Profile Image', 'photo', true, false, true, true)
+            .then(image=>{
+              image!==null ? setSelectedImage(image) : ''
+            })
+            .catch(err=>{
+              console.log('ERROR IN IMAGE PICK',err)
+            })
+          }}>
+            <Icon name="edit" size={24} color="#ffea00" style={styles.imageEditIcon} />
+          </TouchableOpacity>) : ("")}
+        </View>
 
         {editMode ? (
           <TextInput
@@ -76,34 +56,22 @@ const InvertedPersonInfoSemicircle = (props) => {
             '' :
             (<Text style={styles.name}>{name}</Text>)
         }
-        
+
         {editMode ? (
           <TextInput
-          style={styles.editableField}
-          onChangeText={(v) => { handleChange(v) }}
-          placeholder={email ? email : 'Enter your email'}
-          placeholderTextColor="gray"
+            style={styles.editableField}
+            onChangeText={(v) => { handleChange(v) }}
+            placeholder={email ? email : 'Enter your email'}
+            placeholderTextColor="gray"
           />) :
           (email === "" || email === undefined) ?
-          '' :
-          (<Text style={styles.name}>{email}</Text>)
+            '' :
+            (<Text style={styles.name}>{email}</Text>)
         }
-
-        {editMode ? (
-          <TextInput
-          style={styles.editableField}
-          onChangeText={(v) => { handleChange(v) }}
-          placeholder={phoneNumber ? phoneNumber : 'Enter your Number'}
-          placeholderTextColor="gray"
-          />) :
-          (phoneNumber === "" || phoneNumber === undefined) ?
-          '' :
-          (<Text style={styles.phoneNumber}>{phoneNumber}</Text>)
-        }
-
+        <Text style={styles.phoneNumber}>{phoneNumber}</Text>
       </View>
+      <PressButton name="Save" />
       {editMode ? <View style={styles.saveButton}>
-        <PressButton name="Save" />
       </View> : ''}
     </View>
   );

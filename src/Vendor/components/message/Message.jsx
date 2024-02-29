@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout';
 import ThreeWayPushButton from '../../../adOns/molecules/ThreeWayPushButton';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import AuthenticatedLayoutVendor from '../../common/layout/AuthenticatedLayoutVendor';
 import MessageCard from './MessageCard';
 import { useNavigation } from '@react-navigation/native';
 import LoadingScreen from '../../../adOns/organisms/LoadingScreen';
 
-const Message = () => {
+const MessageVendor = () => {
 
     const navigation = useNavigation()
     const [pageIsLoading , setPageIsLoading] = useState(false)
@@ -69,13 +69,13 @@ const Message = () => {
     ]
 
     const handleMessageChat = (item) => {
-        navigation.navigate('messageScreen',{item})
+        navigation.navigate('MessageScreenVendor',{item})
     }
     if(pageIsLoading){
         return <LoadingScreen />
     }else{
         return (
-            <AuthenticatedLayout title={'Messages'} showMessageIcon={false}>
+            <AuthenticatedLayoutVendor title={'Messages Vendor'} showMessageIcon={false}>
                 <View style={[styles.flexDirection, styles.margin]}>
                     <View style={styles.ThreeWaywidth}>
                         <ThreeWayPushButton outerStyles={{ margin: 0, width: '100%', height : 55 }} option1={'All'} option2={'Vendor'} option3={'Customer'} setter={setSelectedOption} />
@@ -103,7 +103,7 @@ const Message = () => {
                         }
                     />
                 </View>
-            </AuthenticatedLayout>
+            </AuthenticatedLayoutVendor>
         )
     }
 }
@@ -141,4 +141,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Message
+export default MessageVendor

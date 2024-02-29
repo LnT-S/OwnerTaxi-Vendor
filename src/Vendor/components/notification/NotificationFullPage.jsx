@@ -1,15 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout';
+import AuthenticatedLayoutVendor from '../../common/layout/AuthenticatedLayoutVendor';
 import { useRoute } from '@react-navigation/native';
 
-const NotificationFullPage = (props) => {
+const NotificationFullPageVendor = (props) => {
 
     const route = useRoute()
     const { notificationType, content, time } = route.params.item
 
     return (
-        <AuthenticatedLayout
+        <AuthenticatedLayoutVendor
             title={notificationType}
             showBackIcon={true}
             showMessageIcon={false}
@@ -25,7 +25,7 @@ const NotificationFullPage = (props) => {
                     <Text style={styles.ContentStyle}>{content}</Text>
                 </View>
             </View>
-        </AuthenticatedLayout>
+        </AuthenticatedLayoutVendor>
     );
 }
 
@@ -62,4 +62,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default NotificationFullPage;
+export default NotificationFullPageVendor;

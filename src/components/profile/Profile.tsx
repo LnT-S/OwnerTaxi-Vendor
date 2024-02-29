@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text, View } from 'react-native'
-import AuthenticatedLayout from '../../common/AuthenticatedLayout'
+import AuthenticatedLayout from '../../Driver/common/layout/AuthenticatedLayout'
 
 const ProfilePage = () => {
   return (

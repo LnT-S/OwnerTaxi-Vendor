@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Text, View,FlatList, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native'
-import AuthenticatedLayout from '../../../common/AuthenticatedLayout'
+import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import HistoryRequestCard from './HistoryRequestCard';
 
 const History = () => {

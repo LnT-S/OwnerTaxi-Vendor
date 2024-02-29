@@ -1,6 +1,6 @@
 import React from 'react'
 import { ScrollView, Text, View, TouchableOpacity, Image, FlatList, StyleSheet } from 'react-native'
-import AuthenticatedLayout from '../../../common/AuthenticatedLayout'
+import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import TransactionBox from './TransactionCard'
 import PressButton from '../../../adOns/atoms/PressButton'
 import Icon from 'react-native-vector-icons/MaterialIcons';

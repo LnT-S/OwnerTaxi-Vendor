@@ -22,7 +22,6 @@ import { ContextProvider } from './src/context/ContextProvider';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
-import HomePage from './src/Vendor/home/Home';
 import SplashScreen from './src/screens/static/SplashScreen';
 import LoginPage from './src/components/Login/Login';
 import SignupScreen from './src/components/Login/SignUp';
@@ -43,10 +42,19 @@ import MessageScreen from './src/Driver/components/Message/MessageScreen';
 import NotificationFullPage from './src/Driver/components/Notification/NotificationFullPage';
 import Profile from './src/Driver/components/profile/Profile';
 
+import CustomDrawerContentVendor from './src/Vendor/common/drawer/CustomDrawerContentVendor';
+import HomePageVendor from './src/Vendor/components/home/HomepageVendor';
+import SettingVendor from './src/Vendor/components/setting/Settting';
+import ProfileVendor from './src/Vendor/components/profile/Profile';
+import MessageVendor from './src/Vendor/components/message/Message';
+import MessageScreenVendor from './src/Vendor/components/message/MessageScreen';
+import NotificationVendor from './src/Vendor/components/notification/Notification';
+import NotificationFullPageVendor from './src/Vendor/components/notification/NotificationFullPage';
+
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator();
 
-function DrawerNavigator() {
+function DrawerNavigatorDriver() {
 
   return (
     <Drawer.Navigator initialRouteName='Home' drawerContent={(props) => <CustomDrawerContent {...props} />} backBehavior="history">
@@ -60,6 +68,21 @@ function DrawerNavigator() {
       <Drawer.Screen name='notificationScreen' component={NotificationFullPage} options={{ headerShown: false }} />
       <Drawer.Screen name='messageScreen' component={MessageScreen} options={{ headerShown: false }} />
       <Drawer.Screen name='profileScreen' component={Profile} options={{ headerShown: false }} />
+    </Drawer.Navigator>
+  );
+}
+
+function DrawerNavigatorVendor() {
+
+  return (
+    <Drawer.Navigator initialRouteName='HomeVendor' drawerContent={(props) => <CustomDrawerContentVendor {...props} />} backBehavior="history">
+      <Drawer.Screen name="HomeVendor" component={HomePageVendor} options={{ headerShown: false }} />
+      <Drawer.Screen name="ProfileVendor" component={ProfileVendor} options={{ headerShown: false }} />
+      <Drawer.Screen name="MessageVendor" component={MessageVendor} options={{ headerShown: false }} />
+      <Drawer.Screen name="MessageScreenVendor" component={MessageScreenVendor} options={{ headerShown: false }} />
+      <Drawer.Screen name="NotificationVendor" component={NotificationVendor} options={{ headerShown: false }} />
+      <Drawer.Screen name="NotificationFullPageVendor" component={NotificationFullPageVendor} options={{ headerShown: false }} />
+      <Drawer.Screen name="SettingVendor" component={SettingVendor} options={{ headerShown: false }} />
     </Drawer.Navigator>
   );
 }
@@ -133,13 +156,13 @@ function App() {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name='HomeSceen'
-              component={HomePage}
+              name='HomeSceenVendor'
+              component={DrawerNavigatorVendor}
               options={{ headerShown: false }}
             />
             <Stack.Screen
               name='HomeSceenDriver'
-              component={DrawerNavigator}
+              component={DrawerNavigatorDriver}
               options={{ headerShown: false }}
             />
 

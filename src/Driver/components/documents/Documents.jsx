@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
-import AuthenticatedLayout from '../../../common/AuthenticatedLayout'
+import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import ThreeWayPushButton from '../../../adOns/molecules/ThreeWayPushButton'
 import DocumentCard from './DocumentCard'
 import MainDocumentCard from './MainDocumentCard'

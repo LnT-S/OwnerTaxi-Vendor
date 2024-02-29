@@ -30,7 +30,7 @@ const LoginPage = () => {
     const handleLogin = async() => {
         await AsyncStorage.setItem('userIs',selectedOption)
         if(selectedOption === 'Vendor'){
-            navigation.navigate('HomeSceen')
+            navigation.navigate('HomeSceenVendor')
         }else if(selectedOption === 'Driver'){
             navigation.navigate('HomeSceenDriver')
         }
@@ -89,26 +89,26 @@ const LoginPage = () => {
                             icon={'person'}
                         />
 
-                        <PassInput
+                        {/*<PassInput
                             placeholder='Password'
                         />
                         <View>
                             <Pressable onPress={ForgetPage}>
                                 <Text style={styles.link}>Forgot Password?</Text>
                             </Pressable>
-                        </View>
+    </View>*/}
                         <PressButton
                             name='Log In'
                             onPress={handleLogin}
                         />
-                        <View style={styles.content}>
+                       {/*} <View style={styles.content}>
                             <View style={styles.signupContainer}>
                                 <Text style={styles.createAccount}>Don't have an account?</Text>
                                 <Pressable onPress={SignUpPage}>
                                     <Text style={styles.link}>Sign Up</Text>
                                 </Pressable>
                             </View>
-                        </View>
+</View>*/}
                     </View>
                 </View>
             </SafeAreaView>

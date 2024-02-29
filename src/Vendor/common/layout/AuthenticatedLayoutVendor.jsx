@@ -8,14 +8,14 @@ import {
 } from 'react-native'
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { Text } from 'react-native-elements';
-import Header from '../Driver/common/header/Header';
-import Footer from '../Driver/common/footer/Footer';
-import { height } from '../styles/responsive';
-import { BgColor } from '../styles/colors';
+import HeaderVendor from '../header/Header';
+import Footer from '../footer/Footer';
+import { height } from '../../../styles/responsive';
+import { BgColor } from '../../../styles/colors';
 
 const Stack = createNativeStackNavigator()
 
-const AuthenticatedLayout = (props) => {
+const AuthenticatedLayoutVendor = (props) => {
     const {
         children,
         showHeader,
@@ -39,7 +39,7 @@ const AuthenticatedLayout = (props) => {
                 <View style={styles.layout}>
                     {/*NAVIGATION */}
                     {(showHeader === undefined || showHeader === true) ? <View style={styles.header}>
-                        <Header
+                        <HeaderVendor
                             title={props.title}
                             showNotification={showNotification}
                             showHMIcon={showHMIcon}
@@ -87,4 +87,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default AuthenticatedLayout
+export default AuthenticatedLayoutVendor

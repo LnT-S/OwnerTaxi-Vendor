@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, FlatList, ActivityIndicator, TouchableOpacity, RefreshControl } from 'react-native';
 import NotificationBox from './NotificationBox';
-import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout';
+import AuthenticatedLayoutVendor from '../../common/layout/AuthenticatedLayoutVendor';
 import { useNavigation } from '@react-navigation/native';
 
-const Notification = () => {
+const NotificationVendor = () => {
 
     const navigation = useNavigation()
 
     const NotificationList = [
         {
-            notificationType: 'Vendor Notification',
+            notificationType: 'Driver Notification',
             content: 'This is just a example of Vendor Notification Click here to see more Notification related to vendor This is just a example of Vendor Notification Click here to see more Notification related to vendor',
             time: '10:00 PM'
         },
@@ -84,10 +84,10 @@ const Notification = () => {
     }
 
     const handleNotificationPage = (item) => {
-        navigation.navigate('notificationScreen',{item})
+        navigation.navigate('NotificationFullPageVendor',{item})
     }
     return (
-        <AuthenticatedLayout title={'Notification'} showNotification={false}>
+        <AuthenticatedLayoutVendor title={'Notification Vendor'} showNotification={false}>
             <View style={{ marginTop: 10 }}>
             {isRefreshing && <ActivityIndicator  size={'large'} color={'black'}/>}
                 <FlatList
@@ -106,7 +106,7 @@ const Notification = () => {
                     }
                 />
             </View>
-        </AuthenticatedLayout>
+        </AuthenticatedLayoutVendor>
     );
 }
 
@@ -116,4 +116,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Notification;
+export default NotificationVendor;

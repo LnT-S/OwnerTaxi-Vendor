@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView, StyleSheet, View, Text, TouchableOpacity } from 'react-native'
 import { BgColor } from '../../../styles/colors'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { DrawerActions, useNavigation } from '@react-navigation/native';
 import global from '../../../styles/global'
-const Header = (props) => {
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const HeaderVendor = (props) => {
 
     const navigation = useNavigation()
     const {
@@ -19,7 +20,20 @@ const Header = (props) => {
         headerStyles,
         headerTextStyles
     } = props
+    const [userIs, setUserIs] = useState(null)
 
+    const userIS = async function () {
+        let temp = await AsyncStorage.getItem('userIs')
+        return temp
+    }
+
+    useEffect(() => {
+        userIS().then(data => {
+            setUserIs(data)
+        }).catch(err => {
+            console.log('UNABLE TO GET USER TYPE IN Header')
+        })
+    }, [])
     const openDrawer = () => {
         navigation.openDrawer()
     };
@@ -37,10 +51,10 @@ const Header = (props) => {
                     <Text style={{ ...{ fontSize: 20, paddingLeft: 10, color: 'black', fontWeight: '600' }, ...headerTextStyles }}>{title}</Text>
                 </View>
                 <View style={styles.right}>
-                    {(showMessageIcon === undefined || showMessageIcon === true) ? <TouchableOpacity style={{ marginRight: 10 }} onPress={() => navigation.navigate('message')}>
+                    {(showMessageIcon === undefined || showMessageIcon === true) ? <TouchableOpacity style={{ marginRight: 10 }} onPress={() => navigation.navigate('MessageVendor')}>
                         <Icon name="chat-bubble" size={26} color="black" style={headerTextStyles} />
                     </TouchableOpacity> : ''}
-                    {(showNotification === undefined || showNotification === true) ? <TouchableOpacity style={{ marginRight: 10 }} onPress={() => navigation.navigate('notification')}>
+                    {(showNotification === undefined || showNotification === true) ? <TouchableOpacity style={{ marginRight: 10 }} onPress={() => navigation.navigate('NotificationVendor')}>
                         <Icon name="notifications" size={26} color="black" style={headerTextStyles} />
                     </TouchableOpacity> : ''}
                     {(showHMIcon === undefined || showHMIcon === true) ? <TouchableOpacity onPress={openDrawer}>
@@ -108,7 +122,7 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Header
+export default HeaderVendor
 
 
 

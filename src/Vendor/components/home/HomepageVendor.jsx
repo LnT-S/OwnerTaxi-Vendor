@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { BackHandler, ScrollView, Text, View, TouchableOpacity, StyleSheet, FlatList } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import SearchBox from '../../../adOns/atoms/Search'
-import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 // const LazyLoadActiveRequestCard = React.lazy(() => import('../Driver/components/ActiveRequestCard.js'))
 import LazyLoadActiveRequestCard from './ActiveRequestCard'
 import TwoWayPushButton from '../../../adOns/molecules/TwoWayPushButton'
 import RefreshButton from '../../../adOns/molecules/RefreshButton'
-const HomePageDriver = () => {
+import AuthenticatedLayoutVendor from '../../common/layout/AuthenticatedLayoutVendor';
+const HomePageVendor = () => {
 
     const activeList = [
         {
@@ -67,7 +67,7 @@ const HomePageDriver = () => {
     }, []);
 
     return (
-        <AuthenticatedLayout title={'Home'}>
+        <AuthenticatedLayoutVendor title={'Home Vendor'}>
             <View style={{ position: 'relative', flex: 1 }}>
                 <View style={{ zIndex: 2 }}>
                     <SearchBox searchArray={searchArray} />
@@ -78,9 +78,9 @@ const HomePageDriver = () => {
                         <Text style={styles.textStyle}>LIVE FEED REQUESTS</Text>
                         <RefreshButton/>
                     </View>
-                    <View style={{display: 'flex',justifyContent:'center',alignItems:'center'}}>
+                    {/*<View style={{display: 'flex',justifyContent:'center',alignItems:'center'}}>
                         <TwoWayPushButton option1={'Local'} option2={'InterCity'} setter={setSelectedOption} />
-                    </View>
+    </View>*/}
 
                     <FlatList
                         style={{}}
@@ -93,7 +93,7 @@ const HomePageDriver = () => {
                     />
                 </View>
             </View>
-        </AuthenticatedLayout>
+        </AuthenticatedLayoutVendor>
     )
 }
 
@@ -121,4 +121,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default HomePageDriver
+export default HomePageVendor

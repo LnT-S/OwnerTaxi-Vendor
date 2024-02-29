@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View , TouchableOpacity, ScrollView } from 'react-native'
-import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
+import AuthenticatedLayout from '../../common/layout/AuthenticatedLayoutVendor'
 import Semicircle from '../../../adOns/atoms/SemiCircle'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import YesNoModal from '../../../adOns/molecules/YesNoModal';
 
-const Profile = () => {
+const ProfileVendor = () => {
 
   const navigation = useNavigation()
   const [showModal, setShowModal] = useState(false)
@@ -22,7 +22,7 @@ const Profile = () => {
  
 
   return (
-    <AuthenticatedLayout title={'Profile'}>
+    <AuthenticatedLayout title={'Profile Vendor'}>
       <YesNoModal
         show={showModal}
         setShow={setShowModal}
@@ -92,4 +92,4 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline'
   }
 })
-export default Profile
+export default ProfileVendor

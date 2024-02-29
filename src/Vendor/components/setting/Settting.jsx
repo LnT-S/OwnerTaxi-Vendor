@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View , TouchableOpacity, ScrollView} from 'react-native'
-import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import Semicircle from '../../../adOns/atoms/SemiCircle'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
+import AuthenticatedLayoutVendor from '../../common/layout/AuthenticatedLayoutVendor';
 
-const Setting = () => {
+const SettingVendor = () => {
 
   const navigation = useNavigation()
   const profileDetails = {
@@ -16,11 +16,11 @@ const Setting = () => {
   }
 
   return (
-    <AuthenticatedLayout title={'Setting'}>
+    <AuthenticatedLayoutVendor title={'Setting Vendor'}>
     <Semicircle item = {profileDetails} editMode={false}/>
       <View style={{flex : 1 ,display : 'flex', flexDirection : 'column',justifyContent : 'space-between' , width : '100%'}}>
         <View style={styles.settingBox}>
-          <TouchableOpacity style={styles.listItem1} onPress = {() => navigation.navigate('profileScreen')}>
+          <TouchableOpacity style={styles.listItem1} onPress = {() => navigation.navigate('ProfileVendor')}>
             <Icon name="edit" size={30} color="#ffea00" />
             <Text style={styles.text}>Edit Profile</Text>
           </TouchableOpacity>
@@ -37,7 +37,7 @@ const Setting = () => {
           <Text style={styles.textStyle}>Terms and Conditions</Text>
         </TouchableOpacity>
       </View>
-    </AuthenticatedLayout>
+    </AuthenticatedLayoutVendor>
   )
 }
 const styles = StyleSheet.create({
@@ -78,4 +78,4 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline'
   }
 })
-export default Setting
+export default SettingVendor

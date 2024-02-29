@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, StyleSheet, Animated, Easing, ActivityIndicator } from 'react-native';
 import { BgColor } from '../../styles/colors';
-import AuthenticatedLayout from '../../common/AuthenticatedLayout';
+import AuthenticatedLayout from '../../Driver/common/layout/AuthenticatedLayout';
 
 const LoadingScreen = () => {
     const [zoomValue] = useState(new Animated.Value(1));

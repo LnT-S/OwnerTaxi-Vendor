@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, StyleSheet, Text, Image, ScrollView, Keyboard, TouchableOpacity } from 'react-native';
-import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import AuthenticatedLayoutVendor from '../../common/layout/AuthenticatedLayoutVendor';
 import { useRoute } from '@react-navigation/native';
 import UserInput from '../../../adOns/atoms/UserInput';
 import MessageInput from '../../../adOns/atoms/MessageInput';
 import { height } from '../../styles/responsive';
 import { activeMessageArray } from '../../../utils/UtilityFuntions';
 
-const MessageScreen = (props) => {
+const MessageScreenVendor = (props) => {
 
     const route = useRoute()
     const scrollViewRef = useRef();
@@ -94,7 +94,7 @@ const MessageScreen = (props) => {
     }
 
     return (
-        <AuthenticatedLayout
+        <AuthenticatedLayoutVendor
             title={name}
             showBackIcon={true}
             showMessageIcon={false}
@@ -131,7 +131,7 @@ const MessageScreen = (props) => {
                     </View>
                 </View>
             </View>
-        </AuthenticatedLayout>
+        </AuthenticatedLayoutVendor>
     );
 }
 
@@ -212,4 +212,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default MessageScreen;
+export default MessageScreenVendor;
