@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Button, StyleSheet, View, Modal, Text } from "react-native";
+import { Button, StyleSheet, View, Modal, Text, Image } from "react-native";
 import PressButton from "../atoms/PressButton";
 
 export default function InfoModal(props) {
 
-    const { show, setShow, title, message } = props
+    const { show, setShow, title, message, messageJsx, imageSource } = props
     const handleCancel = () => {
         setShow(false);
     };
@@ -15,8 +15,15 @@ export default function InfoModal(props) {
             transparent={true}
             onRequestClose={handleCancel}>
             <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                    <Text style={styles.modalText}>{message}</Text>
+                
+                <View style={{ ...styles.modalContent, ...props.extContStyle }}>
+                <View style={{width : '100%' , marginBottom : 15}}>
+                    <Text style={{fontSize : 26 , color : 'black'}}>{title.toUpperCase()}</Text>
+                </View>
+                    {(messageJsx === undefined && message!==undefined) ? <View style={{ marginBottom: 4 }}>
+                        <Text style={styles.modalText}>{message}</Text>
+                    </View> : messageJsx}
+                    {imageSource ? <Image source={imageSource} style={{ height: 350, width: '90%', marginBottom: 15 }} /> : ''}
                     <View style={styles.row}>
                         <View style={styles.r1}>
                             <PressButton name={'Close'} onPress={handleCancel} />

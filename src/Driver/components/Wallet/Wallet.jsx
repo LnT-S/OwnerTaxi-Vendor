@@ -1,11 +1,13 @@
 import React from 'react'
 import { ScrollView, Text, View, TouchableOpacity, Image, FlatList, StyleSheet } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import TransactionBox from './TransactionCard'
 import PressButton from '../../../adOns/atoms/PressButton'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Wallet = () => {
+  const navigation = useNavigation()
   const transactionList = [
     {
       name: 'Transaction Name',
@@ -46,17 +48,18 @@ const Wallet = () => {
         <Text style={styles.textstyle}>Your Name</Text>
       </View>
       <View style={styles.rupeeBox}>
+        <Text style={{...styles.rupeetext , color : 'red'}}>Balance : </Text>
         <Icon name="attach-money" size={30} color="white" />
         <Text style={styles.rupeetext}>10,000</Text>
       </View>
       <View style={styles.col}>
-        <View style = {{flex :1}}>
-          <View>
-            <Text style={styles.text}>Transaction</Text>
+        <View style={{ flex: 1 }}>
+          <View style={{marginBottom : 15}}>
+            <Text style={styles.text}>Transaction History</Text>
           </View>
-          <View style={{flex :1}}>
+          <View style={{ flex: 1 }}>
             <FlatList
-              style={{flex :1 , marginBottom: 10 }}
+              style={{ flex: 1, marginBottom: 10 }}
               keyExtractor={(item, index) => (index)}
               data={transactionList}
               renderItem={({ item }) => {
@@ -71,7 +74,8 @@ const Wallet = () => {
         </View>
         <View>
           <PressButton
-            name='Redeem Now'
+            name='Recharge Now'
+            onPress = {()=>navigation.navigate('Recharge')}
           />
         </View>
       </View>
@@ -103,8 +107,8 @@ const styles = StyleSheet.create({
   },
   text: {
     marginLeft: 15,
-    fontSize: 18,
-    fontWeight: '800',
+    fontSize: 20,
+    fontWeight: '500',
     color: 'black'
   },
   rupeeBox: {

@@ -1,5 +1,6 @@
 import DocumentPicker from 'react-native-document-picker';
 import CroppedImagePicker from 'react-native-image-crop-picker';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 
 type messageObject = {
@@ -56,6 +57,7 @@ export const documentPicker = async (documentName: String) => {
             type: [DocumentPicker.types.allFiles],
             allowMultiSelection: false
         });
+        console.log('DOCUMENT PICKED INFO', res[0])
         return { ...res[0], documentName: documentName }
     } catch (err) {
         if (DocumentPicker.isCancel(err)) {
@@ -105,6 +107,14 @@ export const imagePicker = async function (
     } else {
         return null
     }
+}
 
-
+export const copyToClipboard = (text: string) => {
+    try {
+        Clipboard.setString(text)
+        return true
+    } catch (error) {
+        console.log('ERROR COPYING TO CLIPBOARD', error)
+        return false
+    }
 }

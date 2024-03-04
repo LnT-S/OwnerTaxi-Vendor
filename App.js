@@ -50,6 +50,7 @@ import MessageVendor from './src/Vendor/components/message/Message';
 import MessageScreenVendor from './src/Vendor/components/message/MessageScreen';
 import NotificationVendor from './src/Vendor/components/notification/Notification';
 import NotificationFullPageVendor from './src/Vendor/components/notification/NotificationFullPage';
+import Recharge from './src/Driver/components/Wallet/Recharge';
 
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator();
@@ -59,6 +60,7 @@ function DrawerNavigatorDriver() {
   return (
     <Drawer.Navigator initialRouteName='Home' drawerContent={(props) => <CustomDrawerContent {...props} />} backBehavior="history">
       <Drawer.Screen name="Home" component={HomePageDriver} options={{ headerShown: false }} />
+      <Drawer.Screen name="Recharge" component={Recharge} options={{ headerShown: false }} />
       <Drawer.Screen name="Wallet" component={Wallet} options={{ headerShown: false }} />
       <Drawer.Screen name="Setting" component={Settting} options={{ headerShown: false }} />
       <Drawer.Screen name="Document" component={Documents} options={{ headerShown: false }} />

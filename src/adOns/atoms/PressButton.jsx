@@ -9,7 +9,7 @@ const PressButton = (props) => {
     return (
         <TouchableOpacity style={[styles.buttonContainer]} {...props}>
             <View style={[styles.button]} >
-                {(loading===undefined || loading===false) ? <Text style={styles.text}>{props.name}</Text> : <ActivityIndicator style={styles.text}/>}
+                {(loading===undefined || loading===false) ? <Text style={{...styles.text , ...props.textStyle}}>{props.name}</Text> : <ActivityIndicator style={styles.text}/>}
             </View>
         </TouchableOpacity>
     );
