@@ -4,6 +4,7 @@ import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import ThreeWayPushButton from '../../../adOns/molecules/ThreeWayPushButton'
 import DocumentCard from './DocumentCard'
 import MainDocumentCard from './MainDocumentCard'
+import InvertedPersonInfoSemicircle from '../../../adOns/atoms/SemiCircle'
 
 const Documents = () => {
   const DocumentPendingName = [
@@ -80,13 +81,14 @@ const Documents = () => {
   return (
     <AuthenticatedLayout title={'Document'}>
       <ScrollView>
+        <InvertedPersonInfoSemicircle item={{ name: 'Person', phoneNumber : '1234567890' }} editMode={false} />
         <View style={styles.textContainer}>
           <Text style={styles.text}>Driver Documents</Text>
         </View>
         <View style={styles.document}>
-        {driverArray.map((item, index) => {
-          return <MainDocumentCard item={item} key={index} />
-        })}
+          {driverArray.map((item, index) => {
+            return <MainDocumentCard item={item} key={index} />
+          })}
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.text}>Car Documents</Text>
@@ -112,15 +114,15 @@ const styles = StyleSheet.create({
     gap: 15,
     marginBottom: 25
   },
-  textContainer :{
-    height : 50,
-    width : '100%',
-    margin : 5,
-    padding : 4
+  textContainer: {
+    height: 50,
+    width: '100%',
+    margin: 5,
+    padding: 4
   },
-  text :{
-    fontSize : 26,
-    fontWeight : '600',
+  text: {
+    fontSize: 26,
+    fontWeight: '600',
     color: 'black'
   }
 })

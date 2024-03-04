@@ -70,9 +70,7 @@ const InvertedPersonInfoSemicircle = (props) => {
         }
         <Text style={styles.phoneNumber}>{phoneNumber}</Text>
       </View>
-      <PressButton name="Save" />
-      {editMode ? <View style={styles.saveButton}>
-      </View> : ''}
+      {editMode ? <PressButton name="Save" /> : ''}
     </View>
   );
 };
