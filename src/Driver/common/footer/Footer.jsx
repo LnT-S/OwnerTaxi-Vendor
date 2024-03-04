@@ -33,7 +33,7 @@ const Footer = () => {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate('Document')}>
                     <View style={styles.icons}>
-                        <Icon name="event" size={40} color="#000" />
+                        <Icon name="description" size={40} color="#000" />
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate('Wallet')}>

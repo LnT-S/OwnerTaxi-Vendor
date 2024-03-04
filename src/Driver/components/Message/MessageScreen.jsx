@@ -72,9 +72,9 @@ const MessageScreen = (props) => {
     const optionObject = {
         option1 : {
             name : 'Delete All Message',
-            action : ()=>{
+            action : function(){
                 // API CALL TO DELETE ALL MESSAGES OF CURRENT USER
-                console.log('ALL MESSAGES DELETED')
+                console.log('ALL MESSAGES DELETED',this.name)
             }
         },
         option2: {
