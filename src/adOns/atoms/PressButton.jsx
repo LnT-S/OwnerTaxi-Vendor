@@ -8,8 +8,8 @@ const PressButton = (props) => {
     const {loading} = props
     return (
         <TouchableOpacity style={[styles.buttonContainer]} {...props}>
-            <View style={[styles.button]} >
-                {(loading===undefined || loading===false) ? <Text style={{...styles.text , ...props.textStyle}}>{props.name}</Text> : <ActivityIndicator style={styles.text}/>}
+            <View style={{...styles.button , width : (loading===undefined || loading===false)?'':150 }} >
+                {(loading===undefined || loading===false) ? <Text style={{...styles.text , ...props.textStyle}}>{props.name}</Text> : <ActivityIndicator size={30} style={styles.text}/>}
             </View>
         </TouchableOpacity>
     );

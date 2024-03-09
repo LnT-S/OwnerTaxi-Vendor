@@ -1,15 +1,19 @@
 import React from 'react'
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native'
-import { create } from 'react-test-renderer'
+import { useNavigation } from '@react-navigation/native'
 
 const ActiveRequestCard = (props) => {
 
+    const navigation = useNavigation()
     const { item } = props
 
     return (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('LocalRequestHandler', { data: item })}>
             <View style={styles.activeBar}>
-                <View><Text style={[styles.textColor, styles.textHeading]}>Customer ID : {item.customerID}</Text></View>
+                <View style={{ display: 'flex ', flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ ...styles.textColor, ...styles.textHeading, fontSize: 16 }}>Customer ID : </Text>
+                    <Text style={{ ...styles.textColor, ...styles.textHeading, fontSize: 18, fontWeight: '500' }}>{item.customerID}</Text>
+                </View>
                 <View style={[styles.horizontalstatus, styles.borderTop]}>
                     <View style={styles.activeBarmarginRight}>
                         <View>
@@ -24,13 +28,17 @@ const ActiveRequestCard = (props) => {
                             <Text style={[styles.textColor, styles.textHeading]}>Destination  </Text>
                         </View>
                         <View>
-                            <Text style={{ color: 'white' }}>{item.to}</Text>
+                            <Text style={styles.textColor}>{item.to}</Text>
                         </View>
                     </View>
                 </View>
-                <View style={[styles.horizontalstatus, styles.borderTop]}>
-                    <View>
-                        <Text style={[styles.textColor]}>Posted On : {item.time}  {item.date}</Text>
+                <View style={[styles.borderTop]}>
+                    <View style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}>
+                        <View><Text style={[styles.textColor]}>{item.date} {item.time}</Text></View>
+                        <View style={{}}>
+                            <View><Text style={{ ...styles.textColor, color: 'red' }}>Distance : 500 km </Text></View>
+                            <View><Text style={{ ...styles.textColor, color: 'green' }}>Budget : &#x20B9;{item.budget} </Text></View>
+                        </View>
                     </View>
 
                 </View>
@@ -41,7 +49,7 @@ const ActiveRequestCard = (props) => {
 
 const styles = StyleSheet.create({
     activeBar: {
-        backgroundColor: 'black',
+        backgroundColor: '#E7EEF6',
         marginHorizontal: 10,
         padding: 10
     },
@@ -54,7 +62,7 @@ const styles = StyleSheet.create({
         margin: 2
     },
     borderTop: {
-        borderTopColor: 'white',
+        borderTopColor: 'gray',
         borderTopWidth: 0.7
     },
     activeBarmarginRight: {
@@ -66,7 +74,7 @@ const styles = StyleSheet.create({
         width: '50%'
     },
     textColor: {
-        color: 'white'
+        color: 'black'
     },
     textHeading: {
         fontSize: 18

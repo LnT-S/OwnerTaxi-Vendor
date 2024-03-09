@@ -8,50 +8,70 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import LazyLoadActiveRequestCard from './ActiveRequestCard'
 import TwoWayPushButton from '../../../adOns/molecules/TwoWayPushButton'
 import RefreshButton from '../../../adOns/molecules/RefreshButton'
+import PressButton from '../../../adOns/atoms/PressButton'
+import FunctionalModal from '../../../adOns/molecules/FunctionalModal'
 const HomePageDriver = () => {
-
     const activeList = [
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
             to: 'Shruti Mishra, Ghura mau bangla',
             date: '06-07-2019',
             time: '12:00 PM',
-            customerID: 'Shruti Mishra'
+            customerID: 'Shruti Mishra',
+            budget: 550
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
             to: 'Shruti Mishra, Ghura mau bangla',
             date: '06-07-2019',
             time: '12:00 PM',
-            customerID: 'Shruti Mishra'
+            customerID: 'Shruti Mishra',
+            budget: 550
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
             to: 'Shruti Mishra, Ghura mau bangla',
             date: '06-07-2019',
             time: '12:00 PM',
-            customerID: 'Shruti Mishra'
+            customerID: 'Shruti Mishra',
+            budget: 550
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
             to: 'Shruti Mishra, Ghura mau bangla',
             date: '06-07-2019',
             time: '12:00 PM',
-            customerID: 'Shruti Mishra'
+            customerID: 'Shruti Mishra',
+            budget: 550
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
             to: 'Shruti Mishra, Ghura mau bangla',
             date: '06-07-2019',
             time: '01:00 PM',
-            customerID: 'Shruti Mishra'
+            customerID: 'Shruti Mishra',
+            budget: 550
         }
 
     ];
     const navigation = useNavigation()
     const [showSearchResult, setShowSearchResults] = useState(true)
     const [selectedOption, setSelectedOption] = useState('')
-    const [searchArray, setSearchArray] = useState(['item1', 'ghantu', 'kalyaanimaam', 'shrutimaam', 'herapheri', 'kgf'])
+    const [showPostBookingModal , setShowPostBookingModal] = useState(false)
+    const postBookingFunctionalObject = {
+        function1 : {
+            name:  'Intercity',
+            action : ()=>{
+                navigation.navigate('Intercity')
+            }
+        },
+        function2 : {
+            name:  'Rental',
+            action : ()=>{
+                navigation.navigate('Rental')
+            }
+        },
+    }
 
     useEffect(() => {
         const backAction = () => {
@@ -67,30 +87,36 @@ const HomePageDriver = () => {
     }, []);
 
     return (
-        <AuthenticatedLayout title={'Home'}>
+        <AuthenticatedLayout title={'Home'} showFooter={false}>
             <View style={{ position: 'relative', flex: 1 }}>
-                <View style={{ zIndex: 2 }}>
-                    <SearchBox searchArray={searchArray} />
-                </View>
-
+            <FunctionalModal 
+            show={showPostBookingModal} 
+            setShow={setShowPostBookingModal} 
+            title={'Choose Booking Type'} 
+            functionalObject={postBookingFunctionalObject}
+            />
                 <View style={styles.viewStyle}>
                     <View style={styles.liststyle}>
                         <Text style={styles.textStyle}>LIVE FEED REQUESTS</Text>
-                        <RefreshButton/>
+                        <RefreshButton />
                     </View>
-                    <View style={{display: 'flex',justifyContent:'center',alignItems:'center'}}>
+                    <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <TwoWayPushButton option1={'Local'} option2={'InterCity'} setter={setSelectedOption} />
                     </View>
+                    <View style={{ height: '75%' }}>
+                        <FlatList
+                            keyExtractor={(item, index) => (index)}
+                            data={activeList}
+                            renderItem={({ item }) => {
+                                return <View style={styles.FlatListviewStyle}><LazyLoadActiveRequestCard item={item} /></View>
+                            }}
 
-                    <FlatList
-                        style={{}}
-                        keyExtractor={(item, index) => (index)}
-                        data={activeList}
-                        renderItem={({ item }) => {
-                            return <View style={styles.FlatListviewStyle}><LazyLoadActiveRequestCard item={item} /></View>
-                        }}
-
-                    />
+                        />
+                    </View>
+                    <View style={{marginTop : 8}}>
+                        <PressButton name={'            Post Booking            '} 
+                        onPress={()=>{setShowPostBookingModal(true)}}/>
+                    </View>
                 </View>
             </View>
         </AuthenticatedLayout>
@@ -100,7 +126,7 @@ const HomePageDriver = () => {
 const styles = StyleSheet.create({
     viewStyle: {
         zIndex: 1,
-        height: '88%'
+        height: '100%'
     },
     liststyle: {
         marginHorizontal: 10,
@@ -110,7 +136,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     textStyle: {
-        letterSpacing : 1.3,
+        letterSpacing: 1.3,
         color: 'red',
         fontSize: 20,
         fontWeight: "900"

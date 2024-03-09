@@ -30,11 +30,11 @@ const Recharge = () => {
                 title={'Payments Procedure'}
                 extContStyle={{ width: '85%' }}
                 message={<>
-                    <Text style={{ textAlign: 'justify' }}>1. Copy the corresponding Payment Merchant Info     {'\n'}</Text>
+                    <Text style={{ textAlign: 'right' }}>1. Copy the corresponding Payment Merchant Info     {'\n'}</Text>
                     <Text>2. Open the corresponding Payment Mode and Pay due amaount to the copied Phone Number{'\n'}</Text>
                     <Text>3. Upload the screenshot of the payment and press Request For Confimation{'\n'}{'\n'}</Text>
                     <Text>Your recharge will be confirmed within 24 Hours{'\n'}{'\n'}</Text>
-                    <Text style={{ color: 'red', fontSize: 16, fontWeight: '200', textAlign: 'center' }}>Contact administrator for instant billing</Text>
+                    <Text style={{ color: 'red', fontSize: 16, fontWeight: '400', textAlign: 'center' }}>Contact administrator for instant billing</Text>
                 </>}
             />
             <InfoModal
@@ -92,7 +92,7 @@ const Recharge = () => {
                     </View>
                     <View style={{ ...styles.optionRow, paddingHorizontal: 16 }}>
                         <View><Text style={styles.verifyText}>Upload Screenshot</Text></View>
-                        {screenShot === null ? <TouchableOpacity onPress={() => { documentPicker().then(data => { setScreenShot(data) }).catch(err => { console.log(err) }) }}><Icon name='document-scanner' size={30} color={'black'} /></TouchableOpacity> : <View style={styles.docNameConatainer}><Text style={{ fontSize: 16 }}>{screenShot.name.substring(0, 10)}...</Text><TouchableOpacity onPress={() => setScreenShot(null)}><Icon name='cancel' size={18} color={'black'} /></TouchableOpacity></View>}
+                        {screenShot === null ? <TouchableOpacity onPress={() => { documentPicker().then(data => { setScreenShot(data) }).catch(err => { console.log(err) }) }}><Icon name='document-scanner' size={30} color={'black'} /></TouchableOpacity> : <View style={styles.docNameConatainer}><Text style={{ fontSize: 16 }}>{screenShot?.name?.substring(0, 10)}...</Text><TouchableOpacity onPress={() => setScreenShot(null)}><Icon name='cancel' size={18} color={'black'} /></TouchableOpacity></View>}
                     </View>
                     <View style={{ marginTop: 15 }}>
                         <PressButton name={'Request For Confirmation'} />

@@ -4,6 +4,7 @@ import PressButton from '../../../adOns/atoms/PressButton';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CustomDocumentPicker from './CustomDocumentPicker';
 import InfoModal from '../../../adOns/molecules/InfoModal';
+import { WHITEBG } from '../../../styles/colors';
 
 const MainDocumentCard = (props) => {
     const { url, status, documentId, documentName } = props.item
@@ -73,13 +74,14 @@ const MainDocumentCard = (props) => {
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor : WHITEBG,
         position: 'relative',
         display: 'flex',
         justifyContent: 'space-between',
         width: '45%',
         height: 170, //adjust,
         flexWrap: 'wrap',
-        borderWidth: 5,
+        borderWidth: 1,
         flexDirection: 'column'
     },
     crossButton: {

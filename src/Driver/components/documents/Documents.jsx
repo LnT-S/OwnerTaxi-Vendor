@@ -81,7 +81,7 @@ const Documents = () => {
   return (
     <AuthenticatedLayout title={'Document'}>
       <ScrollView>
-        <InvertedPersonInfoSemicircle item={{ name: 'Person', phoneNumber : '1234567890' }} editMode={false} />
+        <InvertedPersonInfoSemicircle item={{ name: 'Person', phoneNumber: '1234567890' }} editMode={false} />
         <View style={styles.textContainer}>
           <Text style={styles.text}>Driver Documents</Text>
         </View>
