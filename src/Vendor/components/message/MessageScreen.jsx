@@ -16,7 +16,7 @@ const MessageScreenVendor = (props) => {
 
     const [chatData, setchatData] = useState({
         user1: [{ ts: 1, message: 'hi' }, { ts: 0, message: 'how are you' }],
-        user2: [{ ts: 6, message: 'user2' }, { ts: 2, message: 'hello' }, { ts: 1, message: 'fine' }]
+        user2: [{ ts: 6, message: 'user2' }, { ts: 2, message: 'hell' }, { ts: 2, message: 'hell' }, { ts: 2, message: 'hell' }, { ts: 2, message: 'hell' }, { ts: 2, message: 'hell' }, { ts: 2, message: 'hell' }, { ts: 2, message: 'hell' }, { ts: 2, message: 'hell' }, { ts: 1, message: 'fine' }]
     })
 
     const [msgRenderArray, setmsgRenderArray] = useState([])
@@ -126,7 +126,7 @@ const MessageScreenVendor = (props) => {
                             </View>
                         </ScrollView>
                     </View>
-                    <View style={styles.messageInput}>
+                    <View style={{...styles.messageInput , marginBottom :isKeyboardVisible? 48 : 0}}>
                         <MessageInput placeholder="Type a message" sendMessage={sendMessage} />
                     </View>
                 </View>

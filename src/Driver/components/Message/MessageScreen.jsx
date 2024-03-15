@@ -126,7 +126,7 @@ const MessageScreen = (props) => {
                             </View>
                         </ScrollView>
                     </View>
-                    <View style={styles.messageInput}>
+                    <View style={{...styles.messageInput , marginBottom : isKeyboardVisible ? 48 : 0}}>
                         <MessageInput placeholder="Type a message" sendMessage={sendMessage} />
                     </View>
                 </View>
