@@ -18,7 +18,10 @@ const HomePageDriver = () => {
             date: '06-07-2019',
             time: '12:00 PM',
             customerID: 'Shruti Mishra',
-            budget: 550
+            budget: 550,
+            bookingId : 1234567890,
+            verifiedBy : 'Owner Taxi',
+            status : 'active',
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
@@ -26,7 +29,11 @@ const HomePageDriver = () => {
             date: '06-07-2019',
             time: '12:00 PM',
             customerID: 'Shruti Mishra',
-            budget: 550
+            budget: 550,
+            bookingId : 1234567890,
+            verifiedBy : 'Vendor',
+            status : 'active'
+
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
@@ -34,7 +41,11 @@ const HomePageDriver = () => {
             date: '06-07-2019',
             time: '12:00 PM',
             customerID: 'Shruti Mishra',
-            budget: 550
+            budget: 550,
+            bookingId : 1234567890,
+            verifiedBy : false,
+            status : 'closed'
+
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
@@ -42,7 +53,11 @@ const HomePageDriver = () => {
             date: '06-07-2019',
             time: '12:00 PM',
             customerID: 'Shruti Mishra',
-            budget: 550
+            budget: 550,
+            bookingId : 1234567890,
+            verifiedBy : 'Owner Taxi',
+            status : 'active'
+
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
@@ -50,7 +65,10 @@ const HomePageDriver = () => {
             date: '06-07-2019',
             time: '01:00 PM',
             customerID: 'Shruti Mishra',
-            budget: 550
+            budget: 550,
+            bookingId : 1234567890,
+            verifiedBy : 'Owner Taxi',
+            status : 'active'
         }
 
     ];
@@ -110,7 +128,6 @@ const HomePageDriver = () => {
                             renderItem={({ item }) => {
                                 return <View style={styles.FlatListviewStyle}><LazyLoadActiveRequestCard item={item} /></View>
                             }}
-
                         />
                     </View>
                     <View style={{marginTop : 8}}>
