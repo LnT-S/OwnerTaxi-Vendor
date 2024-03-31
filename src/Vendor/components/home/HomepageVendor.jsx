@@ -16,35 +16,65 @@ const HomePageVendor = () => {
             to: 'Shruti Mishra, Ghura mau bangla',
             date: '06-07-2019',
             time: '12:00 PM',
-            customerID: 'Shruti Mishra'
+            customerID: 'Shruti Mishra',
+            budget: 550,
+            bookingId: 1234567890,
+            verifiedBy: 'Owner Taxi',
+            status: 'active',
+            subtype : 'Oneway',
+            car : 'Auto'
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
             to: 'Shruti Mishra, Ghura mau bangla',
             date: '06-07-2019',
             time: '12:00 PM',
-            customerID: 'Shruti Mishra'
+            customerID: 'Shruti Mishra',
+            budget: 550,
+            bookingId: 1234567890,
+            verifiedBy: 'Vendor',
+            status: 'active',
+            subtype : 'Oneway',
+            car : 'Auto'
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
             to: 'Shruti Mishra, Ghura mau bangla',
             date: '06-07-2019',
             time: '12:00 PM',
-            customerID: 'Shruti Mishra'
+            customerID: 'Shruti Mishra',
+            budget: 550,
+            bookingId: 1234567890,
+            verifiedBy: false,
+            status: 'closed',
+            subtype : 'Oneway',
+            car : 'Sedan'
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
             to: 'Shruti Mishra, Ghura mau bangla',
             date: '06-07-2019',
             time: '12:00 PM',
-            customerID: 'Shruti Mishra'
+            customerID: 'Shruti Mishra',
+            budget: 550,
+            bookingId: 1234567890,
+            verifiedBy: 'Owner Taxi',
+            status: 'active',
+            subtype : 'Round Trip',
+            car : 'Mini'
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
             to: 'Shruti Mishra, Ghura mau bangla',
             date: '06-07-2019',
             time: '01:00 PM',
-            customerID: 'Shruti Mishra'
+            customerID: 'Shruti Mishra',
+            budget: 550,
+            bookingId: 1234567890,
+            verifiedBy: 'Owner Taxi',
+            status: 'active',
+            subtype : 'Oneway',
+            car : 'Alto'
         }
 
     ];
@@ -75,7 +105,7 @@ const HomePageVendor = () => {
 
                 <View style={styles.viewStyle}>
                     <View style={styles.liststyle}>
-                        <Text style={styles.textStyle}>LIVE FEED REQUESTS</Text>
+                        <Text style={styles.textStyle}>LIVE INTERCITY FEED REQUESTS</Text>
                         <RefreshButton/>
                     </View>
                     {/*<View style={{display: 'flex',justifyContent:'center',alignItems:'center'}}>

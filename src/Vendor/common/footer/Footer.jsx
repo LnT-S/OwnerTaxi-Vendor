@@ -29,12 +29,14 @@ const Footer = () => {
                 <TouchableOpacity onPress={() => navigation.navigate('HomeVendor')}>
                     <View style={styles.icons}>
                         <Icon name="home" size={40} color="#000" />
+                        <Text style={styles.text}>Home</Text>
                     </View>
                 </TouchableOpacity>
                 
                 <TouchableOpacity onPress={() => navigation.navigate('ProfileVendor')}>
                     <View style={styles.icons}>
                         <Icon name="person" size={40} color="#000" />
+                        <Text style={styles.text}>Profile</Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -45,15 +47,24 @@ const Footer = () => {
 const styles = StyleSheet.create({
     footer: {
         display: 'flex',
-        justifyContent: 'space-evenly',
+        justifyContent: 'space-between',
         flexDirection: 'row',
         alignItems: 'center',
-        height: 50,
+        height: 70,
         backgroundColor: BgColor,
-        zIndex: 2
+        zIndex: 2,
+        padding:5
     },
     icons: {
-        margin: 5
+        margin: 5,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    text: {
+        color: 'black',
+        fontSize: 14,
+        fontWeight: '500',
     }
 })
 

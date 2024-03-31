@@ -33,7 +33,7 @@ const Setting = () => {
             <Text style={styles.text}>Log Out</Text>
           </View>
         </View>
-        <TouchableOpacity style={{width : '100%'}}>
+        <TouchableOpacity style={{width : '100%'}} onPress={() => {navigation.navigate('Terms')}}>
           <Text style={styles.textStyle}>Terms and Conditions</Text>
         </TouchableOpacity>
       </View>
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 18,
     fontWeight: '800',
-    padding:5,
+    padding:15,
     textDecorationLine: 'underline'
   }
 })

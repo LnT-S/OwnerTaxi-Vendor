@@ -57,6 +57,11 @@ import LocalForm from './src/Driver/components/home/postBooking/LocalForm';
 import Rental from './src/Driver/components/home/postBooking/Rental';
 import Sharing from './src/Driver/components/home/postBooking/Sharing';
 import IntercityRequestHandler from './src/Driver/components/home/IntercityRequestHandler';
+import IntercityRequestHandlerVendor from './src/Vendor/components/home/IntercityRequestHandlerVendor';
+import Privacy from './src/Driver/common/Privacy/Privacy';
+import Terms from './src/Driver/common/Terms&Condition/terms';
+import PrivacyVendor from './src/Vendor/common/Privacy/PrivacyVendor';
+import TermsVendor from './src/Vendor/common/Terms&Condition/termsVendor';
 
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator();
@@ -82,6 +87,8 @@ function DrawerNavigatorDriver() {
       <Drawer.Screen name='notificationScreen' component={NotificationFullPage} options={{ headerShown: false }} />
       <Drawer.Screen name='messageScreen' component={MessageScreen} options={{ headerShown: false }} />
       <Drawer.Screen name='profileScreen' component={Profile} options={{ headerShown: false }} />
+      <Drawer.Screen name='Privacy' component={Privacy} options={{ headerShown: false }} />
+      <Drawer.Screen name='Terms' component={Terms} options={{ headerShown: false }} />
     </Drawer.Navigator>
   );
 }
@@ -97,6 +104,9 @@ function DrawerNavigatorVendor() {
       <Drawer.Screen name="NotificationVendor" component={NotificationVendor} options={{ headerShown: false }} />
       <Drawer.Screen name="NotificationFullPageVendor" component={NotificationFullPageVendor} options={{ headerShown: false }} />
       <Drawer.Screen name="SettingVendor" component={SettingVendor} options={{ headerShown: false }} />
+      <Drawer.Screen name="IntercityRequestHandlerVendor" component={IntercityRequestHandlerVendor} options={{ headerShown: false }} />
+      <Drawer.Screen name='Privacy' component={PrivacyVendor} options={{ headerShown: false }} />
+      <Drawer.Screen name='Terms' component={TermsVendor} options={{ headerShown: false }} />
     </Drawer.Navigator>
   );
 }

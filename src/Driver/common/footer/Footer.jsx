@@ -29,21 +29,25 @@ const Footer = () => {
                 <TouchableOpacity onPress={() => navigation.navigate('Home')}>
                     <View style={styles.icons}>
                         <Icon name="home" size={40} color="#000" />
+                        <Text style={styles.text}>Home</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate('Document')}>
                     <View style={styles.icons}>
                         <Icon name="description" size={40} color="#000" />
+                        <Text style={styles.text}>Document</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate('Wallet')}>
                     <View style={styles.icons}>
                         <Icon name="account-balance-wallet" size={40} color="#000" />
+                        <Text style={styles.text}>Wallet</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate('profileScreen')}>
                     <View style={styles.icons}>
                         <Icon name="person" size={40} color="#000" />
+                        <Text style={styles.text}>Profile</Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -57,12 +61,21 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         flexDirection: 'row',
         alignItems: 'center',
-        height: 50,
+        height: 70,
         backgroundColor: BgColor,
-        zIndex: 2
+        zIndex: 2,
+        padding:5
     },
     icons: {
-        margin: 5
+        margin: 5,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    text: {
+        color: 'black',
+        fontSize: 14,
+        fontWeight: '500',
     }
 })
 
