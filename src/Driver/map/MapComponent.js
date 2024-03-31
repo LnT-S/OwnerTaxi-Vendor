@@ -6,7 +6,7 @@ import PlacesAutoComplete from './PlacesAutoComplete';
 import Geolocation from '@react-native-community/geolocation';
 
 
-const MapComponent = () => {
+const MapComponent = (props) => {
 
     const mapViewRef = useRef(null);
     const [currentLocation , setCurrentLocation] = useState(null)
@@ -53,7 +53,7 @@ const MapComponent = () => {
         <View style={styles.container}>
            {currentLocation ?  <MapView
                 ref={mapViewRef}
-                style={styles.map}
+                style={{...styles.map , ...props.mapStyle}}
                 initialRegion={{
                     latitude: currentLocation.latitude,
                     longitude: currentLocation.longitude,

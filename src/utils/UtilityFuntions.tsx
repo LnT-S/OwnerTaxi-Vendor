@@ -17,6 +17,7 @@ export const activeMessageArray = (selfUserArray: Array<messageObject>, otherUse
     let index = 0
 
     let msgObject: messageObject
+    console.log('Other User Array',otherUserArray)
 
     for (; i < selfUserArray.length && j < otherUserArray.length; index++) {
         if (selfUserArray[i].ts >= otherUserArray[j].ts) {

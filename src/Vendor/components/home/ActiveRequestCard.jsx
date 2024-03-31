@@ -1,6 +1,7 @@
 import React from 'react'
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native'
 import { create } from 'react-test-renderer'
+import { WHITEBG } from '../../../styles/colors'
 
 const ActiveRequestCard = (props) => {
 
@@ -24,7 +25,7 @@ const ActiveRequestCard = (props) => {
                             <Text style={[styles.textColor, styles.textHeading]}>Destination  </Text>
                         </View>
                         <View>
-                            <Text style={{ color: 'white' }}>{item.to}</Text>
+                            <Text style={{ color: 'black' }}>{item.to}</Text>
                         </View>
                     </View>
                 </View>
@@ -41,7 +42,7 @@ const ActiveRequestCard = (props) => {
 
 const styles = StyleSheet.create({
     activeBar: {
-        backgroundColor: 'black',
+        backgroundColor: WHITEBG,
         marginHorizontal: 10,
         padding: 10
     },
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
         width: '50%'
     },
     textColor: {
-        color: 'white'
+        color: 'black'
     },
     textHeading: {
         fontSize: 18
