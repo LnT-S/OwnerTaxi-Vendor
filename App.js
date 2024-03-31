@@ -56,6 +56,7 @@ import Intercity from './src/Driver/components/home/postBooking/Intercity';
 import LocalForm from './src/Driver/components/home/postBooking/LocalForm';
 import Rental from './src/Driver/components/home/postBooking/Rental';
 import Sharing from './src/Driver/components/home/postBooking/Sharing';
+import IntercityRequestHandler from './src/Driver/components/home/IntercityRequestHandler';
 
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator();
@@ -71,6 +72,7 @@ function DrawerNavigatorDriver() {
       <Drawer.Screen name="Rental" component={Rental} options={{ headerShown: false }} />
       <Drawer.Screen name="Recharge" component={Recharge} options={{ headerShown: false }} />
       <Drawer.Screen name="LocalRequestHandler" component={LocalRequestHandler} options={{ headerShown: false }} />
+      <Drawer.Screen name="IntercityRequestHandler" component={IntercityRequestHandler} options={{ headerShown: false }} />
       <Drawer.Screen name="Wallet" component={Wallet} options={{ headerShown: false }} />
       <Drawer.Screen name="Setting" component={Settting} options={{ headerShown: false }} />
       <Drawer.Screen name="Document" component={Documents} options={{ headerShown: false }} />

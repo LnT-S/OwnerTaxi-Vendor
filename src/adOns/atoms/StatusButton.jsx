@@ -15,7 +15,7 @@ const StatusButton = (props) => {
 
 const styles = StyleSheet.create({
     container: {
-        width : 70,
+        minWidth : 70,
         height : 50,
         display : 'flex',
         justifyContent: 'center',

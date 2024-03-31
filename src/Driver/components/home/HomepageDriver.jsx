@@ -19,9 +19,11 @@ const HomePageDriver = () => {
             time: '12:00 PM',
             customerID: 'Shruti Mishra',
             budget: 550,
-            bookingId : 1234567890,
-            verifiedBy : 'Owner Taxi',
-            status : 'active',
+            bookingId: 1234567890,
+            verifiedBy: 'Owner Taxi',
+            status: 'active',
+            subtype : 'Oneway',
+            car : 'Auto'
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
@@ -30,10 +32,11 @@ const HomePageDriver = () => {
             time: '12:00 PM',
             customerID: 'Shruti Mishra',
             budget: 550,
-            bookingId : 1234567890,
-            verifiedBy : 'Vendor',
-            status : 'active'
-
+            bookingId: 1234567890,
+            verifiedBy: 'Vendor',
+            status: 'active',
+            subtype : 'Oneway',
+            car : 'Auto'
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
@@ -42,10 +45,11 @@ const HomePageDriver = () => {
             time: '12:00 PM',
             customerID: 'Shruti Mishra',
             budget: 550,
-            bookingId : 1234567890,
-            verifiedBy : false,
-            status : 'closed'
-
+            bookingId: 1234567890,
+            verifiedBy: false,
+            status: 'closed',
+            subtype : 'Oneway',
+            car : 'Sedan'
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
@@ -54,10 +58,11 @@ const HomePageDriver = () => {
             time: '12:00 PM',
             customerID: 'Shruti Mishra',
             budget: 550,
-            bookingId : 1234567890,
-            verifiedBy : 'Owner Taxi',
-            status : 'active'
-
+            bookingId: 1234567890,
+            verifiedBy: 'Owner Taxi',
+            status: 'active',
+            subtype : 'Round Trip',
+            car : 'Mini'
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
@@ -66,26 +71,28 @@ const HomePageDriver = () => {
             time: '01:00 PM',
             customerID: 'Shruti Mishra',
             budget: 550,
-            bookingId : 1234567890,
-            verifiedBy : 'Owner Taxi',
-            status : 'active'
+            bookingId: 1234567890,
+            verifiedBy: 'Owner Taxi',
+            status: 'active',
+            subtype : 'Oneway',
+            car : 'Alto'
         }
 
     ];
     const navigation = useNavigation()
     const [showSearchResult, setShowSearchResults] = useState(true)
-    const [selectedOption, setSelectedOption] = useState('')
-    const [showPostBookingModal , setShowPostBookingModal] = useState(false)
+    const [selectedOption, setSelectedOption] = useState('Local')
+    const [showPostBookingModal, setShowPostBookingModal] = useState(false)
     const postBookingFunctionalObject = {
-        function1 : {
-            name:  'Intercity',
-            action : ()=>{
+        function1: {
+            name: 'Intercity',
+            action: () => {
                 navigation.navigate('Intercity')
             }
         },
-        function2 : {
-            name:  'Rental',
-            action : ()=>{
+        function2: {
+            name: 'Rental',
+            action: () => {
                 navigation.navigate('Rental')
             }
         },
@@ -107,12 +114,12 @@ const HomePageDriver = () => {
     return (
         <AuthenticatedLayout title={'Home'} showFooter={false}>
             <View style={{ position: 'relative', flex: 1 }}>
-            <FunctionalModal 
-            show={showPostBookingModal} 
-            setShow={setShowPostBookingModal} 
-            title={'Choose Booking Type'} 
-            functionalObject={postBookingFunctionalObject}
-            />
+                <FunctionalModal
+                    show={showPostBookingModal}
+                    setShow={setShowPostBookingModal}
+                    title={'Choose Booking Type'}
+                    functionalObject={postBookingFunctionalObject}
+                />
                 <View style={styles.viewStyle}>
                     <View style={styles.liststyle}>
                         <Text style={styles.textStyle}>LIVE FEED REQUESTS</Text>
@@ -126,13 +133,13 @@ const HomePageDriver = () => {
                             keyExtractor={(item, index) => (index)}
                             data={activeList}
                             renderItem={({ item }) => {
-                                return <View style={styles.FlatListviewStyle}><LazyLoadActiveRequestCard item={item} /></View>
+                                return <View style={styles.FlatListviewStyle}><LazyLoadActiveRequestCard item={item} type={selectedOption} /></View>
                             }}
                         />
                     </View>
-                    <View style={{marginTop : 8}}>
-                        <PressButton name={'            Post Booking            '} 
-                        onPress={()=>{setShowPostBookingModal(true)}}/>
+                    <View style={{ marginTop: 8 }}>
+                        <PressButton name={'            Post Booking            '}
+                            onPress={() => { setShowPostBookingModal(true) }} />
                     </View>
                 </View>
             </View>
