@@ -49,8 +49,8 @@ const Wallet = () => {
       </View>
       <View style={styles.rupeeBox}>
         <Text style={{...styles.rupeetext , color : 'red'}}>Balance : </Text>
-        <Icon name="attach-money" size={30} color="white" />
-        <Text style={styles.rupeetext}>10,000</Text>
+       
+        <Text style={styles.rupeetext}>₹ 10,000</Text>
       </View>
       <View style={styles.col}>
         <View style={{ flex: 1 }}>
