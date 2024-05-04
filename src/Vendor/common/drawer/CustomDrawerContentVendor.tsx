@@ -1,8 +1,12 @@
 // CustomDrawerContent.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import YesNoModal from '../../../adOns/molecules/YesNoModal';
+import { useProfile } from '../../../context/ContextProvider';
 
 interface CustomDrawerProps {
   state: any; // React Navigation state object
@@ -12,13 +16,34 @@ interface CustomDrawerProps {
 const CustomDrawerContentVendor: React.FC<CustomDrawerProps> = ({ state, navigation }) => {
 
   const activeRouteName = state.routeNames[state.index]; // Get the active route name
+  const {profileState , profileDispatch} = useProfile()
+  const [showModal, setShowModal] = useState(false)
+  const mainNavigation = useNavigation()
 
   const handleNavigation = (routeName: string) => {
     navigation.navigate(routeName);
   };
+  const handleYes = async () => {
+    await AsyncStorage.removeItem('token')
+    // profileDispatch({type:'REFRESH', payload:!profileState.refresh})
+    setShowModal(false);
+    navigation.closeDrawer();
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'LoginScreen' }],
+    });
+  };
 
   return (
     <DrawerContentScrollView contentContainerStyle={styles.container}>
+      <YesNoModal
+              show={showModal}
+              setShow={setShowModal}
+              title={'EXIT ?'}
+              message={'Are You Sure Want To Logout ?'}
+              handleYes={handleYes}
+              yesText={'Yes'}
+              noText={'No'}/>
       <View style={{ display: 'flex', alignItems: 'flex-end', marginRight: 15, marginTop: 10 }}>
         <Icon name="settings" size={24} color="white" onPress={() => handleNavigation('SettingVendor')}/>
       </View>
@@ -56,6 +81,7 @@ const CustomDrawerContentVendor: React.FC<CustomDrawerProps> = ({ state, navigat
           style={styles.logoutButton}
           onPress={() => {
             // Implement logout functionality
+            setShowModal(true)
           }}>
           <Icon name="exit-to-app" size={30} color="black" />
           <Text style={styles.logoutText}>Log Out</Text>

@@ -27,7 +27,7 @@ const ActiveRequestCard = (props) => {
                
                 <View style={{ display: 'flex ', flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
                     <Text style={{ color: 'black', ...styles.textHeading, fontSize: 18, letterSpacing: 0.5 }}>Booking ID : </Text>
-                    <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500' }}>{item.bookingId}</Text>
+                    <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500' }}>{item._id}</Text>
                 </View> 
                 {type!=='Local' && <View style={{display : 'flex',flexDirection : 'row', justifyContent: 'flex-start',alignItems: 'center',gap : 15 , paddingVertical : 10}}>
                         <StatusButton 
@@ -43,7 +43,7 @@ const ActiveRequestCard = (props) => {
                 </View>}
                 <View style={{ display: 'flex ', flexDirection: 'row', alignItems: 'center' }}>
                     <Text style={{ ...styles.textColor, ...styles.textHeading, fontSize: 16 }}>Customer ID : </Text>
-                    <Text style={{ ...styles.textColor, ...styles.textHeading, fontSize: 18, fontWeight: '500' }}>{item.customerID}</Text>
+                    <Text style={{ ...styles.textColor, ...styles.textHeading, fontSize: 18, fontWeight: '500' }}>{item._id}</Text>
                 </View>
                 <View style={[styles.horizontalstatus, styles.borderTop]}>
                     <View style={styles.activeBarmarginRight}>
@@ -51,7 +51,7 @@ const ActiveRequestCard = (props) => {
                             <Text style={[styles.textColor, styles.textHeading]}>Pick Up  </Text>
                         </View>
                         <View>
-                            <Text style={styles.textColor}>{item.from}</Text>
+                            <Text style={styles.textColor}>{item.pickUp?.description}</Text>
                         </View>
                     </View>
                     <View style={styles.activeBarmarginLeft}>
@@ -59,13 +59,13 @@ const ActiveRequestCard = (props) => {
                             <Text style={[styles.textColor, styles.textHeading]}>Destination  </Text>
                         </View>
                         <View>
-                            <Text style={styles.textColor}>{item.to}</Text>
+                            <Text style={styles.textColor}>{item.drop?.description}</Text>
                         </View>
                     </View>
                 </View>
                 <View style={[styles.borderTop]}>
                     <View style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}>
-                        <View><Text style={[styles.textColor]}>{item.date} {item.time}</Text></View>
+                        <View><Text style={[styles.textColor]}>{`${item.pickUp.date.day}-${item.pickUp.date.month+1}-${item.pickUp.date.year}`} {`${item.pickUp.date.hour}:${item.pickUp.date.min}`}</Text></View>
                         <View style={{}}>
                             <View><Text style={{ ...styles.textColor, color: 'red' }}>Distance : 500 km </Text></View>
                             <View><Text style={{ ...styles.textColor, color: 'green' }}>Budget : &#x20B9;{item.budget} </Text></View>

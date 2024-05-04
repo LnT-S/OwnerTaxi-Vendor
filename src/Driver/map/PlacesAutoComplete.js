@@ -9,12 +9,23 @@ navigator.geolocation = require('@react-native-community/geolocation');
 
 
 const PlacesAutoComplete = (props) => {
-    const { placeholder, width, stops ,  setStops , index ,item} = props
+    const {placeholder, width, stops, setStops, index, item, update } = props
     const [desc , setDesc] = useState(item ? item.description : 'abc')
 
-    const handlePlaceSelected = (place) => {
+    const handlePlacesWithoutStops = (place, location) => {
+        //console.log({place},{location},place.name)
+        update(prev => { return { ...prev, description: (place.description !== undefined ? place.description : place.name), latitude: location.lat, longitude: location.lng } })
+    }
+
+    const handlePlaceSelected = (place, location) => {
+        console.log({ place }, { location })
         let temp = stops
-        temp[index] = place
+        let thisStop = {
+            description: place.description, 
+            latitude: location.lat, 
+            longitude: location.lng
+        }
+        temp[index] = thisStop
         setStops([...temp])
     };
     return (
@@ -29,10 +40,11 @@ const PlacesAutoComplete = (props) => {
                 }}
                 onPress={(data, details) => {
                     // 'details' is provided when fetchDetails = true
-                    console.log('PRESSED',{data}, details);
                     setDesc(data.description)
                     if (stops !== undefined && setStops !== undefined) {
-                        handlePlaceSelected(data);
+                        handlePlaceSelected(data, details.geometry.location);
+                    } else {
+                        handlePlacesWithoutStops(data, details.geometry.location)
                     }
                 }}
                 query={{
@@ -41,7 +53,7 @@ const PlacesAutoComplete = (props) => {
                 }}
                 renderRow={(rowData, index) => (
                     <View style={styles.listItem}>
-                        <Text style={styles.listItemText}>{rowData.description}</Text>
+                        <Text style={styles.listItemText}>{rowData.description || rowData?.name}</Text>
                     </View>
                 )}
                 currentLocation={true}

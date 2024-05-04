@@ -10,6 +10,8 @@ import TwoWayPushButton from '../../../adOns/molecules/TwoWayPushButton'
 import RefreshButton from '../../../adOns/molecules/RefreshButton'
 import PressButton from '../../../adOns/atoms/PressButton'
 import FunctionalModal from '../../../adOns/molecules/FunctionalModal'
+import YesNoModal from '../../../adOns/molecules/YesNoModal'
+import { getLocalBooking } from '../../../services/getDataServices'
 const HomePageDriver = () => {
     const activeList = [
         {
@@ -22,8 +24,8 @@ const HomePageDriver = () => {
             bookingId: 1234567890,
             verifiedBy: 'Owner Taxi',
             status: 'active',
-            subtype : 'Oneway',
-            car : 'Auto'
+            subtype: 'Oneway',
+            car: 'Auto'
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
@@ -35,8 +37,8 @@ const HomePageDriver = () => {
             bookingId: 1234567890,
             verifiedBy: 'Vendor',
             status: 'active',
-            subtype : 'Oneway',
-            car : 'Auto'
+            subtype: 'Oneway',
+            car: 'Auto'
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
@@ -48,8 +50,8 @@ const HomePageDriver = () => {
             bookingId: 1234567890,
             verifiedBy: false,
             status: 'closed',
-            subtype : 'Oneway',
-            car : 'Sedan'
+            subtype: 'Oneway',
+            car: 'Sedan'
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
@@ -61,8 +63,8 @@ const HomePageDriver = () => {
             bookingId: 1234567890,
             verifiedBy: 'Owner Taxi',
             status: 'active',
-            subtype : 'Round Trip',
-            car : 'Mini'
+            subtype: 'Round Trip',
+            car: 'Mini'
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
@@ -74,15 +76,28 @@ const HomePageDriver = () => {
             bookingId: 1234567890,
             verifiedBy: 'Owner Taxi',
             status: 'active',
-            subtype : 'Oneway',
-            car : 'Alto'
+            subtype: 'Oneway',
+            car: 'Alto'
         }
 
     ];
     const navigation = useNavigation()
     const [showSearchResult, setShowSearchResults] = useState(true)
     const [selectedOption, setSelectedOption] = useState('Local')
+    const [showModal, setShowModal] = useState(false)
     const [showPostBookingModal, setShowPostBookingModal] = useState(false)
+
+    const [localList, setLocalList] = useState([])
+    const fetchLocal = () => {
+        getLocalBooking()
+            .then(data => {
+                console.log("**", data.data.data)
+                setLocalList(data.data.data)
+            })
+            .catch(err => {
+                console.log("ERROR IN GETTING LOCAL DATA ", err);
+            })
+    }
     const postBookingFunctionalObject = {
         function1: {
             name: 'Intercity',
@@ -98,13 +113,18 @@ const HomePageDriver = () => {
         },
     }
 
+    const handleYes = async () => {
+        setShowModal(false);
+        BackHandler.exitApp();
+    };
+
     useEffect(() => {
-        const backAction = () => {
+        const backFuntion = () => {
             navigation.goBack()
             return true
         }
         console.log("BACKHANDLER SET IN HOME PAGE")
-        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backFuntion);
         return () => {
             console.log('BACKHANDLER REMOVED FROM HOME PAGE')
             backHandler.remove()
@@ -120,10 +140,18 @@ const HomePageDriver = () => {
                     title={'Choose Booking Type'}
                     functionalObject={postBookingFunctionalObject}
                 />
+                <YesNoModal
+                    show={showModal}
+                    setShow={setShowModal}
+                    title={'EXIT ?'}
+                    message={'Are You Sure Want To Exit ?'}
+                    handleYes={handleYes}
+                    yesText={'Exit'}
+                    noText={'Cancel'} />
                 <View style={styles.viewStyle}>
                     <View style={styles.liststyle}>
                         <Text style={styles.textStyle}>LIVE FEED REQUESTS</Text>
-                        <RefreshButton />
+                        <TouchableOpacity onPress={fetchLocal}><RefreshButton action={fetchLocal}/></TouchableOpacity>
                     </View>
                     <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <TwoWayPushButton option1={'Local'} option2={'InterCity'} setter={setSelectedOption} />
@@ -131,9 +159,9 @@ const HomePageDriver = () => {
                     <View style={{ height: '75%' }}>
                         <FlatList
                             keyExtractor={(item, index) => (index)}
-                            data={activeList}
+                            data={localList}
                             renderItem={({ item }) => {
-                                return <View style={styles.FlatListviewStyle}><LazyLoadActiveRequestCard item={item} type={selectedOption} /></View>
+                                return <View style={styles.FlatListviewStyle}><LazyLoadActiveRequestCard item={item.passiveBookingId} type={selectedOption} /></View>
                             }}
                         />
                     </View>

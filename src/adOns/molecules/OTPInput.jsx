@@ -1,38 +1,42 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 
-const OTPInput = ({ length, onOTPChange }) => {
-  const [otp, setOTP] = useState(Array(length).fill(''));
+const OTPInput = ({ length, OTP }) => {
+  const [otp, setOTP] = useState([...OTP]);
   const inputRefs = useRef([]);
+  console.log('in otp view',OTP)
 
-  const handleOTPChange = (index, value) => {
-    const newOTP = [...otp];
-    newOTP[index] = value;
-    setOTP(newOTP);
-    onOTPChange(newOTP.join(''));
+  // const handleOTPChange = (index, value) => {
+  //   const newOTP = [...otp];
+  //   newOTP[index] = value;
+  //   setOTP(newOTP);
+  //   onOTPChange(newOTP.join(''));
 
-    if (value !== '' && index < length - 1) {
-      inputRefs.current[index + 1].focus();
-    } else if (value === '' && index > 0) {
-      inputRefs.current[index - 1].focus();
-    }
-  };
+  //   if (value !== '' && index < length - 1) {
+  //     inputRefs.current[index + 1].focus();
+  //   } else if (value === '' && index > 0) {
+  //     inputRefs.current[index - 1].focus();
+  //   }
+  // };
+  useEffect(()=>{
+    setOTP([...OTP])
+  },[OTP])
 
   return (
     <View style={styles.container}>
-      {Array(length).fill().map((_, index) => (
-        <TextInput
-          key={index}
-          style={styles.input}
-          onChangeText={(value) => handleOTPChange(index, value)}
-          value={otp[index]}
-          maxLength={1}
-          keyboardType="numeric"
-          selectTextOnFocus
-          ref={(ref) => (inputRefs.current[index] = ref)}
-        />
-      ))}
-    </View>
+    {otp.map((_, index) => (
+      <TextInput
+        key={index}
+        style={styles.input}
+        onChangeText={(value) => handleOTPChange(index, value)}
+        value={otp[index]}
+        maxLength={1}
+        keyboardType="numeric"
+        selectTextOnFocus
+        ref={(ref) => (inputRefs.current[index] = ref)}
+      />
+    ))}
+  </View>
   );
 };
 

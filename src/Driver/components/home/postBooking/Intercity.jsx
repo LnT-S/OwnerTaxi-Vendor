@@ -1,63 +1,190 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, StyleSheet, TextInput, FlatList, ScrollView, TouchableOpacity } from 'react-native';
 import AuthenticatedLayout from '../../../common/layout/AuthenticatedLayout';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import PlacesAutoComplete from '../../../map/PlacesAutoComplete';
-import { BgColor, WHITE , WHITEBG } from '../../../../styles/colors'
+import { BgColor, WHITE, WHITEBG } from '../../../../styles/colors'
 import { getResponsiveValue } from '../../../../styles/responsive';
 import Buttons from '../../../../adOns/atoms/Buttom';
 import TwoWayPushButton from '../../../../adOns/molecules/TwoWayPushButton';
 import DatePicker from '../../../../adOns/atoms/DatePicker';
-
-
+import FlashMessage from 'react-native-flash-message';
+import { useNavigation } from '@react-navigation/native';
+import { useProfile } from '../../../../context/ContextProvider';
+import { booking } from '../../../../services/apiCall';
+import { showNoty } from '../../../../common/flash/flashNotification';
 const Intercity = () => {
 
+
+    const intercityRef = useRef(null)
+    const navigation = useNavigation()
+    const { profileState, profileDispatch } = useProfile()
+
+    const zIndex = 9999
     const [selectedOption, setSelectedOption] = useState('')
-    const [isPressed, setisPressed] = useState({
-        state: false,
-        index: -1
-    })
-    const [addIndex, setaddIndex] = useState(0)
     const [carSpecificArray, setCarSpecificArray] = useState([])
+    const [dtType, setDtType] = useState('pickUp')
     const [showDatePicker, setShowDatePicker] = useState(false)
     const [showTimePicker, setShowTimePicker] = useState(false)
-    const [dateSelected, setDateSelected] = useState(new Date())
-    const [timeSelected, setTimeSelected] = useState(new Date())
+    const [dateSelected, setDateSelected] = useState('')
+    const [timeSelected, setTimeSelected] = useState('')
     const [stops, setStops] = useState([])
-    const [stopInfo, setStopInfo] = useState({})
-    const zIndex = 9999
+    const [addIndex, setaddIndex] = useState(0)
+    const [isPressed, setisPressed] = useState({
+        state: false,
+        subState: false,
+        index: -1,
+        subIndex: -1
+    })
+    const [pickUp, setPickUp] = useState({
+        description: '',
+        latitude: null,
+        longitude: null,
+        date: {
+            msec: new Date().getTime(),
+            year: new Date().getFullYear(),
+            month: new Date().getMonth(),
+            day: new Date().getDate(),
+            hour: new Date().getHours(),
+            min: new Date().getMinutes()
+        }
+    })
+
+    const [drop, setDrop] = useState({
+        description: '',
+        latitude: null,
+        longitude: null,
+        date: {
+            msec: null,
+            year: null,
+            month: null,
+            day: null,
+            hour: null,
+            min: null
+        }
+    })
+    const [budget, setBudget] = useState(null)
+    const [vehicle, selectVehicle] = useState({
+        type: '',
+        subType: '',
+        capacity: '',
+    })
+
+    //functions
+
+    const handleDateChange = () => {
+        date = {
+            msec: new Date(dateSelected).getTime(),
+            year: new Date(dateSelected).getFullYear(),
+            month: new Date(dateSelected).getMonth(),
+            day: new Date(dateSelected).getDate(),
+            hour: null,
+            min: null
+        }
+        if (selectedOption === 'Round Trip') {
+            if (dtType === 'pickUp') {
+                setPickUp(prev => {
+                    return {
+                        ...prev,
+                        date: date
+                    }
+                })
+            } else {
+                setDrop(prev => {
+                    return {
+                        ...prev,
+                        date: date
+                    }
+                })
+            }
+        } else {
+            setPickUp(prev => {
+                return {
+                    ...prev,
+                    date: date
+                }
+            })
+        }
+    }
+    const handleTimeChange = () => {
+        if (selectedOption === 'Round Trip') {
+            if (dtType === 'pickUp') {
+                setPickUp(prev => {
+                    return {
+                        ...prev,
+                        date: { ...prev.date, hour: new Date(timeSelected).getHours(), min: new Date(timeSelected).getMinutes() }
+                    }
+                })
+            } else {
+                setDrop(prev => {
+                    return {
+                        ...prev,
+                        date: { ...prev.date, hour: new Date(timeSelected).getHours(), min: new Date(timeSelected).getMinutes() }
+                    }
+                })
+            }
+        } else {
+            setPickUp(prev => {
+                return {
+                    ...prev,
+                    date: { ...prev.date, hour: new Date(timeSelected).getHours(), min: new Date(timeSelected).getMinutes() }
+                }
+            })
+        }
+    }
     const VehicleArray = [
         {
-            type: 'sedan',
-            specific: ['city', 'verna', 'swift', 'mercedes']
+            type: 'Mini',
+            subType: ['Wagnor', 'Celero', 'Any Mini'],
+            capacity: 3
         },
         {
-            type: 'xuv',
-            specific: ['wagonr', 'xuv500', 'defender', 'thar']
+            type: 'Sedan',
+            subType: ['Dzire', 'Etios', 'Xcent', 'Aura'],
+            capacity: 4
         },
         {
-            type: 'abc',
-            specific: ['ab', 'bc', 'cd', 'ef']
-        }
+            type: 'SUV',
+            subType: ['Ertiga', 'Innova', 'Innova Crista', 'Any 6+1 Seater']
+            , capacity: 6
+        },
+        {
+            type: 'SUV 10+1',
+            subType: ['Tavera', 'Cruser', 'Scorpio'],
+            capacity: 10
+        },
+        {
+            type: 'Bus',
+            subType: ['13 Seater', '17 Seater', '20 Seater', '26 Seater', '32 Seater'],
+            capacity: undefined
+        },
     ]
-
-    const handleVehicleType = function (item, index) {
-        setisPressed({ state: true, index: index })
-        setCarSpecificArray(item.specific)
-        console.log(carSpecificArray, carSpecificArray.length)
+    const extrasArray = {
+        extraDistance: 9.07,
+        extraHour: 2.65
     }
-
+    // const { extraDistance, extraHour } = extrasArray;
+    const handleVehicleType = function (item, index) {
+        setisPressed(prev => { return { ...prev, state: true, index: index, subState: false, subIndex: -1 } })
+        selectVehicle(prev => { return { subType: '', type: item.type, capacity: item.capacity } })
+        setCarSpecificArray(item.subType)
+        // console.log(carSpecificArray, carSpecificArray.length)
+    }
+    const handleVehicleSelection = (item, index) => {
+        setisPressed(prev => { return { ...prev, subState: true, subIndex: index } })
+        selectVehicle(prev => { return { ...prev, subType: item } })
+    }
     const handlePoints = () => {
         let temp = stops
         let obj = {
-            to: '',
-            from: ''
+            description: '',
+            latitude: null,
+            longitude: null,
         }
         temp = [...temp, obj]
         // console.log('NEW ARRAY', temp)
         setStops(temp)
     }
-
     const handleRemoveStop = (index) => {
         console.log('DELETE STOP', index)
         // let indexToRemove = stops.findIndex(item => item.index === index);
@@ -69,9 +196,88 @@ const Intercity = () => {
 
     }
 
+    const [error, setError] = useState('')
+
+    const handleSubmit = async () => {
+        setError('')
+        console.log("HANDLING SUBMIT")
+        if (!(pickUp.description !== '' && pickUp.latitude !== null && !isNaN(pickUp.date.msec) && pickUp.date.msec !== null && !isNaN(pickUp.date.hour) && pickUp.date.hour !== null)) {
+            setError("Pick Up Information Incomplete");
+            return
+        }
+        console.log("PICK UP OK");
+        if (selectedOption === ('Round Trip') && !(drop.description !== '' && drop.latitude !== null && !isNaN(drop.date.msec) && drop.date.msec !== null && !isNaN(drop.date.hour) && drop.date.hour !== null)) {
+            setError("Drop Point Information Incomplete");
+            return
+        }
+        console.log("DROP OK");
+        if (!(vehicle.type !== '' && vehicle.subType !== '')) {
+            setError("SELECT VEHICLE AND ITS TYPE");
+            return
+        }
+        console.log("VEHICLE OK");
+        if (budget === '' || budget === null) {
+            setError("ENTER YOUR BUDGET");
+            return
+        }
+        console.log("BUDGET OK");
+        setError('')
+        let data = {
+            initiator: "driver",
+            pickUp: pickUp,
+            stops: stops,
+            drop: drop,
+            budget,
+            bookingType: "intercity",
+            bookingSubType: selectedOption.toLowerCase(),
+            vehicle: vehicle,
+            extrasIncluded: true
+        }
+        try {
+            // showNoty("SUCCESSFULL", "success")
+            let resObj = await booking(data)
+            console.log(resObj)
+            if (resObj.status !== 200) {
+                showNoty("BOOKING LIMIT HAS BEEN REACHED", "danger")
+            } else {
+                showNoty("BOOKING POSTED SUCCESSFULLY", "success")
+            }
+        } catch (error) {
+            console.log('ERROR IN INTERCITY BOOKING ', error)
+        }
+    }
+
+    //logging
     useEffect(() => {
-        console.log('Array', stops)
-    }, [stops, stopInfo])
+        console.log("ERROR CHANGED")
+        if (error !== '') {
+            showNoty(error, "danger")
+        }
+    }, [error])
+    useEffect(() => {
+        console.log("VEHICLE SELECTION ", vehicle)
+    }, [vehicle])
+    useEffect(() => {
+        console.log('TIME SELECTED', timeSelected)
+        handleTimeChange()
+    }, [timeSelected])
+    useEffect(() => {
+        console.log("PICKUP ", pickUp)
+    }, [pickUp])
+    useEffect(() => {
+        console.log("DROP ", drop)
+    }, [drop])
+    useEffect(() => {
+        console.log('STOPS ARRAY', stops)
+    }, [stops])
+    useEffect(() => {
+        console.log("BUDGET", budget)
+    }, [budget])
+    useEffect(() => {
+        console.log('DATE SELECTED ', dateSelected)
+        handleDateChange()
+    }, [dtType, dateSelected])
+
     return (
         <AuthenticatedLayout
             title={'Intercity'}
@@ -93,9 +299,9 @@ const Intercity = () => {
                                 Pickup Location
                             </Text>
                         </View>
-                        <View style={{ ...styles.LocationInput, zIndex: 10000  }}>
+                        <View style={{ ...styles.LocationInput, zIndex: 10000 }}>
                             <Icon name="location-on" size={24} color="black" style={styles.Timeicon} />
-                            <PlacesAutoComplete placeholder={'Pickup Location'} width={'85%'} />
+                            <PlacesAutoComplete placeholder={'Pickup Location'} width={'85%'} update={setPickUp} />
                         </View>
                     </View>
                     {/*Add Points */}
@@ -113,13 +319,13 @@ const Intercity = () => {
                         : ''}
                     {/**Add Points if Round Trip */}
                     {(selectedOption === 'Round Trip')
-                        ? <TouchableOpacity style={{display : 'flex', flexDirection : 'row', justifyContent: 'flex-end', alignItems: 'center', margin: 10, marginTop : 0 , zIndex : 50 , gap : 5}} onPress={handlePoints}>
-                            <Text style={{ color: 'green', fontSize: 16, fontWeight: '500',letterSpacing : -0.5 , textDecorationStyle : 'dashed' , textDecorationLine : 'underline' }}>Add Stop</Text>
-                            <View style={{ borderWidth : 1 , padding : 0 , borderRadius :50 , borderColor : 'green'}}><Icon name="add" size={28} color="green" style={{...styles.Timeicon}} /></View>
+                        ? <TouchableOpacity style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', margin: 10, marginTop: 0, zIndex: 50, gap: 5 }} onPress={handlePoints}>
+                            <Text style={{ color: 'green', fontSize: 16, fontWeight: '500', letterSpacing: -0.5, textDecorationStyle: 'dashed', textDecorationLine: 'underline' }}>Add Stop</Text>
+                            <View style={{ borderWidth: 1, padding: 0, borderRadius: 50, borderColor: 'green' }}><Icon name="add" size={28} color="green" style={{ ...styles.Timeicon }} /></View>
                         </TouchableOpacity>
                         : ''}
                     {/*Drop*/}
-                    <View style={{...styles.marginContainer ,marginTop : (selectedOption === 'Round Trip')?-45:0}}>
+                    <View style={styles.marginContainer}>
                         <View>
                             <Text style={styles.text}>
                                 Drop Location
@@ -127,71 +333,61 @@ const Intercity = () => {
                         </View>
                         <View style={{ ...styles.LocationInput, zIndex: 2 }}>
                             <Icon name="location-on" size={24} color="black" style={styles.Timeicon} />
-                            <PlacesAutoComplete placeholder={'Drop Location'} width={'85%'} />
+                            <PlacesAutoComplete placeholder={'Drop Location'} width={'85%'} update={setDrop}/>
                         </View>
                     </View>
 
                     {/*Select Time*/}
+                    {showDatePicker ? <DatePicker
+                        initialDate={dateSelected}
+                        show={showDatePicker}
+                        setSelectedDate={setDateSelected}
+                        setShowDatePicker={setShowDatePicker}
+                        mode='date'
+                    /> : ''}
+                    {showTimePicker ? <DatePicker
+                        initialDate={timeSelected}
+                        show={showTimePicker}
+                        setSelectedDate={setTimeSelected}
+                        setShowDatePicker={setShowTimePicker}
+                        mode='time'
+                    /> : ''}
                     {(selectedOption === 'Round Trip')
                         ? <View style={styles.marginContainer}>
                             <View>
                                 <Text style={styles.text}>PickUp Date</Text>
                             </View>
                             <View style={styles.TimeBottons}>
-                                <TouchableOpacity style={[styles.textInput, { marginRight: 5 }]} onPress={() => setShowDatePicker(true)}>
+                                <TouchableOpacity style={[styles.textInput, { marginRight: 5 }]} onPress={() => { setDtType('pickUp'); setShowDatePicker(true) }}>
                                     <Icon name="date-range" size={24} color="black" style={styles.Timeicon} />
                                     <Text
                                         style={styles.Timeinput}
-                                    >{dateSelected.toDateString()}</Text>
+                                    >{pickUp.date.msec !== null && !isNaN(pickUp.date.msec) ? new Date(pickUp.date.msec).toDateString() : 'SELECT DATE'}</Text>
                                 </TouchableOpacity>
-                                {showDatePicker && <DatePicker
-                                    initialDate={dateSelected}
-                                    setSelectedDate={setDateSelected}
-                                    setShowDatePicker={setShowDatePicker}
-                                    mode='date'
-                                />}
-                                <TouchableOpacity style={styles.textInput} onPress={() => setShowTimePicker(true)}>
+                                <TouchableOpacity style={styles.textInput} onPress={() => { setDtType('pickUp'); setShowTimePicker(true) }}>
                                     <Icon name="alarm" size={24} color="black" style={styles.Timeicon} />
                                     <Text
                                         style={styles.Timeinput}
-                                    >{timeSelected.toLocaleTimeString()}</Text>
+                                    >{pickUp.date.hour !== null && !isNaN(pickUp.date.hour) ? `${pickUp.date.hour} : ${pickUp.date.min}` : 'SELECT TIME'}</Text>
                                 </TouchableOpacity>
-                                {showTimePicker && <DatePicker
-                                    initialDate={timeSelected}
-                                    setSelectedDate={setTimeSelected}
-                                    setShowDatePicker={setShowTimePicker}
-                                    mode='time'
-                                />}
                             </View>
                             <View>
                                 <View>
                                     <Text style={styles.text}>Drop Date</Text>
                                 </View>
                                 <View style={styles.TimeBottons}>
-                                    <TouchableOpacity style={[styles.textInput, { marginRight: 5 }]} onPress={() => setShowDatePicker(true)}>
+                                    <TouchableOpacity style={[styles.textInput, { marginRight: 5 }]} onPress={() => { setDtType('drop'); setShowDatePicker(true) }}>
                                         <Icon name="date-range" size={24} color="black" style={styles.Timeicon} />
                                         <Text
                                             style={styles.Timeinput}
-                                        >{dateSelected.toDateString()}</Text>
+                                        >{drop.date.msec !== null && !isNaN(drop.date.msec) ? new Date(drop.date.msec).toDateString() : 'SELECT DATE'}</Text>
                                     </TouchableOpacity>
-                                    {showDatePicker && <DatePicker
-                                        initialDate={dateSelected}
-                                        setSelectedDate={setDateSelected}
-                                        setShowDatePicker={setShowDatePicker}
-                                        mode='date'
-                                    />}
-                                    <TouchableOpacity style={styles.textInput} onPress={() => setShowTimePicker(true)}>
+                                    <TouchableOpacity style={styles.textInput} onPress={() => { setDtType('drop'); setShowTimePicker(true) }}>
                                         <Icon name="alarm" size={24} color="black" style={styles.Timeicon} />
                                         <Text
                                             style={styles.Timeinput}
-                                        >{timeSelected.toLocaleTimeString()}</Text>
+                                        >{drop.date.hour !== null && !isNaN(drop.date.hour) ? `${drop.date.hour} : ${drop.date.min}` : 'SELECT TIME'}</Text>
                                     </TouchableOpacity>
-                                    {showTimePicker && <DatePicker
-                                        initialDate={timeSelected}
-                                        setSelectedDate={setTimeSelected}
-                                        setShowDatePicker={setShowTimePicker}
-                                        mode='time'
-                                    />}
                                 </View>
                             </View>
                         </View>
@@ -207,26 +403,16 @@ const Intercity = () => {
                                     <Icon name="date-range" size={24} color="black" style={styles.Timeicon} />
                                     <Text
                                         style={styles.Timeinput}
-                                    >{dateSelected.toDateString()}</Text>
+                                    >{pickUp.date.msec !== null && !isNaN(pickUp.date.msec) ? new Date(pickUp.date.msec).toDateString() : 'SELECT DATE'}</Text>
                                 </TouchableOpacity>
-                                {showDatePicker && <DatePicker
-                                    initialDate={dateSelected}
-                                    setSelectedDate={setDateSelected}
-                                    setShowDatePicker={setShowDatePicker}
-                                    mode='date'
-                                />}
+
                                 <TouchableOpacity style={styles.textInput} onPress={() => setShowTimePicker(true)}>
                                     <Icon name="alarm" size={24} color="black" style={styles.Timeicon} />
                                     <Text
                                         style={styles.Timeinput}
-                                    >{timeSelected.toLocaleTimeString()}</Text>
+                                    >{pickUp.date.hour !== null && !isNaN(pickUp.date.hour) ? `${pickUp.date.hour} : ${pickUp.date.min}` : 'SELECT TIME'}</Text>
                                 </TouchableOpacity>
-                                {showTimePicker && <DatePicker
-                                    initialDate={timeSelected}
-                                    setSelectedDate={setTimeSelected}
-                                    setShowDatePicker={setShowTimePicker}
-                                    mode='time'
-                                />}
+
                             </View>
                         </View>}
 
@@ -265,10 +451,10 @@ const Intercity = () => {
                                 keyExtractor={(item, index) => (index)}
                                 data={carSpecificArray}
                                 horizontal
-                                renderItem={({ item }) => {
-                                    return <TouchableOpacity>
+                                renderItem={({ item, index }) => {
+                                    return <TouchableOpacity onPress={() => { handleVehicleSelection(item, index) }}>
                                         <View style={styles.vehicleImageContainer}>
-                                            <View style={[styles.vehicleImage]}>
+                                            <View style={[styles.vehicleImage,(isPressed.subState && isPressed.subIndex === index) ? styles.bgcolor : '']}>
                                                 <Icon name="directions-car" size={30} color="#000" />
                                             </View>
                                             <View style={styles.vehicleName}>
@@ -293,21 +479,22 @@ const Intercity = () => {
                                 placeholder="Enter Amount"
                                 keyboardType="numeric"
                                 placeholderTextColor={'gray'}
+                                onChangeText={v=>{setBudget(v)}}
                             />
                         </View>
                     </View>
                     {/**Note */}
                     <View style={styles.marginContainer}>
                         <View>
-                            <Text style={[styles.text,{color:'red'}]}>
+                            <Text style={[styles.text, { color: 'red' }]}>
                                 Note:
                             </Text>
                         </View>
                         <View>
-                            <Text style={[styles.text,{fontSize: 22}]}>Extras to be paid by you to driver</Text>
+                            <Text style={[styles.text, { fontSize: 22 }]}>Extras to be paid by you to driver</Text>
                         </View>
                         <View>
-                            <Text style={[styles.text,{fontSize: 20,fontWeight:'500'}]}>Your fare does not include</Text>
+                            <Text style={[styles.text, { fontSize: 20, fontWeight: '500' }]}>Your fare does not include</Text>
                         </View>
                         <View>
                             <Text style={styles.text}>- Parking</Text>
@@ -321,7 +508,7 @@ const Intercity = () => {
                     </View>
                     {/*Submit*/}
                     <View style={styles.buttons}>
-                        <Buttons name="SUBMIT" style={{ width: '90%' }} />
+                        <Buttons name="SUBMIT" style={{ width: '90%' }}  onPress={()=>{handleSubmit().then().catch(error=>console.log("ERROR IN HANDLE SUBMIT ", error))}}/>
                     </View>
                 </View>
             </ScrollView>
@@ -367,13 +554,13 @@ const styles = StyleSheet.create({
         height: 58,
 
     },
-    LocationInput : {
+    LocationInput: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         // height: 58,
-        
+
     },
     textInput: {
         flexDirection: 'row',

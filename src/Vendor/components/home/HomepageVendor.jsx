@@ -21,8 +21,8 @@ const HomePageVendor = () => {
             bookingId: 1234567890,
             verifiedBy: 'Owner Taxi',
             status: 'active',
-            subtype : 'Oneway',
-            car : 'Auto'
+            subtype: 'Oneway',
+            car: 'Auto'
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
@@ -34,8 +34,8 @@ const HomePageVendor = () => {
             bookingId: 1234567890,
             verifiedBy: 'Vendor',
             status: 'active',
-            subtype : 'Oneway',
-            car : 'Auto'
+            subtype: 'Oneway',
+            car: 'Auto'
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
@@ -47,8 +47,8 @@ const HomePageVendor = () => {
             bookingId: 1234567890,
             verifiedBy: false,
             status: 'closed',
-            subtype : 'Oneway',
-            car : 'Sedan'
+            subtype: 'Oneway',
+            car: 'Sedan'
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
@@ -60,8 +60,8 @@ const HomePageVendor = () => {
             bookingId: 1234567890,
             verifiedBy: 'Owner Taxi',
             status: 'active',
-            subtype : 'Round Trip',
-            car : 'Mini'
+            subtype: 'Round Trip',
+            car: 'Mini'
         },
         {
             from: 'Aman Tiwari, Naween chowk SITAPUR',
@@ -73,15 +73,14 @@ const HomePageVendor = () => {
             bookingId: 1234567890,
             verifiedBy: 'Owner Taxi',
             status: 'active',
-            subtype : 'Oneway',
-            car : 'Alto'
+            subtype: 'Oneway',
+            car: 'Alto'
         }
 
     ];
+    
     const navigation = useNavigation()
-    const [showSearchResult, setShowSearchResults] = useState(true)
     const [selectedOption, setSelectedOption] = useState('')
-    const [searchArray, setSearchArray] = useState(['item1', 'ghantu', 'kalyaanimaam', 'shrutimaam', 'herapheri', 'kgf'])
 
     useEffect(() => {
         const backAction = () => {
@@ -99,19 +98,15 @@ const HomePageVendor = () => {
     return (
         <AuthenticatedLayoutVendor title={'Home Vendor'}>
             <View style={{ position: 'relative', flex: 1 }}>
-                <View style={{ zIndex: 2 }}>
-                    <SearchBox searchArray={searchArray} />
+                <View style={{ zIndex: 2, justifyContent: 'center', alignItems: 'center', }}>
+                    <TwoWayPushButton option1="Intercity" option2="Sharing" setter={setSelectedOption} />
                 </View>
 
                 <View style={styles.viewStyle}>
                     <View style={styles.liststyle}>
                         <Text style={styles.textStyle}>LIVE INTERCITY FEED REQUESTS</Text>
-                        <RefreshButton/>
+                        <RefreshButton />
                     </View>
-                    {/*<View style={{display: 'flex',justifyContent:'center',alignItems:'center'}}>
-                        <TwoWayPushButton option1={'Local'} option2={'InterCity'} setter={setSelectedOption} />
-    </View>*/}
-
                     <FlatList
                         style={{}}
                         keyExtractor={(item, index) => (index)}
@@ -119,7 +114,6 @@ const HomePageVendor = () => {
                         renderItem={({ item }) => {
                             return <View style={styles.FlatListviewStyle}><LazyLoadActiveRequestCard item={item} /></View>
                         }}
-
                     />
                 </View>
             </View>
@@ -140,7 +134,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     textStyle: {
-        letterSpacing : 1.3,
+        letterSpacing: 1.3,
         color: 'red',
         fontSize: 20,
         fontWeight: "900"

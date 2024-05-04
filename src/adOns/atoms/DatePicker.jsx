@@ -4,23 +4,35 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 const DatePicker = (props) => {
 
-    const { initialDate, setSelectedDate, setShowDatePicker,mode } = props
+    const { initialDate, show, setSelectedDate, setShowDatePicker, mode } = props
     const [date, setDate] = useState((initialDate !== '') ? initialDate : new Date());
+    console.log('||||||||||||||||',show)
 
     const onChange = (event, selectedDate) => {
-        setSelectedDate(new Date(selectedDate))
-        console.log('selected date',selectedDate)
         setShowDatePicker(false)
+        if (mode === 'date') {
+            setSelectedDate(new Date(selectedDate).toDateString())
+            setDate(new Date(selectedDate)).toDateString()
+        } else {
+            if (mode === 'time') {
+                setSelectedDate(new Date(selectedDate))
+                setDate(new Date(selectedDate))
+            }
+        }
+        console.log('selected date', selectedDate , selectedDate.toLocaleTimeString())
     };
 
     return (
-        <DateTimePicker
-            value={new Date(date)}
-            mode={mode}
-            display="default"
-            onChange={onChange}
-        />
+        <>
+            {show ? <DateTimePicker
+                value={mode==='date' ? new Date(date) : new Date()}
+                mode={mode}
+                display="default"
+                onChange={onChange}
+
+            /> : ''}
+        </>
     );
 };
 
-export default DatePicker;
+export default React.memo(DatePicker);

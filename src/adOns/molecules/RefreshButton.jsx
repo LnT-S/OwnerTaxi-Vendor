@@ -49,7 +49,12 @@ const RefreshButton = (props) => {
     },[loading])
 
     return (
-        <TouchableOpacity onPress={startRotation}>
+        <TouchableOpacity onPress={()=>{
+            startRotation();
+            if(props.action){
+                props.action();
+            }
+        }}>
             <Animated.View style={[styles.refreshButton, { transform: [{ rotate }] }]}>
                 <Icon name="refresh" size={30} color="#000" />
             </Animated.View>

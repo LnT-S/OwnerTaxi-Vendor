@@ -16,15 +16,15 @@ const ActiveRequestCard = (props) => {
     return (
         <TouchableOpacity onPress={handlePressOverCard}>
             <View style={styles.activeBar}>
-                {type!=='Local' && item.verifiedBy && <View style={{ ...styles.label, backgroundColor: item.verifiedBy.toLowerCase() === 'owner taxi' ? '#8EF433' : BgColor }}>
+                {false && type!=='Local' && item.verifiedBy && <View style={{ ...styles.label, backgroundColor: item.verifiedBy.toLowerCase() === 'owner taxi' ? '#8EF433' : BgColor }}>
                     <Text style={{ ...styles.textColor, ...styles.textHeading, fontSize: 12, letterSpacing: -0.5 }}>Verified By</Text>
                     <Text style={{ ...styles.textColor, ...styles.textHeading, fontSize: 16, fontWeight: '500' }}>{item.verifiedBy}</Text>
                 </View>}
                
-                <View style={{ display: 'flex ', flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+                {false &&<View style={{ display: 'flex ', flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
                     <Text style={{ color: 'black', ...styles.textHeading, fontSize: 18, letterSpacing: 0.5 }}>Booking ID : </Text>
                     <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500' }}>{item.bookingId}</Text>
-                </View> 
+                </View> }
                 {type!=='Local' && <View style={{display : 'flex',flexDirection : 'row', justifyContent: 'flex-start',alignItems: 'center',gap : 15 , paddingVertical : 10}}>
                         <StatusButton 
                             text = {[item.subtype]}
@@ -38,7 +38,7 @@ const ActiveRequestCard = (props) => {
                         />
                 </View>}
                 <View style={{ display: 'flex ', flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={{ ...styles.textColor, ...styles.textHeading, fontSize: 16 }}>Customer ID : </Text>
+                    <Text style={{ ...styles.textColor, ...styles.textHeading, fontSize: 16 }}>Customer Name : </Text>
                     <Text style={{ ...styles.textColor, ...styles.textHeading, fontSize: 18, fontWeight: '500' }}>{item.customerID}</Text>
                 </View>
                 <View style={[styles.horizontalstatus, styles.borderTop]}>

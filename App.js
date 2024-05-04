@@ -30,7 +30,6 @@ import { BgColor } from './src/styles/colors';
 import OtpScreen from './src/components/Login/OTP';
 import NewPassword from './src/components/Login/NewPassword';
 import HomePageDriver from './src/Driver/components/home/HomepageDriver';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Settting from './src/Driver/components/setting/Settting';
 import Wallet from './src/Driver/components/Wallet/Wallet';
 import CustomDrawerContent from './src/Driver/common/drawer/CustomDrawerContent';
@@ -62,6 +61,8 @@ import Privacy from './src/Driver/common/Privacy/Privacy';
 import Terms from './src/Driver/common/Terms&Condition/terms';
 import PrivacyVendor from './src/Vendor/common/Privacy/PrivacyVendor';
 import TermsVendor from './src/Vendor/common/Terms&Condition/termsVendor';
+import FlashMessage from 'react-native-flash-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator();
@@ -122,18 +123,35 @@ function App() {
     return temp
   }
 
+  const isTokenAvailable = async () => {
+    let token = await AsyncStorage.getItem('token')
+    console.log("TOKEN ", token)
+    if (token !== null && token !== undefined) {
+      return true
+    }
+    return false
+  }
+
   useEffect(() => {
-    // userIs().then(data => {
-    //   console.log('USER TYPE IS ', data)
-    //   if (data === 'Vendor') {
-    //     setInitialRoute('HomeSceen')
-    //   }
-    //   if (data === 'Driver') {
-    //     setInitialRoute('HomeSceenDriver')
-    //   }
-    // }).catch(err => {
-    //   console.log('ERROR IN RESOLVING USER TYPEs')
-    // })
+    isTokenAvailable().then(is => {
+      if (is) {
+        userIs().then(data => {
+          console.log('USER TYPE IS ', data)
+          if (data === 'Vendor') {
+            setInitialRoute('HomeSceen')
+          }
+          if (data === 'Driver') {
+            setInitialRoute('HomeSceenDriver')
+          }
+        }).catch(err => {
+          console.log('ERROR IN RESOLVING USER TYPEs')
+        })
+      } else {
+
+      }
+    })
+
+
     setTimeout(() => {
       setIsLoading(false); // Set isLoading to false when the loading task is complete
     }, 2500); // Simulate loading for 2 seconds, replace this with your actual loading logic
@@ -194,6 +212,7 @@ function App() {
 
         </NavigationContainer>
       </ContextProvider>
+      <FlashMessage />
     </SafeAreaView>
   )
 }

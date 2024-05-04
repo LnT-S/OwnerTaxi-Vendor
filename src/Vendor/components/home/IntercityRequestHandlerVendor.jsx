@@ -5,13 +5,15 @@ import StatusButton from '../../../adOns/atoms/StatusButton';
 import { BgColor, WHITEBG } from '../../../styles/colors';
 import PressButton from '../../../adOns/atoms/PressButton';
 import AuthenticatedLayoutVendor from '../../common/layout/AuthenticatedLayoutVendor';
+import Input from '../../../adOns/atoms/Input';
 
 const IntercityRequestHandlerVendor = () => {
 
     const route = useRoute()
     const { item } = route.params
 
-    const [callButton , showCallButton] = useState(false)
+    const [callButton, showCallButton] = useState(false)
+    const [text, setText] = useState('500')
 
     return (
         <AuthenticatedLayoutVendor
@@ -35,7 +37,7 @@ const IntercityRequestHandlerVendor = () => {
                                 containerStyle={{ backgroundColor: item.status.toLowerCase() === 'active' ? 'green' : 'red', borderRadius: 20, width: 80 }}
                                 textStyle={[{ fontFamily: 'serif', color: 'white', fontSize: 18 }]}
                             />
-                            {item.verifiedBy && <StatusButton
+                            {false && item.verifiedBy && <StatusButton
                                 text={['Verified By', item.verifiedBy]}
                                 containerStyle={{ backgroundColor: item.verifiedBy.toLowerCase() === 'owner taxi' ? '#8EF433' : BgColor, borderRadius: 20, width: 120 }}
                                 textStyle={[{ fontFamily: 'serif', fontSize: 12 }, { fontFamily: 'serif', fontSize: 16 }]}
@@ -78,22 +80,78 @@ const IntercityRequestHandlerVendor = () => {
                                 <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{new Date().toDateString()}</Text>
                                 <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{new Date().getHours()} : {new Date().getMinutes()} am</Text>
                             </View>
-                           {item.subtype.toLowerCase()!=='oneway' && <View style={styles.optionContainer.section.rightSection}>
+                            {item.subtype.toLowerCase() !== 'oneway' && <View style={styles.optionContainer.section.rightSection}>
                                 <Text style={{ color: 'gray', ...styles.textHeading, fontSize: 22, letterSpacing: 0.5, textAlign: 'left' }}>Drop Date</Text>
                                 <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{new Date().toDateString()}</Text>
                                 <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{new Date().getHours()} : {new Date().getMinutes()}am</Text>
                             </View>}
                         </View>
-                        <View style={{ backgroundColor: 'rgba(0,0,0,0.03)',padding : 5}}>
+                        <View style={{ backgroundColor: 'rgba(0,0,0,0.03)', padding: 5 }}>
                             <Text style={{ fontFamily: 'serif', fontSize: 20, paddingHorizontal: 15 }}>Extras Information</Text>
-                            <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '90%', padding: 5, borderRadius: 10, marginVertical: 5 }}>
-                                <View>
-                                <Text style={{fontSize : 16 , fontWeight : 500 , color :'black'}}>
-                                    Extra Distance : <Text style={{color : 'red'}}>&#x20B9; 500 per km</Text>
-                                </Text>
-                                <Text style={{fontSize : 16 , fontWeight : 500 , color :'black'}}>
-                                    Extra Hour        : <Text style={{color : 'red'}}>&#x20B9; 80 per hour</Text>
-                                </Text>
+                            <View style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', width: '90%', padding: 5, borderRadius: 10, marginVertical: 5 }}>
+                                <View style={{display : 'flex' , justifyContent: 'flex-start', alignItems: 'flex-start',}}>
+                                    <View style={{ display: 'flex ', justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'row' }}>
+                                        <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>
+                                            Total Distance         : </Text><Text style={{ color: 'red' }}>&#x20B9; </Text>
+                                        <TextInput
+                                            placeholder='500' style={{ width: 60, color: 'red', fontSize: 16, paddingVertical: 0, borderBottomWidth: 0.5, borderBottomColor: 'red' }}
+                                            onChangeText={(v) => { console.log(v); setText(v) }}
+                                            value={text}
+                                        />
+                                        <Text style={{ fontSize: 16, fontWeight: 500, color: 'red' }}>per km</Text>
+                                    </View>
+                                    <View style={{ display: 'flex ', justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'row' }}>
+                                        <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>
+                                            Enter Your Budget  : </Text><Text style={{ color: 'red' }}>&#x20B9; </Text>
+                                        <TextInput
+                                            placeholder='500' style={{ width: 60, color: 'red', fontSize: 16, paddingVertical: 0, borderBottomWidth: 0.5, borderBottomColor: 'red' }}
+                                            onChangeText={(v) => { console.log(v); setText(v) }}
+                                            value={text}
+                                        />
+                                        <Text style={{ fontSize: 16, fontWeight: 500, color: 'red' }}>per km</Text>
+                                    </View>
+                                    <View style={{ display: 'flex ', justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'row' }}>
+                                        <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>
+                                            Extra Distance        : </Text><Text style={{ color: 'red' }}>&#x20B9; </Text>
+                                        <TextInput
+                                            placeholder='500' style={{ width: 60, color: 'red', fontSize: 16, paddingVertical: 0, borderBottomWidth: 0.5, borderBottomColor: 'red' }}
+                                            onChangeText={(v) => { console.log(v); setText(v) }}
+                                            value={text}
+                                        />
+                                        <Text style={{ fontSize: 16, fontWeight: 500, color: 'red' }}>per km</Text>
+                                    </View>
+                                    
+                                    <View style={{ display: 'flex ', justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                                        <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>
+                                            Extra Hour               : </Text><Text style={{ color: 'red' }}>&#x20B9; </Text>
+                                        <TextInput
+                                            placeholder='500' style={{ width: 60, color: 'red', fontSize: 16, paddingVertical: 0, borderBottomWidth: 0.5, borderBottomColor: 'red' }}
+                                            onChangeText={(v) => { console.log(v); setText(v) }}
+                                            value={text}
+                                        />
+                                        <Text style={{ fontSize: 16, fontWeight: 500, color: 'red' }}>per hour</Text>
+                                    </View>
+                                    <View style={{ display: 'flex ', justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                                        <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>
+                                            Night Charges        : </Text><Text style={{ color: 'red' }}>&#x20B9; </Text>
+                                        <TextInput
+                                            placeholder='500' style={{ width: 60, color: 'red', fontSize: 16, paddingVertical: 0, borderBottomWidth: 0.5, borderBottomColor: 'red' }}
+                                            onChangeText={(v) => { console.log(v); setText(v) }}
+                                            value={text}
+                                        />
+                                        <Text style={{ fontSize: 16, fontWeight: 500, color: 'red' }}>per hour</Text>
+                                    </View>
+                                    <View style={{ display: 'flex ', justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                                        <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>
+                                            Driver Allowance   : </Text><Text style={{ color: 'red' }}>&#x20B9; </Text>
+                                        <TextInput
+                                            placeholder='500' style={{ width: 60, color: 'red', fontSize: 16, paddingVertical: 0, borderBottomWidth: 0.5, borderBottomColor: 'red' }}
+                                            onChangeText={(v) => { console.log(v); setText(v) }}
+                                            value={text}
+                                        />
+                                        <Text style={{ fontSize: 16, fontWeight: 500, color: 'red' }}>per hour</Text>
+                                    </View>
+
                                 </View>
                             </View>
                         </View>
@@ -102,9 +160,9 @@ const IntercityRequestHandlerVendor = () => {
                             <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'center'  }}>&#x20B9;</Text><TextInput style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'left', borderBottomWidth: 0.5, borderBottomColor: 'gray', width: 120 }}> </TextInput>
                             </View>*/}
                     </View>
-                    <View style={{ ...styles.buttonContainer, opacity: item.status === 'closed' ? 0.5 : 1 , marginTop : 15}}>
-                        {!callButton ? <PressButton name="Accept" disabled={item.status !== 'closed' ? false : true} onPress={()=>showCallButton(true)}/> : 
-                        <View style={{display : 'flex' , justifyContent: 'center',alignItems: 'center',flexDirection: 'row',}}><PressButton name="Call Vendor" disabled={item.status !== 'closed' ? false : true} onPress={()=>null}/><PressButton name="Un-Accept" disabled={item.status !== 'closed' ? false : true} onPress={()=>showCallButton(false)}/></View>}
+                    <View style={{ ...styles.buttonContainer, opacity: item.status === 'closed' ? 0.5 : 1, marginTop: 15 }}>
+                        <PressButton name="BID TO CUSTOMER" disabled={item.status !== 'closed' ? false : true} />
+                        <PressButton name="   POST BOOKING   " disabled={item.status !== 'closed' ? false : true} />
                     </View>
                 </View>
             </ScrollView>

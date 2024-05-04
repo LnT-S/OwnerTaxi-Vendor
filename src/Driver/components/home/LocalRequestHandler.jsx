@@ -27,7 +27,7 @@ const LocalRequestHandler = () => {
                     <View style={styles.idContainer}>
                         <View style={styles.idContainer.leftSection}>
                             <Text style={{ color: 'black', ...styles.textHeading, fontSize: 16, letterSpacing: 0.5 }}>Booking ID</Text>
-                            <Text style={{ color: 'red', ...styles.textHeading, fontSize: 20, fontWeight: '500' }}>{item.bookingId}</Text>
+                            <Text style={{ color: 'red', ...styles.textHeading, fontSize: 20, fontWeight: '500' }}>{item._id}</Text>
                         </View>
                         <View style={styles.idContainer.rightSection}>
                             <StatusButton
@@ -43,17 +43,17 @@ const LocalRequestHandler = () => {
                         </View>
                     </View>
                     <View style={{...styles.mapContainer , opacity : item.status==='closed' ? 0.5: 1}}>
-                        <MapComponent />
+                        <MapComponent pickUp={item.pickUp} drop={item.drop}/>
                     </View>
                     <View style={{...styles.optionContainer , opacity : item.status==='closed' ? 0.2: 1}}>
                         <View style={styles.optionContainer.section}>
                             <View style={styles.optionContainer.section.leftSection}>
                                 <Text style={{ color: 'black', ...styles.textHeading, fontSize: 16, letterSpacing: 0.5, textAlign: 'left' }}>Pickup</Text>
-                                <Text style={{ color: 'gray', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{item.from}</Text>
+                                <Text style={{ color: 'gray', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{item.pickUp.description}</Text>
                             </View>
                             <View style={styles.optionContainer.section.rightSection}>
                                 <Text style={{ color: 'black', ...styles.textHeading, fontSize: 16, letterSpacing: 0.5, textAlign: 'left' }}>Drop</Text>
-                                <Text style={{ color: 'gray', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{item.to}</Text>
+                                <Text style={{ color: 'gray', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{item.drop.description}</Text>
                             </View>
                         </View>
                         <View style={{...styles.optionContainer.section ,height: 100,backgroundColor : 'rgba(0,0,0,0.03)' }}>
