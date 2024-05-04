@@ -75,6 +75,16 @@ const CustomDrawerContent: React.FC<CustomDrawerProps> = ({ state, navigation })
       </TouchableOpacity>
       <TouchableOpacity
         style={[
+          activeRouteName === 'ActiveBooking' && styles.activeItemBackground,
+        ]}
+        onPress={() => handleNavigation('ActiveBooking')}>
+        <Text style={[
+          styles.text,
+          activeRouteName === 'ActiveBooking' && styles.activeItemColor,
+        ]}>Active Booking</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[
           activeRouteName === 'Wallet' && styles.activeItemBackground,
         ]}
         onPress={() => handleNavigation('Wallet')}>
@@ -83,7 +93,6 @@ const CustomDrawerContent: React.FC<CustomDrawerProps> = ({ state, navigation })
           activeRouteName === 'Wallet' && styles.activeItemColor,
         ]}>Wallet</Text>
       </TouchableOpacity>
-
       <TouchableOpacity
         style={[
           activeRouteName === 'History' && styles.activeItemBackground,
