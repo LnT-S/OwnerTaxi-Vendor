@@ -5,14 +5,17 @@ import PressButton from '../../../adOns/atoms/PressButton';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Input from '../../../adOns/atoms/Input';
+import { uploadDocumentDriver } from '../../../services/apiCall';
 
 const CustomDocumentPicker = (props) => {
 
-    const { documentName, visible, setVisible } = props
+    const { documentName, visible, setVisible,documentDetails,vehicleNo } = props
     const [input, setInput] = useState('')
     const [error, setError] = useState('')
     const [document, setDocument] = useState(null)
     const [isDocumentUploading, setIsDocumentUploading] = useState(false)
+
+    console.log("DOCUMENT DETAILS ",documentDetails , vehicleNo)
 
     const pickDocument = async () => {
         try {
@@ -21,7 +24,7 @@ const CustomDocumentPicker = (props) => {
                 allowMultiSelection: false
             });
 
-            res[0] = { ...res[0], doucumentName: documentName }
+            res[0] = { ...res[0], documentName: documentName }
             setDocument(res[0])
         } catch (err) {
             if (DocumentPicker.isCancel(err)) {
@@ -38,9 +41,30 @@ const CustomDocumentPicker = (props) => {
             setError('Required')
             return 
         }
+        let documentFor = ''
+        if(documentDetails.documentFor==='' || documentDetails.documentFor==="Driver" || documentDetails.documentFor===undefined){
+            documentFor="Driver"
+        }else{
+            if(documentDetails.documentFor==='Vehicle'){
+                documentFor="Vehicle"
+            }
+        }
+        let data = {
+            vehicleNo : vehicleNo,
+            document,
+            documentName,
+            documentFor,
+            documentNo :  input,
+        }
+        uploadDocumentDriver(data)
+        .then(data=>{
+            console.log(data.data.message)
+        })
+        .catch(err=>{
+            console.log("ERROR IS ", err)
+        })
         setIsDocumentUploading(true)
         setTimeout(() => { setIsDocumentUploading(false); setVisible(false) }, 2000)
-        console.log('DOCUMENT UPLOADED SUCCESSFULLY')
         setDocument(null)
     }
 
@@ -50,6 +74,10 @@ const CustomDocumentPicker = (props) => {
         setDocument(null)
         setVisible(false)
     }
+
+    useEffect(()=>{
+        console.log("DOCUMENT SELECTED ",document)
+    },[document])
 
     return (
         <Modal

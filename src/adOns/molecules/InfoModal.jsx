@@ -4,7 +4,7 @@ import PressButton from "../atoms/PressButton";
 
 export default function InfoModal(props) {
 
-    const { show, setShow, title, message, messageJsx, imageSource } = props
+    const { show, setShow, title, message, messageJsx, imageSource , serverImageSource} = props
     const handleCancel = () => {
         setShow(false);
     };
@@ -24,6 +24,7 @@ export default function InfoModal(props) {
                         <Text style={styles.modalText}>{message}</Text>
                     </View> : messageJsx}
                     {imageSource ? <Image source={imageSource} style={{ height: 350, width: '90%', marginBottom: 15 }} /> : ''}
+                    {serverImageSource ? <Image source={{uri : serverImageSource}} style={{ height: 350, width: '90%', marginBottom: 15 }} /> : ''}
                     <View style={styles.row}>
                         <View style={styles.r1}>
                             <PressButton name={'Close'} onPress={handleCancel} />

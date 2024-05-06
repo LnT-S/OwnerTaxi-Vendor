@@ -5,12 +5,14 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import CustomDocumentPicker from './CustomDocumentPicker';
 import InfoModal from '../../../adOns/molecules/InfoModal';
 import { WHITEBG } from '../../../styles/colors';
+import server from '../../../services/server.tsx'
 
 const MainDocumentCard = (props) => {
-    const { url, status, documentId, documentName } = props.item
+    const { status, documentId, documentName,image } = props.item
 
     const [modalVisible, setModalVisible] = useState(false);
     const [infoModalVisible , setInfoModalVisible ] = useState(false)
+    const [viewDocument , setViewDocument] = useState(false)
 
     const backgroundColorMapper = {
         Missing: styles.missingContainer,
@@ -29,10 +31,11 @@ const MainDocumentCard = (props) => {
 
         <View style={{ ...styles.container }}>
             <CustomDocumentPicker 
-            document={props.item}
+            documentDetails={props.item}
             documentName={documentName}
             visible = {modalVisible}
             setVisible = {setModalVisible}
+            vehicleNo={props.vehicleNo}
              />
              <InfoModal 
              show = {infoModalVisible} 
@@ -40,6 +43,13 @@ const MainDocumentCard = (props) => {
              title= {status} 
              message = {infoMessage[status]}
              />
+             <InfoModal
+                show={viewDocument}
+                setShow={setViewDocument}
+                title={documentName}
+                extContStyle={{ width: '85%' }}
+                serverImageSource={server.server + image}
+            />
             <View style={styles.section1}>
                 <TouchableOpacity 
                 style={{ ...styles.statusContainer, ...backgroundColorMapper[status] }}
@@ -49,7 +59,7 @@ const MainDocumentCard = (props) => {
                 </TouchableOpacity>
             </View>
             <View style={styles.section2}>
-                {(status==='Uploaded' || status==='Accept' || status==='Reject')?<TouchableOpacity style={styles.viewButtonContainer}>
+                {(status==='Uploaded' || status==='Accept' || status==='Reject')?<TouchableOpacity style={styles.viewButtonContainer} onPress={()=>{setViewDocument(true)}}>
                     <Text style={styles.viewButtonContainerText}> View </Text>
                 </TouchableOpacity>:''}
                 {(status==='Missing' || status==='Reject')?
@@ -82,7 +92,8 @@ const styles = StyleSheet.create({
         height: 170, //adjust,
         flexWrap: 'wrap',
         borderWidth: 1,
-        flexDirection: 'column'
+        flexDirection: 'column',
+        borderRadius : 15
     },
     crossButton: {
         position: 'absolute',
@@ -131,6 +142,8 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        borderBottomLeftRadius : 15,
+        borderBottomRightRadius : 15
 
     },
     documentNameTextContainer: {

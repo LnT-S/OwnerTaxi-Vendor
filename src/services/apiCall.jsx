@@ -95,3 +95,56 @@ export const booking = async (formData) => {
     console.log('DATA RECIVED ', data)
     return { status: res.status, data: data }
 }
+export const addVehicle = async (formData) => {
+    const URL = `${server.server}/driver/add-vehicle`
+    console.log('URL ', URL)
+    let auth_token = await AsyncStorage.getItem('token')
+
+    let res = await fetch(URL, {
+        method: 'post',
+        mode: 'cors',
+        headers: {
+            'Authorization': auth_token ? `Bearer ${auth_token}` : '',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+
+    })
+    let data = await res.json()
+    console.log('DATA RECIVED ', data)
+    return { status: res.status, data: data }
+}
+export const uploadDocumentDriver = async (rawFormData)=>{
+    try {
+        const URL = `${server.server}/driver/upload-document`
+        console.log('URL ', URL)
+        let auth_token = await AsyncStorage.getItem('token')
+        let formData = new FormData();
+        formData.append('documentNo',rawFormData.documentNo)
+        formData.append('documentName',rawFormData.documentName)
+        {rawFormData.vehicleNo ? formData.append('vehicleNo',rawFormData.vehicleNo) : ''}
+        formData.append('documentFor',rawFormData.documentFor)
+        formData.append('document',{
+            name: rawFormData.document.name,
+            type: rawFormData.document.type ,
+            uri:
+                Platform.OS === "android"
+                    ? rawFormData.document.uri
+                    : rawFormData.document.uri.replace("file://", "")
+        })
+        console.log("FORM DATA" , rawFormData)
+        let res = await fetch(URL, {
+            method: 'post',
+            mode: 'cors',
+            headers: {
+                'Authorization': auth_token ? `Bearer ${auth_token}` : '',
+            },
+            body : formData
+        })
+        let data = await res.json()
+        console.log('DATA RECIVED ', data)
+        return { status: res.status, data: data } 
+    } catch (error) {
+        console.log("ERROR IN UPDATING PROFILE ", error)
+    }
+}

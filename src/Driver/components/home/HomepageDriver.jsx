@@ -11,7 +11,7 @@ import RefreshButton from '../../../adOns/molecules/RefreshButton'
 import PressButton from '../../../adOns/atoms/PressButton'
 import FunctionalModal from '../../../adOns/molecules/FunctionalModal'
 import YesNoModal from '../../../adOns/molecules/YesNoModal'
-import { getLocalBooking } from '../../../services/getDataServices'
+import { getIntercityBookingFromPostVendor, getLocalBooking } from '../../../services/getDataServices'
 const HomePageDriver = () => {
     const activeList = [
         {
@@ -88,6 +88,8 @@ const HomePageDriver = () => {
     const [showPostBookingModal, setShowPostBookingModal] = useState(false)
 
     const [localList, setLocalList] = useState([])
+    const [intercityList, setIntercityList] = useState([])
+
     const fetchLocal = () => {
         getLocalBooking()
             .then(data => {
@@ -96,6 +98,14 @@ const HomePageDriver = () => {
             })
             .catch(err => {
                 console.log("ERROR IN GETTING LOCAL DATA ", err);
+            })
+        getIntercityBookingFromPostVendor()
+            .then(data => {
+                console.log("INTERCITY DATA ", data.data.data)
+                setIntercityList(data.data.data)
+            })
+            .catch(err => {
+                console.log("ERROR IN FETCHING INTERCITY DATA ", err)
             })
     }
     const postBookingFunctionalObject = {
@@ -151,7 +161,7 @@ const HomePageDriver = () => {
                 <View style={styles.viewStyle}>
                     <View style={styles.liststyle}>
                         <Text style={styles.textStyle}>LIVE FEED REQUESTS</Text>
-                        <TouchableOpacity onPress={fetchLocal}><RefreshButton action={fetchLocal}/></TouchableOpacity>
+                        <TouchableOpacity onPress={fetchLocal}><RefreshButton action={fetchLocal} /></TouchableOpacity>
                     </View>
                     <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <TwoWayPushButton option1={'Local'} option2={'InterCity'} setter={setSelectedOption} />
@@ -159,9 +169,9 @@ const HomePageDriver = () => {
                     <View style={{ height: '75%' }}>
                         <FlatList
                             keyExtractor={(item, index) => (index)}
-                            data={localList}
+                            data={selectedOption==='Local' ? localList : intercityList}
                             renderItem={({ item }) => {
-                                return <View style={styles.FlatListviewStyle}><LazyLoadActiveRequestCard item={item.passiveBookingId} type={selectedOption} /></View>
+                                return <View style={styles.FlatListviewStyle}><LazyLoadActiveRequestCard item={selectedOption==='Local' ? item.passiveBookingId : item} type={selectedOption} /></View>
                             }}
                         />
                     </View>

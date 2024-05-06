@@ -25,7 +25,7 @@ export const getLocalBooking = async () => {
 }
 export const getIntercityBookingFromPostVendor = async () => {
     const URL = `${server.server}/driver/get-intercity-bookings-post-vendor`
-    console.log('URL ', URL, phoneNo);
+    console.log('URL ', URL);
     let auth_token = await AsyncStorage.getItem('token')
 
     // Authorization: auth_token ? `Bearer ${auth_token}` : ''
@@ -63,5 +63,26 @@ export const getIntercityBookingFromCustomer = async () => {
         return { status: res.status, data: data }
     } catch (error) {
         console.log('GET_OTP ERROR', error)
+    }
+}
+export const getDocumentInfo = async () => {
+    const URL = `${server.server}/driver/get-document-info`
+    console.log('URL ', URL);
+    let auth_token = await AsyncStorage.getItem('token')
+
+    // Authorization: auth_token ? `Bearer ${auth_token}` : ''
+    try {
+        let res = await fetch(URL, {
+            method: 'get',
+            mode: 'cors',
+            headers: {
+                'Authorization': auth_token ? `Bearer ${auth_token}` : '',
+            }
+        })
+        let data = await res.json()
+        console.log('DATA RECIVED ', data)
+        return { status: res.status, data: data }
+    } catch (error) {
+        console.log('GET_DOCUMENT_INFO ERROR', error)
     }
 }

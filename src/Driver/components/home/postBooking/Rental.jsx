@@ -1,20 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Text, View, StyleSheet, TextInput, FlatList, ScrollView, TouchableOpacity } from 'react-native';
 import AuthenticatedLayout from '../../../common/layout/AuthenticatedLayout';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import PlacesAutoComplete from '../../../map/PlacesAutoComplete';
-import { BgColor , ScreenColor ,WHITEBG } from '../../../../styles/colors';
+import { BgColor, ScreenColor, WHITEBG } from '../../../../styles/colors';
 import { getResponsiveValue } from '../../../../styles/responsive';
 import Buttons from '../../../../adOns/atoms/Buttom';
 import TwoWayPushButton from '../../../../adOns/molecules/TwoWayPushButton';
 import DatePicker from '../../../../adOns/atoms/DatePicker';
+import FlashMessage from 'react-native-flash-message';
+import { showNoty } from '../../../../common/flash/flashNotification';
+import { booking } from '../../../../services/apiCall';
 
 
 const Rental = () => {
 
+    const rentalRef = useRef(null)
+    const [error, setError] = useState('')
+
     const [isPressed, setisPressed] = useState({
         state: false,
-        index: -1
+        subState: false,
+        index: -1,
+        subIndex: -1
     })
     const [isdisPressed, setisdisPressed] = useState({
         state: false,
@@ -28,51 +36,223 @@ const Rental = () => {
     const [permanentCost, setPermanentCost] = useState('')
     const [extraDis, setExtraDis] = useState('')
     const [extraHr, setExtraHr] = useState('')
+    const [budget, setBudget] = useState(null)
+
+    const [pickUp, setPickUp] = useState({
+        description: '',
+        latitude: null,
+        longitude: null,
+        date: {
+            msec: new Date().getTime(),
+            year: new Date().getFullYear(),
+            month: new Date().getMonth(),
+            day: new Date().getDate(),
+            hour: new Date().getHours(),
+            min: new Date().getMinutes()
+        }
+    })
+
+    const [drop, setDrop] = useState({
+        description: '',
+        latitude: null,
+        longitude: null,
+        date: {
+            msec: null,
+            year: null,
+            month: null,
+            day: null,
+            hour: null,
+            min: null
+        }
+    })
+
+    useEffect(() => {
+        console.log("PICKUP ", pickUp)
+    }, [pickUp])
+    useEffect(() => {
+        console.log("DROP ", drop)
+    }, [drop])
+    useEffect(() => {
+        console.log("BUDGET", budget)
+    }, [budget])
 
     const VehicleArray = [
         {
-            type: 'sedan',
-            specific: ['city', 'verna', 'swift', 'mercedes']
+            type: 'Mini',
+            subType: ['Wagnor', 'Celero', 'Any Mini'],
+            capacity: 3
         },
         {
-            type: 'xuv',
-            specific: ['wagonr', 'xuv500', 'defender', 'thar']
+            type: 'Sedan',
+            subType: ['Dzire', 'Etios', 'Xcent', 'Aura'],
+            capacity: 4
         },
         {
-            type: 'abc',
-            specific: ['ab', 'bc', 'cd', 'ef']
-        }
+            type: 'SUV',
+            subType: ['Ertiga', 'Innova', 'Innova Crista', 'Any 6+1 Seater'],
+            capacity: 6
+        },
+        {
+            type: 'SUV 10+1',
+            subType: ['Tavera', 'Cruser', 'Scorpio'],
+            capacity: 10
+        },
+        {
+            type: 'Bus',
+            subType: ['13 Seater', '17 Seater', '20 Seater', '26 Seater', '32 Seater'],
+            capacity: undefined
+        },
     ]
-
     const DistanceArray = [
         {
-            time: 14,
-            timeFormat: 'hr',
-            distance: 140,
-            permanentCost: 1500,
-            extraDistance: 12,
+            extraDistance: 20,
+            extraHour: 2
+        },
+        {
+            extraDistance: 40,
             extraHour: 4
         },
         {
-            time: 16,
-            timeFormat: 'hr',
-            distance: 160,
-            permanentCost: 2500,
-            extraDistance: 16,
+            extraDistance: 60,
             extraHour: 6
         },
+        {
+            extraDistance: 80,
+            extraHour: 8
+        },
+        {
+            extraDistance: 100,
+            extraHour: 10
+        },
+        {
+            extraDistance: 120,
+            extraHour: 12
+        },
     ]
+    const [vehicle, selectVehicle] = useState({
+        type: '',
+        subType: '',
+        capacity: '',
+    })
+    useEffect(() => {
+        console.log("VEHICLE SELECTION ", vehicle)
+    }, [vehicle])
+
     const handleVehicleType = function (item, index) {
-        setisPressed({ state: true, index: index })
-        setCarSpecificArray(item.specific)
-        console.log("lovehical choosen", item.name)
+        setisPressed(prev => { return { ...prev, state: true, index: index, subState: false, subIndex: -1 } })
+        selectVehicle(prev => { return { subType: '', type: item.type, capacity: item.capacity } })
+        setCarSpecificArray(item.subType)
     }
+    const handleVehicleSelection = (item, index) => {
+        setisPressed(prev => { return { ...prev, subState: true, subIndex: index } })
+        selectVehicle(prev => { return { ...prev, subType: item } })
+    }
+    const [IRPackage, setPackage] = useState({
+        extraDistance: null,
+        extraTime: null
+    })
+    useEffect(() => {
+        console.log("PACKAGE ", IRPackage)
+    }, [IRPackage])
     const handleDistance = function (item, index) {
+        // console.log(item ,index)
         setisdisPressed({ state: true, index: index })
-        setPermanentCost(item.permanentCost)
-        setExtraDis(item.extraDistance)
-        setExtraHr(item.extraHour)
+        setPackage({
+            extraDistance: item.extraDistance,
+            extraTime: item.extraHour
+        })
     }
+
+    const handleSubmit = async () => {
+        setError('')
+        console.log("HANDLING SUBMIT")
+        if (!(pickUp.description !== '' && pickUp.latitude !== null && !isNaN(pickUp.date.msec) && pickUp.date.msec !== null && !isNaN(pickUp.date.hour) && pickUp.date.hour !== null)) {
+            setError("Pick Up Information Incomplete");
+            return
+        }
+        console.log("PICK UP OK");
+        if (!(drop.description !== '' && drop.latitude !== null)) {
+            setError("Drop Point Information Incomplete");
+            return
+        }
+        console.log("DROP OK");
+        if (!(vehicle.type !== '' && vehicle.subType !== '')) {
+            setError("SELECT VEHICLE AND ITS TYPE");
+            return
+        }
+        console.log("VEHICLE OK");
+        if (IRPackage.extraDistance === '' || IRPackage.extraDistance === null) {
+            setError("ENTER YOUR BUDGET");
+            return
+        }
+        console.log("BUDGET OK");
+        if (budget === '' || budget === null) {
+            setError("ENTER YOUR BUDGET");
+            return
+        }
+        console.log("BUDGET OK");
+        setError('')
+        let data = {
+            initiator: "driver",
+            pickUp: pickUp,
+            drop: drop,
+            budget,
+            bookingType: "rental",
+            vehicle: vehicle,
+            IRPackage: IRPackage,
+            extrasIncluded: true
+        }
+        try {
+            // showNoty("SUCCESSFULL", "success")
+            let resObj = await booking(data)
+            console.log(resObj)
+            if (resObj.status !== 200) {
+                showNoty("BOOKING LIMIT HAS BEEN REACHED", "danger")
+            } else {
+                showNoty("BOOKING POSTED SUCCESSFULLY", "success")
+            }
+        } catch (error) {
+            console.log('ERROR IN RENTAL BOOKING ', error)
+        }
+    }
+
+    const handleDateChange = () => {
+        date = {
+            msec: new Date(dateSelected).getTime(),
+            year: new Date(dateSelected).getFullYear(),
+            month: new Date(dateSelected).getMonth(),
+            day: new Date(dateSelected).getDate(),
+        }
+        setPickUp(prev => {
+            return {
+                ...prev,
+                date: {...prev.date , ...date}
+            }
+        })
+    }
+    const handleTimeChange = () => {
+        setPickUp(prev => {
+            return {
+                ...prev,
+                date: { ...prev.date, hour: new Date(timeSelected).getHours(), min: new Date(timeSelected).getMinutes() }
+            }
+        })
+    }
+
+    useEffect(() => {
+        console.log("ERROR CHANGED")
+        if (error !== '') {
+            showNoty(error, "danger")
+        }
+    }, [error])
+    useEffect(() => {
+        console.log('TIME SELECTED', timeSelected)
+        handleTimeChange()
+    }, [timeSelected])
+    useEffect(() => {
+        console.log('DATE SELECTED ', dateSelected)
+        handleDateChange()
+    }, [dateSelected])
 
     return (
         <AuthenticatedLayout
@@ -84,7 +264,7 @@ const Rental = () => {
                 contentContainerStyle={{ flexGrow: 1 }}
                 keyboardShouldPersistTaps="true"
             >
-
+                <FlashMessage ref={rentalRef} />
                 {/*Pick up*/}
                 <View style={styles.pickUpContainer}>
                     <View>
@@ -94,7 +274,7 @@ const Rental = () => {
                     </View>
                     <View style={{ ...styles.LocationInput, zIndex: 3 }}>
                         <Icon name="location-on" size={24} color="black" style={styles.Timeicon} />
-                        <PlacesAutoComplete placeholder={'Pickup Location'} width={'85%'} />
+                        <PlacesAutoComplete placeholder={'Pickup Location'} width={'85%'} update={setPickUp} />
                     </View>
                 </View>
                 {/*Drop*/}
@@ -106,7 +286,7 @@ const Rental = () => {
                     </View>
                     <View style={{ ...styles.LocationInput, zIndex: 2 }}>
                         <Icon name="location-on" size={24} color="black" style={styles.Timeicon} />
-                        <PlacesAutoComplete placeholder={'Drop Location'} width={'85%'} />
+                        <PlacesAutoComplete placeholder={'Drop Location'} width={'85%'} update={setDrop} />
                     </View>
                 </View>
                 {/*Select Time*/}
@@ -116,24 +296,33 @@ const Rental = () => {
                         <Text style={styles.text}>Select Time</Text>
                     </View>
                     {/*Timming*/}
+                    {showDatePicker && <DatePicker
+                        initialDate={dateSelected}
+                        show={showDatePicker}
+                        setSelectedDate={setDateSelected}
+                        setShowDatePicker={setShowDatePicker}
+                        mode='date'
+                    />}
+                    {showTimePicker && <DatePicker
+                        initialDate={timeSelected}
+                        show={showTimePicker}
+                        setSelectedDate={setTimeSelected}
+                        setShowDatePicker={setShowTimePicker}
+                        mode='time'
+                    />}
                     <View style={styles.TimeBottons}>
                         <TouchableOpacity style={[styles.textInput, { marginRight: 5 }]} onPress={() => setShowDatePicker(true)}>
                             <Icon name="date-range" size={24} color="black" style={styles.Timeicon} />
                             <Text
                                 style={styles.Timeinput}
-                            >{dateSelected.toDateString()}</Text>
+                            >{pickUp.date.msec !== null && !isNaN(pickUp.date.msec) ? new Date(pickUp.date.msec).toDateString() : 'SELECT DATE'}</Text>
                         </TouchableOpacity>
-                        {showDatePicker && <DatePicker
-                            initialDate={dateSelected}
-                            setSelectedDate={setDateSelected}
-                            setShowDatePicker={setShowDatePicker}
-                            mode='date'
-                        />}
+
                         <TouchableOpacity style={styles.textInput} onPress={() => setShowTimePicker(true)}>
                             <Icon name="alarm" size={24} color="black" style={styles.Timeicon} />
                             <Text
                                 style={styles.Timeinput}
-                            >{timeSelected.toLocaleTimeString()}</Text>
+                            >{pickUp.date.hour !== null && !isNaN(pickUp.date.hour) ? `${pickUp.date.hour} : ${pickUp.date.min}` : 'SELECT TIME'}</Text>
                         </TouchableOpacity>
                         {showTimePicker && <DatePicker
                             initialDate={timeSelected}
@@ -179,10 +368,10 @@ const Rental = () => {
                             keyExtractor={(item, index) => (index)}
                             data={carSpecificArray}
                             horizontal
-                            renderItem={({ item }) => {
-                                return <TouchableOpacity>
+                            renderItem={({ item, index }) => {
+                                return <TouchableOpacity onPress={() => { handleVehicleSelection(item, index) }}>
                                     <View style={styles.vehicleImageContainer}>
-                                        <View style={[styles.vehicleImage]}>
+                                        <View style={[styles.vehicleImage, (isPressed.subState && isPressed.subIndex === index) ? styles.bgcolor : '']}>
                                             <Icon name="directions-car" size={30} color="#000" />
                                         </View>
                                         <View style={styles.vehicleName}>
@@ -210,14 +399,14 @@ const Rental = () => {
                             return <TouchableOpacity onPress={() => handleDistance(item, index)}>
                                 <View style={styles.DistanceContainer}>
                                     <View style={[styles.distanceImage, (isdisPressed.state && isdisPressed.index === index) ? styles.bgcolor : '']}>
-                                        <Text style={styles.disText}>{item.time} {item.timeFormat}</Text>
-                                        <Text style={styles.disText}>{item.distance} Km</Text>
+                                        <Text style={styles.disText}>{item.extraHour} hr</Text>
+                                        <Text style={styles.disText}>{item.extraDistance} Km</Text>
                                     </View>
                                 </View>
                             </TouchableOpacity>
                         }}
                     />
-                    {(permanentCost !== '') ?
+                    {/*(permanentCost !== '') ?
                         <View>
                             <View>
                                 <Text style={styles.Packagetext}>Permanent Cost: {permanentCost}</Text>
@@ -229,7 +418,7 @@ const Rental = () => {
                                 <Text style={styles.Packagetext}>Extra Hour: {extraHr}</Text>
                             </View>
                         </View> : ''
-                    }
+                    */}
 
                 </View>
                 {/*Budget*/}
@@ -243,12 +432,13 @@ const Rental = () => {
                             placeholder="Enter Amount"
                             keyboardType="numeric"
                             placeholderTextColor={'gray'}
+                            onChangeText={v => setBudget(v)}
                         />
                     </View>
                 </View>
                 {/*Submit*/}
                 <View style={styles.buttons}>
-                    <Buttons name="SUBMIT" style={{ width: '90%' }} />
+                    <Buttons name="SUBMIT" style={{ width: '90%' }} onPress={handleSubmit} />
                 </View>
             </ScrollView>
         </AuthenticatedLayout>
@@ -290,7 +480,7 @@ const styles = StyleSheet.create({
         fontWeight: '800',
         color: 'green',
         paddingLeft: 5,
-        margin:5
+        margin: 5
     },
     LocationInput: {
         display: 'flex',

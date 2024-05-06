@@ -10,7 +10,7 @@ const ActiveRequestCard = (props) => {
     const { item, type } = props;
 
     const handlePressOverCard = () => {
-        console.log('TYPE ',type)
+        console.log('TYPE ', type)
         if (type === 'Local')
             navigation.navigate('LocalRequestHandler', { item: item });
         else
@@ -20,26 +20,31 @@ const ActiveRequestCard = (props) => {
     return (
         <TouchableOpacity onPress={handlePressOverCard}>
             <View style={styles.activeBar}>
-                {type!=='Local' && item.verifiedBy && <View style={{ ...styles.label, backgroundColor: item.verifiedBy.toLowerCase() === 'owner taxi' ? '#8EF433' : BgColor }}>
+                {type !== 'Local' && item.verifiedBy && <View style={{ ...styles.label, backgroundColor: item.verifiedBy.toLowerCase() === 'owner taxi' ? '#8EF433' : BgColor }}>
                     <Text style={{ ...styles.textColor, ...styles.textHeading, fontSize: 12, letterSpacing: -0.5 }}>Verified By</Text>
                     <Text style={{ ...styles.textColor, ...styles.textHeading, fontSize: 16, fontWeight: '500' }}>{item.verifiedBy}</Text>
                 </View>}
-               
+
                 <View style={{ display: 'flex ', flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
                     <Text style={{ color: 'black', ...styles.textHeading, fontSize: 18, letterSpacing: 0.5 }}>Booking ID : </Text>
                     <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500' }}>{item._id}</Text>
-                </View> 
-                {type!=='Local' && <View style={{display : 'flex',flexDirection : 'row', justifyContent: 'flex-start',alignItems: 'center',gap : 15 , paddingVertical : 10}}>
-                        <StatusButton 
-                            text = {[item.subtype]}
-                            textStyle={[{color : 'white',fontSize:16}]}
-                            containerStyle={{borderRadius : 15,padding : 3 , backgroundColor : '#4B2021' , minWidth : 90}}
-                        />
-                        <StatusButton 
-                            text = {[item.car]}
-                            textStyle={[{color : 'white',fontSize:16}]}
-                            containerStyle={{borderRadius : 15,padding : 3 , backgroundColor : '#8B558F'}}
-                        />
+                </View>
+                {type !== 'Local' && <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', gap: 15, paddingVertical: 10 }}>
+                    <StatusButton
+                        text={[item.bookingType!=='rental' ? item.bookingSubType?.toUpperCase() : "Rental"]}
+                        textStyle={[{ color: 'white', fontSize: 16 }]}
+                        containerStyle={{ borderRadius: 15, padding: 3, backgroundColor: '#4B2021', minWidth: 90 }}
+                    />
+                    <StatusButton
+                        text={[item.vehicle.type]}
+                        textStyle={[{ color: 'white', fontSize: 16 }]}
+                        containerStyle={{ borderRadius: 15, padding: 3, backgroundColor: '#8B558F' }}
+                    />
+                    {item.vehicle.subType !== '' ? <StatusButton
+                        text={[item.vehicle.subType]}
+                        textStyle={[{ color: 'white', fontSize: 16 }]}
+                        containerStyle={{ borderRadius: 15, padding: 3, backgroundColor: '#8B1F81' }}
+                    /> : ''}
                 </View>}
                 <View style={{ display: 'flex ', flexDirection: 'row', alignItems: 'center' }}>
                     <Text style={{ ...styles.textColor, ...styles.textHeading, fontSize: 16 }}>Customer ID : </Text>
@@ -65,7 +70,7 @@ const ActiveRequestCard = (props) => {
                 </View>
                 <View style={[styles.borderTop]}>
                     <View style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}>
-                        <View><Text style={[styles.textColor]}>{`${item.pickUp.date.day}-${item.pickUp.date.month+1}-${item.pickUp.date.year}`} {`${item.pickUp.date.hour}:${item.pickUp.date.min}`}</Text></View>
+                        <View><Text style={[styles.textColor]}>{`${item.pickUp.date.day}-${item.pickUp.date.month + 1}-${item.pickUp.date.year}`} {`${item.pickUp.date.hour}:${item.pickUp.date.min}`}</Text></View>
                         <View style={{}}>
                             <View><Text style={{ ...styles.textColor, color: 'red' }}>Distance : 500 km </Text></View>
                             <View><Text style={{ ...styles.textColor, color: 'green' }}>Budget : &#x20B9;{item.budget} </Text></View>
@@ -87,7 +92,7 @@ const styles = StyleSheet.create({
         padding: 10,
         position: 'relative',
         overflow: 'hidden',
-        borderRadius : 10
+        borderRadius: 10
     },
     label: {
         display: 'flex ',
