@@ -63,6 +63,7 @@ import PrivacyVendor from './src/Vendor/common/Privacy/PrivacyVendor';
 import TermsVendor from './src/Vendor/common/Terms&Condition/termsVendor';
 import FlashMessage from 'react-native-flash-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ActiveBooking from './src/Driver/components/active Booking/ActiveBooking';
 
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator();
@@ -77,6 +78,7 @@ function DrawerNavigatorDriver() {
       <Drawer.Screen name="Sharing" component={Sharing} options={{ headerShown: false }} />
       <Drawer.Screen name="Rental" component={Rental} options={{ headerShown: false }} />
       <Drawer.Screen name="Recharge" component={Recharge} options={{ headerShown: false }} />
+      <Drawer.Screen name="ActiveBooking" component={ActiveBooking} options={{ headerShown: false }} />
       <Drawer.Screen name="LocalRequestHandler" component={LocalRequestHandler} options={{ headerShown: false }} />
       <Drawer.Screen name="IntercityRequestHandler" component={IntercityRequestHandler} options={{ headerShown: false }} />
       <Drawer.Screen name="Wallet" component={Wallet} options={{ headerShown: false }} />
