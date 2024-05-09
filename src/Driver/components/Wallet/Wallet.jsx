@@ -1,13 +1,33 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { ScrollView, Text, View, TouchableOpacity, Image, FlatList, StyleSheet } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import TransactionBox from './TransactionCard'
 import PressButton from '../../../adOns/atoms/PressButton'
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useProfile } from '../../../context/ContextProvider'
+import server from '../../../services/server.tsx'
+import LoadingScreen from '../../../adOns/organisms/LoadingScreen'
 
 const Wallet = () => {
   const navigation = useNavigation()
+  const { profileState, profileDispatch } = useProfile()
+  const [comingSoon, setComingsoon] = useState(true)
+  const [profileDetails, setProfileDetails] = useState({
+    image: server.server + profileState.avatar,
+    name: profileState?.userName,
+    phoneNumber: profileState?.phone,
+    email: profileState.email
+  })
+  useFocusEffect(
+    useCallback(() => {
+      setProfileDetails({
+        image: server.server + profileState.avatar,
+        name: profileState?.userName,
+        phoneNumber: profileState?.phone,
+        email: profileState?.email
+      })
+    }, []))
   const transactionList = [
     {
       name: 'Transaction Name',
@@ -44,41 +64,42 @@ const Wallet = () => {
     <AuthenticatedLayout title={'Wallet'}>
 
       <View style={styles.displayFlex}>
-        <Image source={require('../../../assets/imgaes/Profile2.png')} style={styles.imagestyle} />
-        <Text style={styles.textstyle}>Your Name</Text>
+        <Image source={!profileState.avatar ? require('../../../assets/imgaes/Profile2.png') : { uri: profileDetails.image }} style={styles.imagestyle} />
+        <Text style={styles.textstyle}>{!profileDetails.name ? "User Name" : profileDetails.name}</Text>
       </View>
-      <View style={styles.rupeeBox}>
-        <Text style={{...styles.rupeetext , color : 'red'}}>Balance : </Text>
-       
-        <Text style={styles.rupeetext}>₹ 10,000</Text>
-      </View>
-      <View style={styles.col}>
-        <View style={{ flex: 1 }}>
-          <View style={{marginBottom : 15}}>
-            <Text style={styles.text}>Transaction History</Text>
+      {!comingSoon ? <View style={{ flex: 1  , marginBottom : 20}}>
+        <View style={styles.rupeeBox}>
+          <Text style={{ ...styles.rupeetext, color: 'red' }}>Balance : </Text>
+          <Text style={styles.rupeetext}>₹ 10,000</Text>
+        </View>
+        <View style={styles.col}>
+          <View style={{ flex: 1}}>
+            <View style={{ marginBottom: 15 }}>
+              <Text style={styles.text}>Transaction History</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <FlatList
+                style={{ flex: 1, marginBottom: 10 }}
+                keyExtractor={(item, index) => (index)}
+                data={transactionList}
+                renderItem={({ item }) => {
+                  return <TouchableOpacity>
+                    <View style={styles.FlatListviewStyle}>
+                      <TransactionBox item={item} />
+                    </View>
+                  </TouchableOpacity>
+                }}
+              />
+            </View>
           </View>
-          <View style={{ flex: 1 }}>
-            <FlatList
-              style={{ flex: 1, marginBottom: 10 }}
-              keyExtractor={(item, index) => (index)}
-              data={transactionList}
-              renderItem={({ item }) => {
-                return <TouchableOpacity>
-                  <View style={styles.FlatListviewStyle}>
-                    <TransactionBox item={item} />
-                  </View>
-                </TouchableOpacity>
-              }}
+          <View>
+            <PressButton
+              name='Recharge Now'
+              onPress={() => navigation.navigate('Recharge')}
             />
           </View>
         </View>
-        <View>
-          <PressButton
-            name='Recharge Now'
-            onPress = {()=>navigation.navigate('Recharge')}
-          />
-        </View>
-      </View>
+      </View> : <LoadingScreen cs={true} showFooter={false} showHeader={false}/>}
 
     </AuthenticatedLayout>
   )

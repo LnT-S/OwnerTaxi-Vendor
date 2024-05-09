@@ -1,20 +1,25 @@
 import React from 'react'
 import {View, Text, StyleSheet } from 'react-native'
+import { useProfile } from '../../../context/ContextProvider'
 
 const HistoryRequestCard = (props) => {
 
     const { item } = props
+    const {profileState , profileDispatch} = useProfile()
 
     return (
             <View style={styles.activeBar}>
-                <View><Text style={[styles.textColor, styles.textHeading]}>Customer ID : {item.customerID}</Text></View>
+                <View style={{marginBottom : 10}}>
+                <Text style={[styles.textColor, styles.textHeading,{fontSize : 18}]}>Posted By     : {profileState?.phone?.toString()===item.id?.phoneNo.toString() ? 'You' : item.id.phoneNo}</Text>
+                <Text style={[styles.textColor, styles.textHeading]}>Accepted By : {item.acceptor?.phone?.toString()===profileState?.phone?.toString() ? 'You' : item.acceptor.phone}</Text>
+                </View>
                 <View style={[styles.horizontalstatus, styles.borderTop]}>
                     <View style={styles.activeBarmarginRight}>
                         <View>
                             <Text style={[styles.textColor, styles.textHeading]}>Pick Up  </Text>
                         </View>
                         <View>
-                            <Text style={styles.textColor}>{item.from}</Text>
+                            <Text style={styles.textColor}>{item.pickUp.description}</Text>
                         </View>
                     </View>
                     <View style={styles.activeBarmarginLeft}>
@@ -22,13 +27,14 @@ const HistoryRequestCard = (props) => {
                             <Text style={[styles.textColor, styles.textHeading]}>Destination  </Text>
                         </View>
                         <View>
-                            <Text style={{ color: 'white' }}>{item.to}</Text>
+                            <Text style={{ color: 'white' }}>{item.drop.description}</Text>
                         </View>
                     </View>
                 </View>
                 <View style={[styles.horizontalstatus, styles.borderTop]}>
                     <View>
-                        <Text style={[styles.textColor]}>Accepted On : {item.time}  {item.date}</Text>
+                        <Text style={[styles.textColor]}>Accepted On : {new Date(item.updatedAt).toDateString()}</Text>
+                        <Text style={[styles.textColor]}>Budget:  &#x20B9;{item.budget}</Text>
                     </View>
 
                 </View>

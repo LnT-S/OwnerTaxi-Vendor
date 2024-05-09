@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { BackHandler, ScrollView, Text, View, TouchableOpacity, StyleSheet, FlatList } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
+import React, { useCallback, useEffect, useState } from 'react'
+import { BackHandler, ScrollView, Text, View, TouchableOpacity, StyleSheet, FlatList, Image } from 'react-native'
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
 import SearchBox from '../../../adOns/atoms/Search'
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -12,6 +12,9 @@ import PressButton from '../../../adOns/atoms/PressButton'
 import FunctionalModal from '../../../adOns/molecules/FunctionalModal'
 import YesNoModal from '../../../adOns/molecules/YesNoModal'
 import { getIntercityBookingFromPostVendor, getLocalBooking } from '../../../services/getDataServices'
+import LoadingScreen from '../../../adOns/organisms/LoadingScreen'
+import { getProfile } from '../../../services/profileServices'
+import { useProfile } from '../../../context/ContextProvider'
 const HomePageDriver = () => {
     const activeList = [
         {
@@ -82,8 +85,13 @@ const HomePageDriver = () => {
 
     ];
     const navigation = useNavigation()
+    const route = useRoute();
+    const { profileState, profileDispatch } = useProfile()
+    const { reload, option } = route?.params ? route.params : ''
     const [showSearchResult, setShowSearchResults] = useState(true)
-    const [selectedOption, setSelectedOption] = useState('Local')
+    const [selectedOption, setSelectedOption] = useState('InterCity')
+    console.log('selection ', selectedOption)
+    const [pageIsLoading, setPageIsLoading] = useState(true)
     const [showModal, setShowModal] = useState(false)
     const [showPostBookingModal, setShowPostBookingModal] = useState(false)
 
@@ -91,6 +99,8 @@ const HomePageDriver = () => {
     const [intercityList, setIntercityList] = useState([])
 
     const fetchLocal = () => {
+        setPageIsLoading(true)
+        setSelectedOption('InterCity')
         getLocalBooking()
             .then(data => {
                 console.log("**", data.data.data)
@@ -107,7 +117,15 @@ const HomePageDriver = () => {
             .catch(err => {
                 console.log("ERROR IN FETCHING INTERCITY DATA ", err)
             })
+        setPageIsLoading(false)
     }
+    useFocusEffect(
+        useCallback(() => {
+            fetchLocal()
+            setSelectedOption(option)
+        }, [])
+    );
+
     const postBookingFunctionalObject = {
         function1: {
             name: 'Intercity',
@@ -127,11 +145,32 @@ const HomePageDriver = () => {
         setShowModal(false);
         BackHandler.exitApp();
     };
-
+    useEffect(() => {
+        setPageIsLoading(true)
+        getProfile()
+            .then(data => {
+                profileDispatch({
+                    type: 'PHONE',
+                    payload: data.data.data.phoneNo
+                })
+                profileDispatch({
+                    type: 'USERNAME',
+                    payload: data.data.data.name
+                })
+                profileDispatch({
+                    type: 'AVATAR',
+                    payload: data.data.data.avatar
+                })
+                console.log("PROFILE UPDATED")
+            })
+            .catch(err => {
+                console.log("ERROR IN RETRIVING PROFILE ", err)
+            })
+            setPageIsLoading(false)
+    }, [])
     useEffect(() => {
         const backFuntion = () => {
-            navigation.goBack()
-            return true
+            setShowModal(true)
         }
         console.log("BACKHANDLER SET IN HOME PAGE")
         const backHandler = BackHandler.addEventListener('hardwareBackPress', backFuntion);
@@ -140,55 +179,65 @@ const HomePageDriver = () => {
             backHandler.remove()
         };
     }, []);
+    const leftCenterJsx = (<View style={{ height: 100, width: 100, position : 'relative', top : 5,marginRight : -10}}><Image resizeMode='contain' source={require('../../../assets/imgaes/Taxilogo.png')} style={{ height: '100%', width: '100%' }} /></View>)
 
-    return (
-        <AuthenticatedLayout title={'Home'} showFooter={false}>
-            <View style={{ position: 'relative', flex: 1 }}>
-                <FunctionalModal
-                    show={showPostBookingModal}
-                    setShow={setShowPostBookingModal}
-                    title={'Choose Booking Type'}
-                    functionalObject={postBookingFunctionalObject}
-                />
-                <YesNoModal
-                    show={showModal}
-                    setShow={setShowModal}
-                    title={'EXIT ?'}
-                    message={'Are You Sure Want To Exit ?'}
-                    handleYes={handleYes}
-                    yesText={'Exit'}
-                    noText={'Cancel'} />
-                <View style={styles.viewStyle}>
-                    <View style={styles.liststyle}>
-                        <Text style={styles.textStyle}>LIVE FEED REQUESTS</Text>
-                        <TouchableOpacity onPress={fetchLocal}><RefreshButton action={fetchLocal} /></TouchableOpacity>
-                    </View>
-                    <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    if (pageIsLoading) {
+        return (
+            <LoadingScreen cs={false} />)
+    } else {
+        return (
+            <AuthenticatedLayout title={'Owner Taxi'} showFooter={false} showBackIcon={false} leftCenterJsx={leftCenterJsx}>
+                <View style={{ position: 'relative', flex: 1 }}>
+                    <FunctionalModal
+                        show={showPostBookingModal}
+                        setShow={setShowPostBookingModal}
+                        title={'Choose Booking Type'}
+                        functionalObject={postBookingFunctionalObject}
+                    />
+                    <YesNoModal
+                        show={showModal}
+                        setShow={setShowModal}
+                        title={'EXIT ?'}
+                        message={'Are You Sure Want To Exit ?'}
+                        handleYes={handleYes}
+                        yesText={'Exit'}
+                        noText={'Cancel'} />
+                    <View style={styles.viewStyle}>
+                        <View style={styles.liststyle}>
+                            <View style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '90%' }}>
+                                <TwoWayPushButton option1={'InterCity'} option2={'Local'} setter={setSelectedOption} />
+                            </View>
+                            <TouchableOpacity onPress={fetchLocal}><RefreshButton action={fetchLocal} /></TouchableOpacity>
+                        </View>
+                        {/*<View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <TwoWayPushButton option1={'Local'} option2={'InterCity'} setter={setSelectedOption} />
-                    </View>
-                    <View style={{ height: '75%' }}>
-                        <FlatList
-                            keyExtractor={(item, index) => (index)}
-                            data={selectedOption==='Local' ? localList : intercityList}
-                            renderItem={({ item }) => {
-                                return <View style={styles.FlatListviewStyle}><LazyLoadActiveRequestCard item={selectedOption==='Local' ? item.passiveBookingId : item} type={selectedOption} /></View>
-                            }}
-                        />
-                    </View>
-                    <View style={{ marginTop: 8 }}>
-                        <PressButton name={'            Post Booking            '}
-                            onPress={() => { setShowPostBookingModal(true) }} />
+    </View>*/}
+                        <View style={{ height: '81%' }}>
+
+                            {selectedOption !== 'Local' ? <FlatList
+                                keyExtractor={(item, index) => (index)}
+                                data={selectedOption === 'Local' ? localList : intercityList}
+                                renderItem={({ item }) => {
+                                    return <View style={styles.FlatListviewStyle}><LazyLoadActiveRequestCard item={selectedOption === 'Local' ? item.passiveBookingId : item} type={selectedOption} /></View>
+                                }}
+                            /> : <LoadingScreen cs={true} showHeader={false} showFooter={false} />}
+                        </View>
+                        <View style={{ marginTop: 8 }}>
+                            <PressButton name={'            Post Booking            '}
+                                onPress={() => { setShowPostBookingModal(true) }} />
+                        </View>
                     </View>
                 </View>
-            </View>
-        </AuthenticatedLayout>
-    )
+            </AuthenticatedLayout>
+        )
+    }
 }
 
 const styles = StyleSheet.create({
     viewStyle: {
         zIndex: 1,
-        height: '100%'
+        height: '100%',
+        flex: 1,
     },
     liststyle: {
         marginHorizontal: 10,

@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export const getProfile = async () => {
-    const URL = `${server.server}/customer/get-profile-info`
+    const URL = `${server.server}/driver/get-profile-info`
     console.log('URL ', URL)
     let auth_token = await AsyncStorage.getItem('token')
     let res = await fetch(URL, {

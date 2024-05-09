@@ -1,56 +1,42 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Linking } from 'react-native';
-import { showNoty } from '../../../common/flash/flashNotification';
-import FlashMessage from 'react-native-flash-message';
-import YesNoModal from '../../../adOns/molecules/YesNoModal';
-import { deleteBooking } from '../../../services/apiCall';
+import CheckLeadsModal from '../../../adOns/molecules/CheckLeadsModal';
 
-const ActiveBookingCard = (props) => {
+const BookingAcceptedCard = (props) => {
 
     const activeItem = props.item?.passiveBookingId
+    // console.log("ACTIVE ORP ",activeItem)
+    // console.log("ACTIVE ORP ", props.item)
     const navigation = useNavigation()
-    const ref = useRef(null)
-    const [showModal, setShowModal] = useState(false)
+    const [showLeads, setShowLeads] = useState(false)
 
-    const handleView = () => {
-        navigation.navigate("IntercityRequestHandler", { item: activeItem })
-    }
-    const handleYes =()=>{
-        setShowModal(false)
-        deleteBooking({bookingId : props?.item?.passiveBookingId?._id})
-        .then(data=>{
-            if(data.status===200){
-                showNoty(data.data.message , "success")
-                props?.load()
-            }else{
-                showNoty(data.data.message , "danger")
-            }
-        })
-        .catch(err=>{
-            console.log("ERROR DELETING ACCOUNT ",err);
-            showNoty("Some Error Occured ! Try After Some Time")
-        })
-    }
+    const handleCall = () => {
+        Linking.openURL(`tel:${props.item.authenticationId.phoneNo}`);
+    };
 
+    const handleMessage = () => {
+        const messageUrl = `sms:${props.item.authenticationId.phoneNo}`;
+        Linking.openURL(messageUrl);
+    };
     const handlenavigation = () => {
-        if (activeItem.status === 'bidstarted' || activeItem.status === 'accepted') {
-            console.log("Active RERRRRRR ", props.item)
-            navigation.navigate('Bidding', { item: props.item })
-        } else {
-            if (activeItem.status === 'pending') {
-                showNoty("No Driver has yet accepted your booking ", "info")
-            }else{
-                showNoty("You will now see this in history ", "info")
-            }
+        if (activeItem.status === 'bidstarted') {
+            navigation.navigate('Bidding', { item: activeItem })
         }
     }
-    return (
-        <View>
-            <FlashMessage ref={ref} />
+    const checkLeads = () => {
+        setShowLeads(true)
+    }
 
+    return (
+        <View >
+            <CheckLeadsModal
+                show={showLeads}
+                setShow={setShowLeads}
+                driversArray={props.item.driverResponse}
+                 />
             <View style={styles.activeBar}>
                 <TouchableOpacity onPress={handlenavigation}>
                     <View style={{ display: 'flex ', flexDirection: 'row', alignItems: 'center' }}>
@@ -93,28 +79,20 @@ const ActiveBookingCard = (props) => {
                 </TouchableOpacity>
 
                 {/**Call Msg cancel */}
-                <YesNoModal
-                    show={showModal}
-                    setShow={setShowModal}
-                    title={'EXIT ?'}
-                    message={'Are You Sure Want To Delete this Booking ?'}
-                    handleYes={handleYes}
-                    yesText={'Delete'}
-                    noText={'Cancel'} />
-                {<View style={[styles.container, styles.borderTop, {}]} >
-                    <TouchableOpacity style={styles.iconContainer} onPress={handleView}>
-                        <Icon name="preview" size={30} color='#31db1a' />
-                        <Text style={styles.scheduleText}>View</Text>
+                <View style={[styles.container, styles.borderTop, {}]} >
+                    <TouchableOpacity style={styles.iconContainer} onPress={handleCall}>
+                        <Icon name="phone" size={30} color='#31db1a' />
+                        <Text style={styles.scheduleText}>Call</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.iconContainer} onPress={handlenavigation}>
-                        <Icon name="view-list" size={30} color="blue" />
-                        <Text style={styles.scheduleText}>Driver</Text>
+                    <TouchableOpacity style={styles.iconContainer} onPress={handleMessage}>
+                        <Icon name="message" size={30} color="blue" />
+                        <Text style={styles.scheduleText}>Message</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.iconContainer} onPress={()=>setShowModal(true)}>
-                        <Icon name="cancel" size={30} color="red" />
-                        <Text style={styles.scheduleText}>Delete</Text>
+                    <TouchableOpacity style={styles.iconContainer} onPress={checkLeads}>
+                        <Icon name="format-list-bulleted" size={30} color="black" />
+                        <Text style={styles.scheduleText}>Leads</Text>
                     </TouchableOpacity>
-                </View>}
+                </View>
             </View>
         </View>
     )
@@ -171,4 +149,4 @@ const styles = StyleSheet.create({
         textTransform: 'capitalize'
     }
 })
-export default ActiveBookingCard
+export default BookingAcceptedCard

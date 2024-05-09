@@ -24,7 +24,7 @@ const OtpScreen = () => {
     const [timer, setTimer] = useState('')
 
     const handleVerificationOTP = async () => {
-        await getOtp(profileState.phone)
+        await getOtp(profileState.phone,"Driver")
     }
 
     const extractOTP = (messageBody) => {

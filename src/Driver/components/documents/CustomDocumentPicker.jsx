@@ -9,7 +9,7 @@ import { uploadDocumentDriver } from '../../../services/apiCall';
 
 const CustomDocumentPicker = (props) => {
 
-    const { documentName, visible, setVisible,documentDetails,vehicleNo } = props
+    const { documentName, visible, setVisible,documentDetails,vehicleNo,reload } = props
     const [input, setInput] = useState('')
     const [error, setError] = useState('')
     const [document, setDocument] = useState(null)
@@ -59,6 +59,10 @@ const CustomDocumentPicker = (props) => {
         uploadDocumentDriver(data)
         .then(data=>{
             console.log(data.data.message)
+            if(data.status===200){
+                reload()
+                setVisible(false)
+            }
         })
         .catch(err=>{
             console.log("ERROR IS ", err)

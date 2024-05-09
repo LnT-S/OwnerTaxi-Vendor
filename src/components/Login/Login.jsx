@@ -52,7 +52,11 @@ const LoginPage = () => {
         setTimer(interval)
     }
     useEffect(() => {
+        setError('')
         console.log('selected Option ', selectedOption)
+        if(selectedOption==='Vendor'){
+            setError("Coming Soon ...")
+        }
     }, [selectedOption])
     useEffect(() => {
         if (seconds <= 0) {
@@ -72,7 +76,13 @@ const LoginPage = () => {
     const handleLogin = async () => {
         setLoading(true)
         try {
-            if (phone.length === 10) {
+            if(selectedOption==='Vendor'){
+                setError("Coming Soon ...")
+                showNoty("Vendor Module will soon be available","info")
+                setLoading(false)
+                return 
+            }
+            if (phone.length === 10 ) {
                 let otpSent = await AsyncStorage.getItem('otpSent')
                 otpSent = parseInt(otpSent)
                 console.log('otp', otpSent)
@@ -151,12 +161,12 @@ const LoginPage = () => {
                             <Text style={styles.title}>LogIn</Text>
                         </View>
 
-                        <TwoWayPushButton option1={'Vendor'} option2={'Driver'} setter={setSelectedOption} />
+                        <TwoWayPushButton option1={'Driver'} option2={'Vendor'} setter={setSelectedOption} />
 
                         <View style={styles.formpart}>
                             <UserInput
                                 style={[styles.input]}
-                                placeholder='UserName or Phone No.'
+                                placeholder='Phone Number'
                                 icon={'person'}
                                 onChangeText={(v) => {
                                     setPhone(v)

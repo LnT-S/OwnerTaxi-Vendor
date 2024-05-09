@@ -1,12 +1,14 @@
 // CustomDrawerContent.tsx
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import YesNoModal from '../../../adOns/molecules/YesNoModal';
 import { useProfile } from '../../../context/ContextProvider';
+import server from '../../../services/server.tsx'
+import { BgColor } from '../../../styles/colors.jsx';
 
 interface CustomDrawerProps {
   state: any; // React Navigation state object
@@ -16,9 +18,26 @@ interface CustomDrawerProps {
 const CustomDrawerContent: React.FC<CustomDrawerProps> = ({ state, navigation }) => {
 
   const activeRouteName = state.routeNames[state.index]; // Get the active route name
-  const {profileState , profileDispatch} = useProfile()
+  const { profileState, profileDispatch } = useProfile()
   const [showModal, setShowModal] = useState(false)
   const mainNavigation = useNavigation()
+
+  const [profileDetails, setProfileDetails] = useState({
+    image: profileState.avatar !== '' ? server.server + profileState.avatar : '',
+    name: profileState?.userName,
+    phoneNumber: profileState?.phone,
+    email: profileState.email
+  })
+  useFocusEffect(
+    useCallback(() => {
+      setProfileDetails({
+        image: server.server + profileState.avatar,
+        name: profileState?.userName,
+        phoneNumber: profileState?.phone,
+        email: profileState?.email
+      })
+    }, [profileState]))
+
 
   const handleNavigation = (routeName: string) => {
     navigation.navigate(routeName);
@@ -33,24 +52,24 @@ const CustomDrawerContent: React.FC<CustomDrawerProps> = ({ state, navigation })
       routes: [{ name: 'LoginScreen' }],
     });
   };
-
   return (
     <DrawerContentScrollView contentContainerStyle={styles.container}>
-       <YesNoModal
-              show={showModal}
-              setShow={setShowModal}
-              title={'EXIT ?'}
-              message={'Are You Sure Want To Logout ?'}
-              handleYes={handleYes}
-              yesText={'Yes'}
-              noText={'No'}/>
+      <YesNoModal
+        show={showModal}
+        setShow={setShowModal}
+        title={'EXIT ?'}
+        message={'Are You Sure Want To Logout ?'}
+        handleYes={handleYes}
+        yesText={'Yes'}
+        noText={'No'} />
       <View style={{ display: 'flex', alignItems: 'flex-end', marginRight: 15, marginTop: 10 }}>
         <Icon name="settings" size={24} color="white" onPress={() => handleNavigation('Setting')} />
       </View>
       <View style={styles.profileContainer}>
-        <Icon name="person" size={50} color="#ffea00" />
-        <Text style={styles.profileText}>Person name</Text>
-        <Text style={styles.profileText}>123-456-7890</Text>
+        <Image source={!profileState.avatar ? require('../../../assets/imgaes/Profile2.png') : { uri: profileDetails.image }} style={styles.imagestyle} />
+        {/*<Icon name="person" size={50} color="#ffea00" />*/}
+        <Text style={styles.profileText}>{!profileDetails.name ? 'User Name' : profileDetails.name}</Text>
+        <Text style={styles.profileText}>{profileDetails.phoneNumber}</Text>
       </View>
       <TouchableOpacity
         style={[
@@ -82,6 +101,26 @@ const CustomDrawerContent: React.FC<CustomDrawerProps> = ({ state, navigation })
           styles.text,
           activeRouteName === 'ActiveBooking' && styles.activeItemColor,
         ]}>Active Booking</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[
+          activeRouteName === 'BookingAccepted' && styles.activeItemBackground,
+        ]}
+        onPress={() => handleNavigation('BookingAccepted')}>
+        <Text style={[
+          styles.text,
+          activeRouteName === 'BookingAccepted' && styles.activeItemColor,
+        ]}>Booking Accepted</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[
+          activeRouteName === 'Profile' && styles.activeItemBackground,
+        ]}
+        onPress={() => handleNavigation('Profile')}>
+        <Text style={[
+          styles.text,
+          activeRouteName === 'Profile' && styles.activeItemColor,
+        ]}>Profile</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={[
@@ -137,6 +176,13 @@ const styles = StyleSheet.create({
   profileContainer: {
     alignItems: 'center',
     paddingVertical: 20,
+  },
+  imagestyle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginBottom: 10,
+    // backgroundColor : BgColor,
   },
   item: {
     flexDirection: 'row',

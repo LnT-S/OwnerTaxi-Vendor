@@ -1,63 +1,37 @@
-import React, { useState } from 'react'
-import { Text, View,FlatList, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native'
+import React, { useCallback, useState } from 'react'
+import { Text, View, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native'
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import HistoryRequestCard from './HistoryRequestCard';
+import { useFocusEffect } from '@react-navigation/native';
+import { getDriverHistory } from '../../../services/getDataServices';
+import { showNoty } from '../../../common/flash/flashNotification';
 
 const History = () => {
-  const historyList = [
-    {
-      from: 'Aman Tiwari, Naween chowk SITAPUR',
-      to: 'Shruti Mishra, Ghura mau bangla',
-      date: '06-07-2019',
-      time: '12:00 PM',
-      customerID: 'Shruti Mishra'
-    },
-    {
-      from: 'Aman Tiwari, Naween chowk SITAPUR',
-      to: 'Shruti Mishra, Ghura mau bangla',
-      date: '06-07-2019',
-      time: '12:00 PM',
-      customerID: 'Shruti Mishra'
-    },
-    {
-      from: 'Aman Tiwari, Naween chowk SITAPUR',
-      to: 'Shruti Mishra, Ghura mau bangla',
-      date: '06-07-2019',
-      time: '12:00 PM',
-      customerID: 'Shruti Mishra'
-    },
-    {
-      from: 'Aman Tiwari, Naween chowk SITAPUR',
-      to: 'Shruti Mishra, Ghura mau bangla',
-      date: '06-07-2019',
-      time: '12:00 PM',
-      customerID: 'Shruti Mishra'
-    },
-    {
-      from: 'Aman Tiwari, Naween chowk SITAPUR',
-      to: 'Shruti Mishra, Ghura mau bangla',
-      date: '06-07-2019',
-      time: '01:00 PM',
-      customerID: 'Shruti Mishra'
-    }
-
-  ];
-
+  const [historyList, setHistoryList] = useState([])
   const [isRefreshing, setIsRefreshing] = useState(false)
 
-  const refreshing = async ()=>{
-  }
-  const fetchData = async ()=>{
-      setIsRefreshing(true)
-      setInterval(()=>{
-          setIsRefreshing(false)
-      },200)
+  const fetchData = async () => {
+    setIsRefreshing(true)
+    getDriverHistory()
+      .then(data => {
+        console.log("HISTORY DATA",data.data.data)
+        setHistoryList(data.data.data)
+      })
+      .catch(err => {
+        showNoty("Error Occured ! Try after some time")
+      })
+    setIsRefreshing(false)
 
   }
+  useFocusEffect(
+    useCallback(() => {
+      fetchData()
+    }, [])
+  )
 
   return (
     <AuthenticatedLayout title={'History'}>
-    {isRefreshing && <ActivityIndicator  size={'large'} color={'black'}/>}
+      {isRefreshing && <ActivityIndicator size={'large'} color={'black'} />}
       <FlatList
         style={{}}
         keyExtractor={(item, index) => (index)}
@@ -67,15 +41,15 @@ const History = () => {
         }}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={fetchData} />
-      }
+        }
       />
     </AuthenticatedLayout>
   )
 }
 
-const styles= StyleSheet.create({
+const styles = StyleSheet.create({
   FlatListviewStyle: {
     marginVertical: 10
-}
+  }
 })
 export default History

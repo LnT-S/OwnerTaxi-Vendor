@@ -10,7 +10,7 @@ import LoadingScreen from '../../../adOns/organisms/LoadingScreen';
 const Message = () => {
 
     const navigation = useNavigation()
-    const [pageIsLoading , setPageIsLoading] = useState(false)
+    const [pageIsLoading , setPageIsLoading] = useState(true)
     const [selectedOption, setSelectedOption] = useState('')
     const [isRefreshing, setIsRefreshing] = useState(false)
 
@@ -72,7 +72,7 @@ const Message = () => {
         navigation.navigate('messageScreen',{item})
     }
     if(pageIsLoading){
-        return <LoadingScreen />
+        return <LoadingScreen cs={true}/>
     }else{
         return (
             <AuthenticatedLayout title={'Messages'} showMessageIcon={false}>

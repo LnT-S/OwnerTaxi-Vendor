@@ -1,9 +1,9 @@
-import React, { useRef, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { StyleSheet, Text, View , TouchableOpacity, ScrollView} from 'react-native'
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import Semicircle from '../../../adOns/atoms/SemiCircle'
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useProfile } from '../../../context/ContextProvider';
 import { deleteAccount } from '../../../services/apiCall';
 import { showNoty } from '../../../common/flash/flashNotification';
@@ -16,14 +16,35 @@ const Setting = () => {
   const navigation = useNavigation()
   const {profileState, profileDispatch} = useProfile()
   const [showModal, setShowModal] = useState(false)
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
   const delRef = useRef(null)
-
-  const profileDetails = {
-    image : '',
-    name: 'Shruti',
-    phoneNumber: '1234567891',
-    email: ''
-  }
+  const [loading, setLoading] = useState(false)
+  const [profileDetails, setProfileDetails] = useState({
+    image: profileState.avatar,
+    name: profileState?.userName,
+    phoneNumber: profileState?.phone,
+    email: profileState.email
+  })
+  useFocusEffect(
+    useCallback(() => {
+      setProfileDetails({
+        image: profileState.avatar,
+        name: profileState?.userName,
+        phoneNumber: profileState?.phone,
+        email: profileState.email
+      })
+      // console.log('7887798 ',profileState.email)
+    }, []))
+    const handleYes = async () => {
+      await AsyncStorage.removeItem('token')
+      // profileDispatch({type:'REFRESH', payload:!profileState.refresh})
+      setShowModal(false);
+      navigation.closeDrawer();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'LoginScreen' }],
+      });
+    };
   const handleDelete = () => {
     console.log("DELETE PRESSED")
     deleteAccount()
@@ -55,7 +76,7 @@ const Setting = () => {
       <View style={{flex : 1 ,display : 'flex', flexDirection : 'column',justifyContent : 'space-between' , width : '100%'}}>
         <View style={styles.settingBox}>
         <FlashMessage ref={delRef} />
-          <TouchableOpacity style={styles.listItem1} onPress = {() => navigation.navigate('profileScreen')}>
+          <TouchableOpacity style={styles.listItem1} onPress = {() => navigation.navigate('Profile')}>
             <Icon name="edit" size={30} color="#ffea00" />
             <Text style={styles.text}>Edit Profile</Text>
           </TouchableOpacity>
@@ -67,14 +88,22 @@ const Setting = () => {
             handleYes={handleDelete}
             yesText={'Delete'}
             noText={'Cancel'} />
+            <YesNoModal
+            show={showLogoutModal}
+            setShow={setShowLogoutModal}
+            title={'EXIT ?'}
+            message={'Are You Sure Want To Logout ?'}
+            handleYes={handleYes}
+            yesText={'Yes'}
+            noText={'No'}/>
           <TouchableOpacity style={styles.listItem1} onPress={() => { setShowModal(true) }}>
             <Icon name="delete" size={30} color="#ffea00" />
             <Text style={styles.text}>Delete My Account</Text>
           </TouchableOpacity>
-          <View style={styles.listItem2}>
+          <TouchableOpacity style={styles.listItem2} onPress={()=>setShowLogoutModal(true)}>
             <Icon name="exit-to-app" size={30} color="#ffea00" />
             <Text style={styles.text}>Log Out</Text>
-          </View>
+          </TouchableOpacity>
         </View>
         <TouchableOpacity style={{width : '100%'}} onPress={() => {navigation.navigate('Terms')}}>
           <Text style={styles.textStyle}>Terms and Conditions</Text>

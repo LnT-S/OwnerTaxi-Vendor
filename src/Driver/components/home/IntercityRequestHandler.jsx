@@ -1,30 +1,115 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Text, ScrollView, TextInput } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
+import { View, StyleSheet, Text, ScrollView, TextInput, Linking } from 'react-native';
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout';
-import { useRoute } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import StatusButton from '../../../adOns/atoms/StatusButton';
 import { BgColor, WHITEBG } from '../../../styles/colors';
 import MapComponent from '../../map/MapComponent';
 import { height } from '../../../styles/responsive';
 import PressButton from '../../../adOns/atoms/PressButton';
+import { acceptIntercityBooking, checkWhetherAcceptedTheBooking, isDocumentVerified, unacceptTheBooking } from '../../../services/apiCall';
+import FlashMessage from 'react-native-flash-message';
+import { showNoty } from '../../../common/flash/flashNotification';
 
 const IntercityRequestHandler = () => {
 
     const route = useRoute()
-    const { item } = route.params
-
+    const navigation = useNavigation()
+    const { item, reload } = route.params
+    const ref = useRef()
+    // console.log("ITEM IS ",item)
+    const [phone, setPhone] = useState(null)
     const [callButton, showCallButton] = useState(false)
+
+    useFocusEffect(
+        useCallback(() => {
+            showCallButton(false)
+            // console.log({bookingId : item._id},item)
+            checkWhetherAcceptedTheBooking({ bookingId: item._id })
+                .then(data => {
+                    if (data.data.data.accepted) {
+                        setPhone(data.data.data.phoneNo)
+                        showCallButton(true)
+                    } else {
+                        showCallButton(false)
+                    }
+                })
+                .catch(err => {
+                    console.log("ERROR CHECKING ACCEPTANCE ", err)
+                })
+        }, [item]))
+    const handleUnaccept = () => {
+        unacceptTheBooking({ bookingId: item._id })
+            .then(data => {
+                if (data.status === 200) {
+                    showNoty(data.data.message, "success")
+                    showCallButton(false);
+                } else {
+                    showNoty(data.data.message, "warning")
+                }
+            })
+            .catch(err => {
+                console.log("ERROR UNACCEPTING THE BOOKING ", err)
+            })
+    }
+
+    const handleAccept = () => {
+        let formData = {
+            bookingId: item._id
+        }
+        isDocumentVerified()
+            .then(data => {
+                console.log(data.data.data)
+                if (data.data.data.verified===true || true) {
+                    acceptIntercityBooking(formData)
+                        .then(data => {
+                            if (data.status === 300) {
+                                showNoty(data.data.message, "info")
+                            } else {
+                                if (data.status === 400 || data.status === 500) {
+                                    showNoty(data.data.message, "warning")
+                                } else {
+                                    showCallButton(true)
+                                    showNoty(data.data.message, "success")
+                                    setPhone(data.data.data.phoneNo)
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            console.log("ERROR in ACCEPT INTERCITY")
+                        })
+                }else{
+                    showNoty(data.data.message,"warning")
+                    setTimeout(()=>navigation.navigate("Document"),2000)
+                }
+            })
+            .catch(err=>{
+                console.log("ERROR CHECKING DOCUMENT VWERIFICATION ",err)
+            })
+        // console.log(data)
+
+    }
+    const handleCall = () => {
+        if (phone !== null) {
+            Linking.openURL(`tel:${phone}`);
+        }
+    };
+    const handleMessage = () => {
+        const messageUrl = `sms:${phone}`;
+        Linking.openURL(messageUrl);
+    };
 
     return (
         <AuthenticatedLayout
             showFooter={false}
-            showBackIcon={false}
-            title={item.customerID}
+            showBackIcon={true}
+            title={"Intercity Request"}
         >
             <ScrollView style={{ flex: 1, backgroundColor: WHITEBG }}
                 nestedScrollEnabled={true}
                 contentContainerStyle={{ flexGrow: 1 }}
                 keyboardShouldPersistTaps="true">
+                <FlashMessage ref={ref} />
                 <View style={{ ...styles.mainConatiner }}>
                     <View style={styles.idContainer}>
                         <View style={styles.idContainer.leftSection}>
@@ -34,7 +119,7 @@ const IntercityRequestHandler = () => {
                         <View style={styles.idContainer.rightSection}>
                             <StatusButton
                                 text={[item.status[0]?.toUpperCase() + item.status.substring(1,)]}
-                                containerStyle={{ backgroundColor: item.status.toLowerCase() === 'active' ? 'green' : 'red', borderRadius: 20, width: 80 }}
+                                containerStyle={{ backgroundColor: item.status.toLowerCase() === 'active' ? 'green' : 'red', borderRadius: 20, width: 100 }}
                                 textStyle={[{ fontFamily: 'serif', color: 'white', fontSize: 18 }]}
                             />
                             {item.verifiedBy && <StatusButton
@@ -46,7 +131,7 @@ const IntercityRequestHandler = () => {
                     </View>
                     <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
                         <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#4B2021', width: '75%', padding: 5, borderRadius: 10, marginVertical: 5 }}>
-                            <Text style={{ textAlign: 'center', color: 'white', fontSize: 22 }}>{item.bookingType!=="rental" ? item.bookingSubType[0]?.toUpperCase() + item.bookingSubType.substring(1,) : "Rental"}</Text>
+                            <Text style={{ textAlign: 'center', color: 'white', fontSize: 22 }}>{item.bookingType !== "rental" ? item.bookingSubType[0]?.toUpperCase() + item.bookingSubType.substring(1,) : "Rental"}</Text>
                         </View>
                         <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#8B558F', width: '75%', padding: 5, borderRadius: 10, marginVertical: 5 }}>
                             <Text style={{ textAlign: 'center', color: 'white', fontSize: 22 }}>{item.vehicle.type[0]?.toUpperCase() + item.vehicle.type.substring(1,)}</Text>
@@ -74,12 +159,12 @@ const IntercityRequestHandler = () => {
                                 </View>
                             })}
                         </View> : ''}
-                        {item.bookingSubType?.toLowerCase() !== 'oneway' && item.bookingType!== " rental" ? <View style={{ flexDirection: 'column', flex: 1 }}>
+                        <View style={{ flexDirection: 'column', flex: 1 }}>
                             <View style={{ width: '100%', marginBottom: 15, justifyContent: 'center', alignItems: 'center', }}>
                                 <Text style={{ color: 'black', ...styles.textHeading, fontSize: 16, letterSpacing: 0.5, textAlign: 'left' }}>Drop</Text>
                                 <Text style={{ color: 'gray', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{item.drop.description}</Text>
                             </View>
-                        </View> : ''}
+                        </View>
                         <View style={{ ...styles.optionContainer.section, height: 100, backgroundColor: 'rgba(0,0,0,0.03)' }}>
                             <View style={styles.optionContainer.section.leftSection}>
                                 <Text style={{ color: 'gray', ...styles.textHeading, fontSize: 20, letterSpacing: 0.5, textAlign: 'left' }}>Distance</Text>
@@ -96,7 +181,7 @@ const IntercityRequestHandler = () => {
                                 <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{new Date(item.pickUp.date.msec).toDateString()}</Text>
                                 <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{item.pickUp.date.hour} : {item.pickUp.date.min} {item.pickUp.date.hour > 12 ? 'pm' : 'am'}</Text>
                             </View>
-                            {item.bookingSubType?.toLowerCase()!== 'oneway' && item.bookingType!=="rental"  && <View style={styles.optionContainer.section.rightSection}>
+                            {item.bookingSubType?.toLowerCase() !== 'oneway' && item.bookingType !== "rental" && <View style={styles.optionContainer.section.rightSection}>
                                 <Text style={{ color: 'gray', ...styles.textHeading, fontSize: 22, letterSpacing: 0.5, textAlign: 'left' }}>Drop Date</Text>
                                 <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{new Date(item.drop.date.msec).toDateString()}</Text>
                                 <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{item.drop.date.hour} : {item.drop.date.min} {item.drop.date.hour > 12 ? 'pm' : 'am'}</Text>
@@ -121,8 +206,8 @@ const IntercityRequestHandler = () => {
                             </View>*/}
                     </View>
                     <View style={{ ...styles.buttonContainer, opacity: item.status === 'closed' ? 0.5 : 1, marginTop: 15 }}>
-                        {!callButton ? <PressButton name="Accept" disabled={item.status !== 'closed' ? false : true} onPress={() => showCallButton(true)} /> :
-                            <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', }}><PressButton name="Call Vendor" disabled={item.status !== 'closed' ? false : true} onPress={() => null} /><PressButton name="Un-Accept" disabled={item.status !== 'closed' ? false : true} onPress={() => showCallButton(false)} /></View>}
+                        {!callButton ? <PressButton name="Accept" disabled={item.status !== 'closed' ? false : true} onPress={handleAccept} /> :
+                            <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', }}><PressButton name="Call Vendor" disabled={item.status !== 'closed' ? false : true} onPress={handleCall} /><PressButton name="Un-Accept" disabled={item.status !== 'closed' ? false : true} onPress={handleUnaccept} /></View>}
                     </View>
                 </View>
             </ScrollView>

@@ -64,6 +64,8 @@ import TermsVendor from './src/Vendor/common/Terms&Condition/termsVendor';
 import FlashMessage from 'react-native-flash-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ActiveBooking from './src/Driver/components/active Booking/ActiveBooking';
+import BidingPage from './src/Driver/components/active Booking/BidingPage';
+import BookingAccepted from './src/Driver/components/active Booking/BookingAccepted';
 
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator();
@@ -76,11 +78,14 @@ function DrawerNavigatorDriver() {
       <Drawer.Screen name="Intercity" component={Intercity} options={{ headerShown: false }} />
       <Drawer.Screen name="Local" component={LocalForm} options={{ headerShown: false }} />
       <Drawer.Screen name="Sharing" component={Sharing} options={{ headerShown: false }} />
+      <Drawer.Screen name='Bidding' component={BidingPage} options={{ headerShown: false }}/>
       <Drawer.Screen name="Rental" component={Rental} options={{ headerShown: false }} />
       <Drawer.Screen name="Recharge" component={Recharge} options={{ headerShown: false }} />
       <Drawer.Screen name="ActiveBooking" component={ActiveBooking} options={{ headerShown: false }} />
+      <Drawer.Screen name="BookingAccepted" component={BookingAccepted} options={{ headerShown: false }} />
       <Drawer.Screen name="LocalRequestHandler" component={LocalRequestHandler} options={{ headerShown: false }} />
       <Drawer.Screen name="IntercityRequestHandler" component={IntercityRequestHandler} options={{ headerShown: false }} />
+      <Drawer.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
       <Drawer.Screen name="Wallet" component={Wallet} options={{ headerShown: false }} />
       <Drawer.Screen name="Setting" component={Settting} options={{ headerShown: false }} />
       <Drawer.Screen name="Document" component={Documents} options={{ headerShown: false }} />
@@ -89,7 +94,6 @@ function DrawerNavigatorDriver() {
       <Drawer.Screen name='notification' component={Notification} options={{ headerShown: false }} />
       <Drawer.Screen name='notificationScreen' component={NotificationFullPage} options={{ headerShown: false }} />
       <Drawer.Screen name='messageScreen' component={MessageScreen} options={{ headerShown: false }} />
-      <Drawer.Screen name='profileScreen' component={Profile} options={{ headerShown: false }} />
       <Drawer.Screen name='Privacy' component={Privacy} options={{ headerShown: false }} />
       <Drawer.Screen name='Terms' component={Terms} options={{ headerShown: false }} />
     </Drawer.Navigator>

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, StyleSheet, Animated, Easing, ActivityIndicator } from 'react-native';
+import { View, Image, StyleSheet, Animated, Easing, ActivityIndicator, Text } from 'react-native';
 import { BgColor } from '../../styles/colors';
 import AuthenticatedLayout from '../../Driver/common/layout/AuthenticatedLayout';
 
-const LoadingScreen = () => {
+const LoadingScreen = (props) => {
+    const { cs , showHeader , showFooter} = props
     const [zoomValue] = useState(new Animated.Value(1));
 
     useEffect(() => {
@@ -31,13 +32,15 @@ const LoadingScreen = () => {
     }, [zoomValue]);
 
     return (
-        <AuthenticatedLayout>
+        <AuthenticatedLayout showFooter={showFooter} showHeader={showHeader}>
+            {props.children}
             <View style={styles.container}>
                 <Animated.Image
                     source={require('../../assets/imgaes/Taxilogo.png')}
                     style={[styles.image, { transform: [{ scale: zoomValue }] }]}
                 />
-                <ActivityIndicator size={40} color={'white'} style={styles.activityIndicator} />
+
+                {cs ? <View style={{ ...styles.activityIndicator, left: 90 }}><Text style={{ color: 'white', fontSize: 18, fontFamily: 'serif' }}>Coming Soon ...</Text></View> : <ActivityIndicator size={40} color={'white'} style={styles.activityIndicator} />}
             </View>
         </AuthenticatedLayout>
     );

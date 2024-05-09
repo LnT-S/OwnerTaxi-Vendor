@@ -11,12 +11,15 @@ import DatePicker from '../../../../adOns/atoms/DatePicker';
 import FlashMessage from 'react-native-flash-message';
 import { showNoty } from '../../../../common/flash/flashNotification';
 import { booking } from '../../../../services/apiCall';
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 
 const Rental = () => {
 
     const rentalRef = useRef(null)
     const [error, setError] = useState('')
+    const navigation = useNavigation()
 
     const [isPressed, setisPressed] = useState({
         state: false,
@@ -192,11 +195,19 @@ const Rental = () => {
         }
         console.log("BUDGET OK");
         setError('')
+        let origin = `${pickUp.latitude},${pickUp.longitude}`
+        let destination = `${drop.latitude},${drop.longitude}`
+        const apiKey = 'AIzaSyAlEujvNEFTFUBtG9363FjtK-3YOLAUSfM'
+        const response = await axios.get(
+            `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${origin}&destinations=${destination}&key=${apiKey}`
+        );
+        const distance = response.data.rows[0].elements[0].distance?.text;
         let data = {
             initiator: "driver",
             pickUp: pickUp,
             drop: drop,
             budget,
+            distance : distance ? distance.toString() : '',
             bookingType: "rental",
             vehicle: vehicle,
             IRPackage: IRPackage,
@@ -208,8 +219,11 @@ const Rental = () => {
             console.log(resObj)
             if (resObj.status !== 200) {
                 showNoty("BOOKING LIMIT HAS BEEN REACHED", "danger")
+                setTimeout(()=>navigation.navigate("Home"),2000)
+
             } else {
                 showNoty("BOOKING POSTED SUCCESSFULLY", "success")
+                setTimeout(()=>navigation.navigate("Home"),2000)
             }
         } catch (error) {
             console.log('ERROR IN RENTAL BOOKING ', error)

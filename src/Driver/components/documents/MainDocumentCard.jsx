@@ -9,6 +9,7 @@ import server from '../../../services/server.tsx'
 
 const MainDocumentCard = (props) => {
     const { status, documentId, documentName,image } = props.item
+    const {reload} = props
 
     const [modalVisible, setModalVisible] = useState(false);
     const [infoModalVisible , setInfoModalVisible ] = useState(false)
@@ -36,6 +37,7 @@ const MainDocumentCard = (props) => {
             visible = {modalVisible}
             setVisible = {setModalVisible}
             vehicleNo={props.vehicleNo}
+            reload={reload}
              />
              <InfoModal 
              show = {infoModalVisible} 

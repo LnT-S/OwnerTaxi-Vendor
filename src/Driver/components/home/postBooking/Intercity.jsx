@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, TextInput, FlatList, ScrollView, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TextInput, FlatList, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import AuthenticatedLayout from '../../../common/layout/AuthenticatedLayout';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import PlacesAutoComplete from '../../../map/PlacesAutoComplete';
@@ -13,6 +13,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useProfile } from '../../../../context/ContextProvider';
 import { booking } from '../../../../services/apiCall';
 import { showNoty } from '../../../../common/flash/flashNotification';
+import { GoogleDirections } from 'react-native-google-maps-directions';
+import axios from 'axios';
 const Intercity = () => {
 
 
@@ -211,6 +213,16 @@ const Intercity = () => {
             return
         }
         console.log("DROP OK");
+        let origin = `${pickUp.latitude},${pickUp.longitude}`
+        let destination = `${drop.latitude},${drop.longitude}`
+        const apiKey = 'AIzaSyAlEujvNEFTFUBtG9363FjtK-3YOLAUSfM'
+
+        const response = await axios.get(
+            `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${origin}&destinations=${destination}&key=${apiKey}`
+        );
+
+        const distance = response.data.rows[0].elements[0].distance?.text;
+        console.log("DISTANCE ", distance ,response.data.rows[0].elements[0])  
         if (!(vehicle.type !== '' && vehicle.subType !== '')) {
             setError("SELECT VEHICLE AND ITS TYPE");
             return
@@ -227,6 +239,7 @@ const Intercity = () => {
             pickUp: pickUp,
             stops: stops,
             drop: drop,
+            distance : distance ? distance.toString() : '',
             budget,
             bookingType: "intercity",
             bookingSubType: selectedOption.toLowerCase(),
@@ -238,9 +251,11 @@ const Intercity = () => {
             let resObj = await booking(data)
             console.log(resObj)
             if (resObj.status !== 200) {
-                showNoty("BOOKING LIMIT HAS BEEN REACHED", "danger")
+                setTimeout(() => navigation.navigate("Home"), 2000)
+                showNoty(resObj.data.message, "danger")
             } else {
-                showNoty("BOOKING POSTED SUCCESSFULLY", "success")
+                setTimeout(() => navigation.navigate("Home"), 2000)
+                showNoty(resObj.data.message, "success")
             }
         } catch (error) {
             console.log('ERROR IN INTERCITY BOOKING ', error)
@@ -333,7 +348,7 @@ const Intercity = () => {
                         </View>
                         <View style={{ ...styles.LocationInput, zIndex: 2 }}>
                             <Icon name="location-on" size={24} color="black" style={styles.Timeicon} />
-                            <PlacesAutoComplete placeholder={'Drop Location'} width={'85%'} update={setDrop}/>
+                            <PlacesAutoComplete placeholder={'Drop Location'} width={'85%'} update={setDrop} />
                         </View>
                     </View>
 
@@ -454,7 +469,7 @@ const Intercity = () => {
                                 renderItem={({ item, index }) => {
                                     return <TouchableOpacity onPress={() => { handleVehicleSelection(item, index) }}>
                                         <View style={styles.vehicleImageContainer}>
-                                            <View style={[styles.vehicleImage,(isPressed.subState && isPressed.subIndex === index) ? styles.bgcolor : '']}>
+                                            <View style={[styles.vehicleImage, (isPressed.subState && isPressed.subIndex === index) ? styles.bgcolor : '']}>
                                                 <Icon name="directions-car" size={30} color="#000" />
                                             </View>
                                             <View style={styles.vehicleName}>
@@ -479,7 +494,7 @@ const Intercity = () => {
                                 placeholder="Enter Amount"
                                 keyboardType="numeric"
                                 placeholderTextColor={'gray'}
-                                onChangeText={v=>{setBudget(v)}}
+                                onChangeText={v => { setBudget(v) }}
                             />
                         </View>
                     </View>
@@ -508,7 +523,7 @@ const Intercity = () => {
                     </View>
                     {/*Submit*/}
                     <View style={styles.buttons}>
-                        <Buttons name="SUBMIT" style={{ width: '90%' }}  onPress={()=>{handleSubmit().then().catch(error=>console.log("ERROR IN HANDLE SUBMIT ", error))}}/>
+                        <Buttons name="SUBMIT" style={{ width: '90%' }} onPress={() => { handleSubmit().then().catch(error => console.log("ERROR IN HANDLE SUBMIT ", error)) }} />
                     </View>
                 </View>
             </ScrollView>

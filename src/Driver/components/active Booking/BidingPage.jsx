@@ -1,70 +1,109 @@
-import React from 'react';
-import { View, StyleSheet, Text, FlatList, Image, TouchableOpacity } from 'react-native';
+import React, { useRef } from 'react';
+import { View, StyleSheet, Text, FlatList, Image, TouchableOpacity, Linking } from 'react-native';
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import server from '../../../services/server.tsx'
+import { assignBooking, unAssignBooking } from '../../../services/apiCall.jsx';
+import FlashMessage from 'react-native-flash-message';
+import { showNoty } from '../../../common/flash/flashNotification.jsx';
 
 const BidingPage = (props) => {
     const route = useRoute()
+    const navigation = useNavigation()
     const { item } = route.params
-    const driverArray = item.driver
+    const ref = useRef(null)
+    console.log("ITEM ", item)
+    const handleCall = (phone) => {
+        Linking.openURL(`tel:${phone}`);
+    };
+    const handleUnAssign = (phoneNo)=>{
+        unAssignBooking({
+            bookingId : item?.passiveBookingId?._id,
+            phoneNo
+        })
+        .then(data=>{
+            if(data.status===200){
+                showNoty(data.data.message,"info");
+                navigation.goBack()
+            }else{
+                showNoty(data.data.message,"danger")
+            }
+        })
+        .catch(err=>{
+            console.log("ERROR ASSIGN BOOKING",err)
+            showNoty("BOOKING COULD NOT BE ASSIGNED ","danger")
+        })
+    }
+    const handleAssign = (phoneNo)=>{
+        assignBooking({
+            bookingId : item?.passiveBookingId?._id,
+            phoneNo
+        })
+        .then(data=>{
+            if(data.status===200){
+                showNoty(data.data.message,"info")
+                navigation.goBack()
+            }else{
+                showNoty(data.data.message,"danger")
+            }
+        })
+        .catch(err=>{
+            console.log("ERROR ASSIGN BOOKING",err)
+            showNoty("BOOKING COULD NOT BE ASSIGNED ","danger")
+        })
+    }
+
     return (
         <AuthenticatedLayout title={'Bidding Cofirmation'}>
+        <FlashMessage ref={ref}/>
             <FlatList
                 keyExtractor={(item, index) => (index)}
-                data={driverArray}
+                data={item.driverResponse}
                 renderItem={({ item, index }) => {
                     return <View>
                         <View style={styles.FlatListviewStyle}>
                             <View style={styles.flexrow}>
                                 <View style={styles.flexrow}>
                                     <Image
-                                        source={item.image}
+                                        source={!item.image ? require('../../../assets/imgaes/Profile.png') :{uri : server.server+item.image}}
                                         style={styles.image}
                                     />
                                     <View>
                                         <View>
-                                            <Text style={{ ...styles.text, color:'black',textTransform:'capitalize' }}>{item.name}</Text>
+                                            <Text style={{ ...styles.text, color: 'black', textTransform: 'capitalize' }}>{item.driverPhone}</Text>
                                         </View>
                                         <View>
                                             <View>
-                                                <Text style={{ ...styles.text, color:'black' }}>
+                                                <Text style={{ ...styles.text, color: 'black' }}>
                                                     &#9733; {item.rating}
                                                 </Text>
                                             </View>
-                                            <View>
-                                                <Text style={{ ...styles.text, color:'gray' }}>
+                                            {/*<View>
+                                                <Text style={{ ...styles.text, color: 'gray' }}>
                                                     ({item.satisfiedCustomer})
                                                 </Text>
-                                            </View>
+                </View>*/}
                                         </View>
                                     </View>
                                 </View>
 
                                 <View>
                                     <View>
-                                        <Text style={{ ...styles.text, color:'green',fontSize: 22 }}>
-                                            ₹{item.cost}
-                                        </Text>
-                                    </View>
-                                    <View>
-                                        <Text style={{ ...styles.text, color:'black' }}>
-                                            {item.time}
-                                        </Text>
-                                    </View>
-                                    <View>
-                                        <Text style={{ ...styles.text, color:'black' }}>
-                                            {item.kilometer}
+                                        <Text style={{ ...styles.text, color: 'green', fontSize: 22 }}>
+                                            ₹{route.params.item.passiveBookingId.budget}
                                         </Text>
                                     </View>
                                 </View>
                             </View>
-                            <View style={{...styles.flexrow, margin: 5}}>
-                                <TouchableOpacity style={styles.btn}>
-                                    <Text style={{ ...styles.text, color:'red' }}>Decline</Text>
+                            <View style={{ ...styles.flexrow, margin: 5 }}>
+                                <TouchableOpacity style={styles.btn} onPress={()=>{handleCall(item.driverPhone)}}>
+                                    <Text style={{ ...styles.text, color: 'red' }}>Call</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={{ ...styles.btn, backgroundColor: 'green' }}>
-                                    <Text style={{ ...styles.text, color:'white' }}>Accept</Text>
-                                </TouchableOpacity>
+                                {route.params.item?.passiveBookingId?.acceptor?.phone?.toString()!==item.driverPhone ? <TouchableOpacity style={{ ...styles.btn, backgroundColor: 'green' }} onPress={()=>{handleAssign(item.driverPhone)}}>
+                                    <Text style={{ ...styles.text, color: 'white' }}>Assign</Text>
+                                </TouchableOpacity> :<TouchableOpacity style={{ ...styles.btn, backgroundColor: 'green' }} onPress={()=>{handleUnAssign(item.driverPhone)}}>
+                                <Text style={{ ...styles.text, color: 'white' }}>Un Assign</Text>
+                            </TouchableOpacity> }
                             </View>
                         </View>
                     </View>
@@ -87,7 +126,8 @@ const styles = StyleSheet.create({
         height: 60,
         borderRadius: 30,
         marginBottom: 10,
-        marginRight: 10
+        marginRight: 10,
+        backgroundColor : 'black'
     },
     flexrow: {
         display: 'flex',

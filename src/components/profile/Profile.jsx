@@ -1,12 +1,12 @@
-import React, { useCallback, useLayoutEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
-import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
-import Semicircle from '../../../adOns/atoms/SemiCircle'
+import AuthenticatedLayout from '../../Driver/common/layout/AuthenticatedLayout';
+import InvertedPersonInfoSemicircle from '../../adOns/atoms/SemiCircle';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import YesNoModal from '../../../adOns/molecules/YesNoModal';
-import { useProfile } from '../../../context/ContextProvider';
-import { getProfile } from '../../../services/profileServices';
+import YesNoModal from '../../adOns/molecules/YesNoModal';
+import { useProfile } from '../../context/ContextProvider';
+import { getProfile } from '../../services/profileServices';
 
 const Profile = () => {
 
@@ -14,22 +14,13 @@ const Profile = () => {
   const [showModal, setShowModal] = useState(false)
   const { profileState, profileDispatch } = useProfile()
   const [loading, setLoading] = useState(false)
+
   const [profileDetails, setProfileDetails] = useState({
     image: profileState.avatar,
     name: profileState?.userName,
     phoneNumber: profileState?.phone,
     email: profileState.email
   })
-  useFocusEffect(
-    useCallback(() => {
-      setProfileDetails({
-        image: profileState.avatar,
-        name: profileState?.userName,
-        phoneNumber: profileState?.phone,
-        email: profileState.email
-      })
-      // console.log('7887798 ',profileState.email)
-    }, []))
 
   const handleRefresh = () => {
     setLoading(true)
@@ -84,7 +75,7 @@ const Profile = () => {
         handleYes={handleShow}
         yesText={'Hide'}
         noText={'Show'} />
-      <Semicircle item={profileDetails} editMode={false} />
+      <InvertedPersonInfoSemicircle item={profileDetails} editMode={false} />
       <View style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '100%' }}>
         <View style={styles.settingBox}>
           <TouchableOpacity style={styles.listItem1} onPress={() => setShowModal(true)}>
