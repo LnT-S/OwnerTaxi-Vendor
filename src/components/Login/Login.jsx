@@ -97,10 +97,16 @@ const LoginPage = () => {
                     await AsyncStorage.setItem('otpSent', new Date().getTime().toString())
                     if (resObj.status === 200) {
                         setLoading(false)
-                        navigation.navigate('OTPScreen')
+                        navigation.navigate('OTPScreen',{preOtp : undefined})
                     }else{
-                        showNoty(resObj.data.message , "danger")
-                        setLoading(false)
+                        if(resObj.status===202){
+                            showNoty(resObj.data.message , "info")
+                            setTimeout(()=>navigation.navigate('OTPScreen',{preOtp : resObj.data.otp}),2000)
+                            setLoading(false)
+                        }else{
+                            showNoty(resObj.data.message , "danger")
+                            setLoading(false)
+                        }
                     }
                 } else {
                     setLoading(false)

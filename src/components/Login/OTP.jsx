@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { KeyboardAvoidingView, TouchableOpacity, View, Image, StyleSheet, Text, Platform } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { BgColor } from '../../styles/colors';
 import global from '../../styles/global'
 import { getResponsiveValue } from '../../styles/responsive';
 import OTPInput from '../../adOns/molecules/OTPInput';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import PressButton from '../../adOns/atoms/PressButton';
 import SmsListener from 'react-native-android-sms-listener'
 // import SmsRetriever from 'react-native-sms-retriever';
@@ -17,19 +17,51 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const OtpScreen = () => {
 
     const navigation = useNavigation()
+    const route = useRoute()
+    const { preOtp } = route.params
     const { profileState, profileDispatch } = useProfile()
-    const [otp, setOtp] = useState('      ');
+    const [otp, setOtp] = useState(preOtp === undefined ? '      ' : preOtp);
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [timer, setTimer] = useState('')
 
     const handleVerificationOTP = async () => {
-        await getOtp(profileState.phone,"Driver")
+        await getOtp(profileState.phone, "Driver")
+    }
+
+    let test = async () => {
+        setOtp(preOtp === undefined ? '      ' : preOtp)
+        if (preOtp !== undefined) {
+            let resObj = await verifyOtp(profileState.phone, preOtp)
+            if (resObj.status === 200){
+                if (resObj.data.token !== null) {
+                    setError('')
+                    profileDispatch({
+                        type: 'TOKEN',
+                        payload: resObj.data.token
+                    })
+                    await AsyncStorage.setItem('token', resObj.data.token)
+                }
+
+                let temp = await AsyncStorage.getItem('userIs')
+                console.log(temp)
+                if (temp === 'Vendor') {
+                    navigation.navigate('HomeSceenVendor')
+                } else {
+                    navigation.navigate('HomeSceenDriver')
+                }
+                setLoading(false)
+            } else {
+                setError(resObj.data.message)
+                setLoading(false)
+            }
+        }
     }
 
     const extractOTP = (messageBody) => {
         // Implement your OTP extraction logic here
         // Example: Extract 6 digit OTP using regex
+
         const otpRegex = /Your OTP is (\d{6})/;
         const match = messageBody.match(otpRegex);
         const otp = match ? match[1] : null;
@@ -50,6 +82,10 @@ const OtpScreen = () => {
                     request(PERMISSIONS.ANDROID.RECEIVE_SMS)
                         .then(async results => {
                             console.log("1", result, results);
+                            if (profileState.phone.toString() === '1906991906') {
+                                let otp = await AsyncStorage.getItem('testOtp')
+
+                            }
                             if (results === 'granted' && result === 'granted') {
                                 console.log("2.0");
                                 // Start listening for incoming SMS
@@ -131,13 +167,19 @@ const OtpScreen = () => {
                 {error !== '' ? <View style={{ marginTop: 20, marginBottom: -25 }}><Text style={{ color: 'red', fontSize: 14 }}>{error}</Text></View> : ''}
 
 
-                <PressButton
+                {preOtp === undefined ? <PressButton
                     style={{ marginTop: 60 }}
                     name='Resend OTP'
                     loading={loading}
                     disabled={loading}
                     onPress={handleVerificationOTP}
-                />
+                /> : <PressButton
+                    style={{ marginTop: 60 }}
+                    name='Verify OTP'
+                    loading={false}
+                    disabled={false}
+                    onPress={()=>test().then().catch(err=>console.log(err))} />
+                }
 
                 {/*<View style = {styles.resendtext}>
                     <Text style= {{fontSize:15, color: 'black'}}>
