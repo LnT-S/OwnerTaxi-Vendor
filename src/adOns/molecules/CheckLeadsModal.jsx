@@ -26,8 +26,8 @@ export default function CheckLeadsModal(props) {
                     <View style={{ width: '90%', marginBottom: 15 }}>
                         {driversArray?.map((el, i) => {
                             return <View style={styles.array}>
-                                <Text>{el.driverPhone}</Text>
-                                <Text>{el.rating}</Text>
+                                <Text style={{color : 'gray'}}>{el.driverPhone}</Text>
+                                <Text style={{color : 'gray'}}>{el.rating}</Text>
                                 <TouchableOpacity onPress={()=>handleCall(el.driverPhone)}><Icon name="call" size={30} color={BgColor} /></TouchableOpacity>
                             </View>
                         })}

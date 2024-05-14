@@ -66,6 +66,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ActiveBooking from './src/Driver/components/active Booking/ActiveBooking';
 import BidingPage from './src/Driver/components/active Booking/BidingPage';
 import BookingAccepted from './src/Driver/components/active Booking/BookingAccepted';
+import CloseBooking from './src/Driver/components/active Booking/CloseBooking';
 
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator();
@@ -96,6 +97,7 @@ function DrawerNavigatorDriver() {
       <Drawer.Screen name='messageScreen' component={MessageScreen} options={{ headerShown: false }} />
       <Drawer.Screen name='Privacy' component={Privacy} options={{ headerShown: false }} />
       <Drawer.Screen name='Terms' component={Terms} options={{ headerShown: false }} />
+      <Drawer.Screen name='CloseBooking' component={CloseBooking} options={{ headerShown: false }} />
     </Drawer.Navigator>
   );
 }

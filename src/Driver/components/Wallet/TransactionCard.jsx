@@ -3,16 +3,18 @@ import { View, StyleSheet, Text } from 'react-native';
 
 const TransactionBox = (props) => {
 
-    const {name, date, rupees} = props.item
+    const {amount, date, status} = props.item
+
 
     return (
         <View style={[styles.boxStyle,styles.displayflex]}>
-            <View>
-                <Text style={styles.typeStyle}>{name}</Text>
-                <Text style={styles.timeStyle}>{date}</Text>
+            <View style={{justifyContent : 'space-between'}}>
+                <Text style={styles.typeStyle}>Id : {date}</Text>
+                <Text style={styles.timeStyle}>{new Date(date).toLocaleDateString()} {new Date(date).toLocaleTimeString()}</Text>
             </View>
-            <View>
-                <Text style={styles.contentStyle}>{rupees}</Text>
+            <View style={{justifyContent: 'flex-end',alignItems : 'flex-end',}}>
+                <Text style={styles.contentStyle}>₹ {amount}</Text>
+                <Text style={{...styles.contentStyle , color : 'red'}}>Status  : {status.toUpperCase()}</Text>
             </View>
         </View>
     );
@@ -21,13 +23,14 @@ const TransactionBox = (props) => {
 const styles = StyleSheet.create({
     boxStyle: {
         backgroundColor: 'black',
-        padding: 8,
+        padding : 10,
         marginHorizontal: 10
     },
     displayflex: {
         display:'flex',
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     typeStyle: {
         fontSize: 18,

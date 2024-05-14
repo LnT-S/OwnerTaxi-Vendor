@@ -18,7 +18,7 @@ export default function InfoModal(props) {
                 
                 <View style={{ ...styles.modalContent, ...props.extContStyle }}>
                 <View style={{width : '100%' , marginBottom : 15}}>
-                    <Text style={{fontSize : 26 , color : 'black'}}>{title.toUpperCase()}</Text>
+                    <Text style={{fontSize : 26 , color : 'black'}}>{title}</Text>
                 </View>
                     {(messageJsx === undefined && message!==undefined) ? <View style={{ marginBottom: 4 }}>
                         <Text style={styles.modalText}>{message}</Text>

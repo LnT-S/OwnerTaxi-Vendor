@@ -171,7 +171,6 @@ const LoginPage = () => {
 
                         <View style={styles.formpart}>
                             <UserInput
-                                style={[styles.input]}
                                 placeholder='Phone Number'
                                 icon={'person'}
                                 onChangeText={(v) => {

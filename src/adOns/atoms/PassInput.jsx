@@ -54,7 +54,8 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize : 18
+    fontSize : 18,
+    color : 'black'
   },
 });
 

@@ -75,7 +75,7 @@ const ActiveRequestCard = (props) => {
                 </View>
                 <View>
                     <View style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}>
-                        <View><Text style={[styles.textColor]}>{`${item.pickUp.date.day}-${item.pickUp.date.month + 1}-${item.pickUp.date.year}`} {`${item.pickUp.date.hour}:${item.pickUp.date.min}`}</Text></View>
+                        <View><Text style={[styles.textColor]}>{`${item.pickUp.date.day}-${item.pickUp.date.month + 1}-${item.pickUp.date.year}`} {`${item.pickUp.date.hour}:${item.pickUp.date.min>=10?item.pickUp.date.min:'0'+item.pickUp.date.min}`}</Text></View>
                         <View style={{}}>
                             <View><Text style={{ ...styles.textColor, color: 'red' }}>Distance : {item.distance}</Text></View>
                             <View><Text style={{ ...styles.textColor, color: 'green' }}>Budget : &#x20B9;{item.budget} </Text></View>

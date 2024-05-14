@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { ActivityIndicator, BackHandler, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout';
 import ThreeWayPushButton from '../../../adOns/molecules/ThreeWayPushButton';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -71,8 +71,20 @@ const Message = () => {
     const handleMessageChat = (item) => {
         navigation.navigate('messageScreen',{item})
     }
+    useEffect(() => {
+        const backFuntion = () => {
+            navigation.goBack()
+            return true
+        }
+        console.log("BACKHANDLER SET IN HOME PAGE")
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backFuntion);
+        return () => {
+            console.log('BACKHANDLER REMOVED FROM HOME PAGE')
+            backHandler.remove()
+        };
+    }, []);
     if(pageIsLoading){
-        return <LoadingScreen cs={true}/>
+        return <LoadingScreen cs={true} title={"Message"}/>
     }else{
         return (
             <AuthenticatedLayout title={'Messages'} showMessageIcon={false}>

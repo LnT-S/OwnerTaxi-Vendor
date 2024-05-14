@@ -25,16 +25,16 @@ export const editProflie = async (rawFormData)=>{
         console.log('URL ', URL)
         let auth_token = await AsyncStorage.getItem('token')
         let formData = new FormData();
-        formData.append('name',rawFormData.name)
-        formData.append('email',rawFormData.email)
-        formData.append('avatar',{
+        rawFormData.name ? formData.append('name',rawFormData.name) : ''
+        rawFormData.email ? formData.append('email',rawFormData.email) : ''
+        rawFormData.avatar ? formData.append('avatar',{
             name: rawFormData.avatar.fileName,
             type: rawFormData.avatar.type ,
             uri:
                 Platform.OS === "android"
                     ? rawFormData.avatar.uri
                     : rawFormData.avatar.uri.replace("file://", "")
-        })
+        }) : ''
         console.log("FORM DATA" , rawFormData)
         let res = await fetch(URL, {
             method: 'post',

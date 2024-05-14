@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { View, StyleSheet, Text, FlatList, Image, TouchableOpacity, Linking } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, StyleSheet, Text, FlatList, Image, TouchableOpacity, Linking, BackHandler } from 'react-native';
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import server from '../../../services/server.tsx'
@@ -12,50 +12,62 @@ const BidingPage = (props) => {
     const navigation = useNavigation()
     const { item } = route.params
     const ref = useRef(null)
-    console.log("ITEM ", item)
+    console.log("ITEM IN BIIDING PAGE", item)
     const handleCall = (phone) => {
         Linking.openURL(`tel:${phone}`);
     };
-    const handleUnAssign = (phoneNo)=>{
+    const handleUnAssign = (phoneNo) => {
         unAssignBooking({
-            bookingId : item?.passiveBookingId?._id,
+            bookingId: item?.passiveBookingId?._id,
             phoneNo
         })
-        .then(data=>{
-            if(data.status===200){
-                showNoty(data.data.message,"info");
-                navigation.goBack()
-            }else{
-                showNoty(data.data.message,"danger")
-            }
-        })
-        .catch(err=>{
-            console.log("ERROR ASSIGN BOOKING",err)
-            showNoty("BOOKING COULD NOT BE ASSIGNED ","danger")
-        })
+            .then(data => {
+                if (data.status === 200) {
+                    showNoty(data.data.message, "info");
+                    navigation.goBack()
+                } else {
+                    showNoty(data.data.message, "danger")
+                }
+            })
+            .catch(err => {
+                console.log("ERROR ASSIGN BOOKING", err)
+                showNoty("BOOKING COULD NOT BE ASSIGNED ", "danger")
+            })
     }
-    const handleAssign = (phoneNo)=>{
+    const handleAssign = (phoneNo) => {
         assignBooking({
-            bookingId : item?.passiveBookingId?._id,
+            bookingId: item?.passiveBookingId?._id,
             phoneNo
         })
-        .then(data=>{
-            if(data.status===200){
-                showNoty(data.data.message,"info")
-                navigation.goBack()
-            }else{
-                showNoty(data.data.message,"danger")
-            }
-        })
-        .catch(err=>{
-            console.log("ERROR ASSIGN BOOKING",err)
-            showNoty("BOOKING COULD NOT BE ASSIGNED ","danger")
-        })
+            .then(data => {
+                if (data.status === 200) {
+                    showNoty(data.data.message, "info")
+                    navigation.goBack()
+                } else {
+                    showNoty(data.data.message, "danger")
+                }
+            })
+            .catch(err => {
+                console.log("ERROR ASSIGN BOOKING", err)
+                showNoty("BOOKING COULD NOT BE ASSIGNED ", "danger")
+            })
     }
+    useEffect(() => {
+        const backFuntion = () => {
+            navigation.goBack()
+            return true
+        }
+        console.log("BACKHANDLER SET IN HOME PAGE")
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backFuntion);
+        return () => {
+            console.log('BACKHANDLER REMOVED FROM HOME PAGE')
+            backHandler.remove()
+        };
+    }, []);
 
     return (
         <AuthenticatedLayout title={'Bidding Cofirmation'}>
-        <FlashMessage ref={ref}/>
+            <FlashMessage ref={ref} />
             <FlatList
                 keyExtractor={(item, index) => (index)}
                 data={item.driverResponse}
@@ -65,10 +77,13 @@ const BidingPage = (props) => {
                             <View style={styles.flexrow}>
                                 <View style={styles.flexrow}>
                                     <Image
-                                        source={!item.image ? require('../../../assets/imgaes/Profile.png') :{uri : server.server+item.image}}
+                                        source={!item.image ? require('../../../assets/imgaes/Profile.png') : { uri: server.server + item.image }}
                                         style={styles.image}
                                     />
                                     <View>
+                                        <View>
+                                            <Text style={{ ...styles.text, color: 'black', textTransform: 'capitalize' }}>{item.name}</Text>
+                                        </View>
                                         <View>
                                             <Text style={{ ...styles.text, color: 'black', textTransform: 'capitalize' }}>{item.driverPhone}</Text>
                                         </View>
@@ -96,14 +111,14 @@ const BidingPage = (props) => {
                                 </View>
                             </View>
                             <View style={{ ...styles.flexrow, margin: 5 }}>
-                                <TouchableOpacity style={styles.btn} onPress={()=>{handleCall(item.driverPhone)}}>
+                                <TouchableOpacity style={styles.btn} onPress={() => { handleCall(item.driverPhone) }}>
                                     <Text style={{ ...styles.text, color: 'red' }}>Call</Text>
                                 </TouchableOpacity>
-                                {route.params.item?.passiveBookingId?.acceptor?.phone?.toString()!==item.driverPhone ? <TouchableOpacity style={{ ...styles.btn, backgroundColor: 'green' }} onPress={()=>{handleAssign(item.driverPhone)}}>
+                                {route.params.item?.passiveBookingId?.acceptor?.phone?.toString() !== item.driverPhone ? <TouchableOpacity style={{ ...styles.btn, backgroundColor: 'green' }} onPress={() => { handleAssign(item.driverPhone) }}>
                                     <Text style={{ ...styles.text, color: 'white' }}>Assign</Text>
-                                </TouchableOpacity> :<TouchableOpacity style={{ ...styles.btn, backgroundColor: 'green' }} onPress={()=>{handleUnAssign(item.driverPhone)}}>
-                                <Text style={{ ...styles.text, color: 'white' }}>Un Assign</Text>
-                            </TouchableOpacity> }
+                                </TouchableOpacity> : <TouchableOpacity style={{ ...styles.btn, backgroundColor: 'green' }} onPress={() => { handleUnAssign(item.driverPhone) }}>
+                                    <Text style={{ ...styles.text, color: 'white' }}>Un Assign</Text>
+                                </TouchableOpacity>}
                             </View>
                         </View>
                     </View>
@@ -127,7 +142,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         marginBottom: 10,
         marginRight: 10,
-        backgroundColor : 'black'
+        backgroundColor: 'black'
     },
     flexrow: {
         display: 'flex',

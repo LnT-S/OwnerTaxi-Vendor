@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Text, View, FlatList, ScrollView, StyleSheet, StatusBar, ActivityIndicator, RefreshControl, Alert } from 'react-native'
+import { Text, View, FlatList, ScrollView, StyleSheet, StatusBar, ActivityIndicator, RefreshControl, Alert, BackHandler } from 'react-native'
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import ActiveBookingCard from './ActiveBookingCard'
 
@@ -9,11 +9,12 @@ import { activeBookingInfo } from '../../../services/apiCall'
 import { showNoty } from '../../../common/flash/flashNotification'
 import FlashMessage from 'react-native-flash-message'
 import { getBookingsDriverHasPosted, getIntercityBookingFromPostVendor } from '../../../services/getDataServices'
-import { useFocusEffect } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 
-const ActiveBooking = () => {
+const ActiveBooking = (props) => {
+    const {showHeader , showFooter} = props
     const [isRefreshing, setIsRefreshing] = useState(false)
-
+    const navigation=  useNavigation()
     const [activeBookingArray, setActiveBookingArray] = useState([])
     const [refresh, setRefresh] = useState(true)
     const ref = useRef(null)
@@ -50,8 +51,20 @@ const ActiveBooking = () => {
                 console.log('ERROR CALLING ACTIVE BOOKING SCHEMA')
             })
     }, [refresh])
+    useEffect(() => {
+        const backFuntion = () => {
+            navigation.goBack()
+            return true
+        }
+        console.log("BACKHANDLER SET IN HOME PAGE")
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backFuntion);
+        return () => {
+            console.log('BACKHANDLER REMOVED FROM HOME PAGE')
+            backHandler.remove()
+        };
+    }, []);
     return (
-        <AuthenticatedLayout title={'Active Booking'}>
+        <AuthenticatedLayout title={'Active Booking'} showHeader={showHeader}  showFooter={showFooter}>
             {isRefreshing && <ActivityIndicator size={'large'} color={'black'} />}
            
                 <FlashMessage ref={ref} />
@@ -63,7 +76,7 @@ const ActiveBooking = () => {
                     <RefreshControl refreshing={isRefreshing} onRefresh={fetchData} />
                 }
                     renderItem={({ item, index }) => {
-                        return <View>
+                        return <View key={index}>
                             <View key={index} style={styles.FlatListviewStyle}><ActiveBookingCard item={item} load={fetchData}/></View>
                         </View>
                     }}

@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { View, StyleSheet, Text, ScrollView, TextInput, Linking } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { View, StyleSheet, Text, ScrollView, TextInput, Linking, BackHandler } from 'react-native';
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import StatusButton from '../../../adOns/atoms/StatusButton';
@@ -52,7 +52,6 @@ const IntercityRequestHandler = () => {
                 console.log("ERROR UNACCEPTING THE BOOKING ", err)
             })
     }
-
     const handleAccept = () => {
         let formData = {
             bookingId: item._id
@@ -60,7 +59,7 @@ const IntercityRequestHandler = () => {
         isDocumentVerified()
             .then(data => {
                 console.log(data.data.data)
-                if (data.data.data.verified===true || true) {
+                if (data.data.data.verified === true || true) {
                     acceptIntercityBooking(formData)
                         .then(data => {
                             if (data.status === 300) {
@@ -78,13 +77,13 @@ const IntercityRequestHandler = () => {
                         .catch(err => {
                             console.log("ERROR in ACCEPT INTERCITY")
                         })
-                }else{
-                    showNoty(data.data.message,"warning")
-                    setTimeout(()=>navigation.navigate("Document"),2000)
+                } else {
+                    showNoty(data.data.message, "warning")
+                    setTimeout(() => navigation.navigate("Document"), 2000)
                 }
             })
-            .catch(err=>{
-                console.log("ERROR CHECKING DOCUMENT VWERIFICATION ",err)
+            .catch(err => {
+                console.log("ERROR CHECKING DOCUMENT VWERIFICATION ", err)
             })
         // console.log(data)
 
@@ -98,6 +97,18 @@ const IntercityRequestHandler = () => {
         const messageUrl = `sms:${phone}`;
         Linking.openURL(messageUrl);
     };
+    useEffect(() => {
+        const backFuntion = () => {
+            navigation.goBack();
+            return true
+        }
+        console.log("BACKHANDLER SET IN HOME PAGE")
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backFuntion);
+        return () => {
+            console.log('BACKHANDLER REMOVED FROM HOME PAGE')
+            backHandler.remove()
+        };
+    }, []);
 
     return (
         <AuthenticatedLayout
@@ -168,7 +179,7 @@ const IntercityRequestHandler = () => {
                         <View style={{ ...styles.optionContainer.section, height: 100, backgroundColor: 'rgba(0,0,0,0.03)' }}>
                             <View style={styles.optionContainer.section.leftSection}>
                                 <Text style={{ color: 'gray', ...styles.textHeading, fontSize: 20, letterSpacing: 0.5, textAlign: 'left' }}>Distance</Text>
-                                <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>500 km</Text>
+                                <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{item.distance}</Text>
                             </View>
                             <View style={styles.optionContainer.section.rightSection}>
                                 <Text style={{ color: 'gray', ...styles.textHeading, fontSize: 22, letterSpacing: 0.5, textAlign: 'left' }}>Budget</Text>
@@ -179,7 +190,7 @@ const IntercityRequestHandler = () => {
                             <View style={styles.optionContainer.section.leftSection}>
                                 <Text style={{ color: 'gray', ...styles.textHeading, fontSize: 20, letterSpacing: 0.5, textAlign: 'left' }}>PickUp Date</Text>
                                 <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{new Date(item.pickUp.date.msec).toDateString()}</Text>
-                                <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{item.pickUp.date.hour} : {item.pickUp.date.min} {item.pickUp.date.hour > 12 ? 'pm' : 'am'}</Text>
+                                <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'right' }}>{item.pickUp.date.hour} : {item.pickUp.date.min >= 10 ? item.pickUp.date.min : '0' + item.pickUp.date.min} {item.pickUp.date.hour > 12 ? 'pm' : 'am'}</Text>
                             </View>
                             {item.bookingSubType?.toLowerCase() !== 'oneway' && item.bookingType !== "rental" && <View style={styles.optionContainer.section.rightSection}>
                                 <Text style={{ color: 'gray', ...styles.textHeading, fontSize: 22, letterSpacing: 0.5, textAlign: 'left' }}>Drop Date</Text>
@@ -188,14 +199,52 @@ const IntercityRequestHandler = () => {
                             </View>}
                         </View>
                         <View style={{ backgroundColor: 'rgba(0,0,0,0.03)', padding: 5 }}>
+                            <Text style={{ fontFamily: 'serif', fontSize: 20, paddingHorizontal: 15 }}>Extra Taxes</Text>
+                            <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', borderRadius: 10, marginVertical: 5}}>
+                                <View style={{ paddingHorizontal: 60, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', width: '100%',backgroundColor:'rgba(255,255,255,0.25)'}} >
+                                    <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>Toll</Text>
+                                    <Text style={{ color: 'red' }}>{item?.extrasIncluded?.tollExtra?.toUpperCase()}</Text>
+                                </View>
+                                {item?.extrasIncluded?.tollExtraAmount !== ''
+                                    ?
+                                    <View style={{ paddingHorizontal: 60, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', width: '100%',backgroundColor:'rgba(255,255,255,0.25)' }}>
+                                        <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>Toll Amount Payed By Driver</Text>
+                                        <Text style={{ color: 'red' }}>&#x20B9; {item?.extrasIncluded?.tollExtraAmount}</Text>
+                                    </View> : ''}
+                                <View style={{ paddingHorizontal: 60, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', width: '100%' }} >
+                                    <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>Border</Text>
+                                    <Text style={{ color: 'red' }}>{item?.extrasIncluded?.borderExtra?.toUpperCase()}</Text>
+                                </View>
+                                {item?.extrasIncluded?.borderExtraAmount !== ''
+                                    ?
+                                    <View style={{paddingHorizontal: 60, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', width: '100%'  }}>
+                                        <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>Border Amount Payed By Driver:</Text>
+                                        <Text style={{ color: 'red' }}>&#x20B9; {item?.extrasIncluded?.borderExtraAmount}</Text>
+                                    </View> : ''}
+                                <View style={{paddingHorizontal: 60, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', width: '100%',backgroundColor:'rgba(255,255,255,0.25)'}} >
+                                    <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>Parking</Text>
+                                    <Text style={{ color: 'red' }}>{item?.extrasIncluded?.parkingExtra?.toUpperCase()}</Text>
+                                </View>
+                                {item?.extrasIncluded?.parkingExtraAmount !== ''
+                                    ?
+                                    <View style={{ paddingHorizontal: 60, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', width: '100%',backgroundColor:'rgba(255,255,255,0.25)'}}>
+                                        <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>Toll Amount Payed By Driver</Text>
+                                        <Text style={{ color: 'red' }}>&#x20B9; {item?.extrasIncluded?.parkingExtraAmount}</Text>
+                                    </View> : ''}
+                            </View>
+                        </View>
+                        <View style={{ padding: 5 }}>
                             <Text style={{ fontFamily: 'serif', fontSize: 20, paddingHorizontal: 15 }}>Extras Information</Text>
                             <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '90%', padding: 5, borderRadius: 10, marginVertical: 5 }}>
-                                <View>
+                                <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
                                     <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>
-                                        Extra Distance : <Text style={{ color: 'red' }}>&#x20B9; 500 per km</Text>
+                                    Cost Per Extra Km  : <Text style={{ color: 'red' }}>&#x20B9; {item?.extrasIncluded?.extraKm} km</Text>
                                     </Text>
                                     <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>
-                                        Extra Hour        : <Text style={{ color: 'red' }}>&#x20B9; 80 per hour</Text>
+                                        Extra Hours    : <Text style={{ color: 'red' }}>{item?.extrasIncluded?.extraHours} Hours</Text>
+                                    </Text>
+                                    <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>
+                                        Driver DA    : <Text style={{ color: 'red' }}>&#x20B9; {item?.extrasIncluded?.driverDA}</Text>
                                     </Text>
                                 </View>
                             </View>

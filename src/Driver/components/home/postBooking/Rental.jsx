@@ -12,6 +12,8 @@ import FlashMessage from 'react-native-flash-message';
 import { showNoty } from '../../../../common/flash/flashNotification';
 import { booking } from '../../../../services/apiCall';
 import { useNavigation } from '@react-navigation/native';
+import { GoogleDirections } from 'react-native-google-maps-directions';
+import { Dropdown } from 'react-native-element-dropdown';
 import axios from 'axios';
 
 
@@ -20,7 +22,6 @@ const Rental = () => {
     const rentalRef = useRef(null)
     const [error, setError] = useState('')
     const navigation = useNavigation()
-
     const [isPressed, setisPressed] = useState({
         state: false,
         subState: false,
@@ -40,7 +41,17 @@ const Rental = () => {
     const [extraDis, setExtraDis] = useState('')
     const [extraHr, setExtraHr] = useState('')
     const [budget, setBudget] = useState(null)
-
+    const [tollExtra, setTollExtra] = useState('')
+    const [tollExtraAmount, setTollExtraAmount] = useState('')
+    const [borderExtra, setBorderExtra] = useState('')
+    const [borderExtraAmount, setBorderExtraAmount] = useState('')
+    const [parkingExtra, setParkingExtra] = useState('')
+    const [parkingExtraAmount, setParkingExtraAmount] = useState('')
+    const [distance, setDistance] = useState('')
+    const [extraKm, setExtraKm] = useState('')
+    const [costPerKm, setCostPerKm] = useState('')
+    const [extraHours, setExtraHours] = useState('')
+    const [reset, setReset] = useState(false)
     const [pickUp, setPickUp] = useState({
         description: '',
         latitude: null,
@@ -54,7 +65,6 @@ const Rental = () => {
             min: new Date().getMinutes()
         }
     })
-
     const [drop, setDrop] = useState({
         description: '',
         latitude: null,
@@ -68,17 +78,11 @@ const Rental = () => {
             min: null
         }
     })
-
-    useEffect(() => {
-        console.log("PICKUP ", pickUp)
-    }, [pickUp])
-    useEffect(() => {
-        console.log("DROP ", drop)
-    }, [drop])
-    useEffect(() => {
-        console.log("BUDGET", budget)
-    }, [budget])
-
+    const [vehicle, selectVehicle] = useState({
+        type: '',
+        subType: '',
+        capacity: '',
+    })
     const VehicleArray = [
         {
             type: 'Mini',
@@ -132,15 +136,25 @@ const Rental = () => {
             extraHour: 12
         },
     ]
-    const [vehicle, selectVehicle] = useState({
-        type: '',
-        subType: '',
-        capacity: '',
-    })
-    useEffect(() => {
-        console.log("VEHICLE SELECTION ", vehicle)
-    }, [vehicle])
-
+    const handleReset = () => {
+        let origin = `${pickUp.latitude},${pickUp.longitude}`
+        let destination = `${drop.latitude},${drop.longitude}`
+        const apiKey = 'AIzaSyAlEujvNEFTFUBtG9363FjtK-3YOLAUSfM'
+        if (!(!pickUp.latitude && !drop.latitude)) {
+            axios.get(
+                `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${origin}&destinations=${destination}&key=${apiKey}`
+            ).then(response => {
+                const distances = response.data.rows[0].elements[0].distance?.text;
+                setDistance(distances)
+            })
+                .catch(err => {
+                    console.log("ERROR GETTING DISTANCE ", err);
+                    setDistance('')
+                })
+        } else {
+            setDistance('')
+        }
+    }
     const handleVehicleType = function (item, index) {
         setisPressed(prev => { return { ...prev, state: true, index: index, subState: false, subIndex: -1 } })
         selectVehicle(prev => { return { subType: '', type: item.type, capacity: item.capacity } })
@@ -154,9 +168,6 @@ const Rental = () => {
         extraDistance: null,
         extraTime: null
     })
-    useEffect(() => {
-        console.log("PACKAGE ", IRPackage)
-    }, [IRPackage])
     const handleDistance = function (item, index) {
         // console.log(item ,index)
         setisdisPressed({ state: true, index: index })
@@ -165,7 +176,6 @@ const Rental = () => {
             extraTime: item.extraHour
         })
     }
-
     const handleSubmit = async () => {
         setError('')
         console.log("HANDLING SUBMIT")
@@ -201,17 +211,47 @@ const Rental = () => {
         const response = await axios.get(
             `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${origin}&destinations=${destination}&key=${apiKey}`
         );
-        const distance = response.data.rows[0].elements[0].distance?.text;
+        const distances = response.data.rows[0].elements[0].distance?.text;
+        if (!tollExtra || (tollExtra==='amount'&&tollExtraAmount==='')) {
+            setError("Enter Toll Tax Info Correctly")
+            return
+        }
+        setError('')
+        if (!borderExtra || (borderExtra==='amount'&&borderExtraAmount==='')) {
+            setError("Enter Border Tax Info Correctly")
+            return
+        }
+        setError('')
+        if (!parkingExtra || (parkingExtra==='amount'&&parkingExtraAmount==='')) {
+            setError("Enter Parking Tax Info Correctly")
+            return
+        }
+        setError('')
+        if (!extraHours || !extraKm) {
+            setError("Enter Toll Tax Info")
+            return
+        }
+        setError('')
         let data = {
             initiator: "driver",
             pickUp: pickUp,
             drop: drop,
             budget,
-            distance : distance ? distance.toString() : '',
             bookingType: "rental",
             vehicle: vehicle,
             IRPackage: IRPackage,
-            extrasIncluded: true
+            distance: distance ? distance.toString() : distances ? distances.toString() : '',
+            extrasIncluded: {
+                tollExtra,
+                tollExtraAmount,
+                borderExtra,
+                borderExtraAmount,
+                parkingExtra,
+                parkingExtraAmount,
+                extraKm,
+                extraHours,
+                driverDA : '00'
+            },
         }
         try {
             // showNoty("SUCCESSFULL", "success")
@@ -219,17 +259,16 @@ const Rental = () => {
             console.log(resObj)
             if (resObj.status !== 200) {
                 showNoty("BOOKING LIMIT HAS BEEN REACHED", "danger")
-                setTimeout(()=>navigation.navigate("Home"),2000)
+                setTimeout(() => navigation.navigate("Home"), 2000)
 
             } else {
                 showNoty("BOOKING POSTED SUCCESSFULLY", "success")
-                setTimeout(()=>navigation.navigate("Home"),2000)
+                setTimeout(() => navigation.navigate("Home"), 2000)
             }
         } catch (error) {
             console.log('ERROR IN RENTAL BOOKING ', error)
         }
     }
-
     const handleDateChange = () => {
         date = {
             msec: new Date(dateSelected).getTime(),
@@ -240,7 +279,7 @@ const Rental = () => {
         setPickUp(prev => {
             return {
                 ...prev,
-                date: {...prev.date , ...date}
+                date: { ...prev.date, ...date }
             }
         })
     }
@@ -252,7 +291,39 @@ const Rental = () => {
             }
         })
     }
-
+    useEffect(() => {
+        console.log("PICKUP ", pickUp)
+    }, [pickUp])
+    useEffect(() => {
+        let origin = `${pickUp.latitude},${pickUp.longitude}`
+        let destination = `${drop.latitude},${drop.longitude}`
+        const apiKey = 'AIzaSyAlEujvNEFTFUBtG9363FjtK-3YOLAUSfM'
+        if (!(!pickUp.latitude && !drop.latitude)) {
+            axios.get(
+                `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${origin}&destinations=${destination}&key=${apiKey}`
+            )
+                .then(response => {
+                    const distances = response.data.rows[0].elements[0].distance?.text;
+                    setDistance(distances)
+                })
+                .catch(err => {
+                    console.log("ERROR GETTING DISTANCE ", err);
+                    setDistance('')
+                })
+        } else {
+            setDistance('')
+        }
+        console.log("DROP ", drop)
+    }, [drop])
+    useEffect(() => {
+        console.log("BUDGET", budget)
+    }, [budget])
+    useEffect(() => {
+        console.log("VEHICLE SELECTION ", vehicle)
+    }, [vehicle])
+    useEffect(() => {
+        console.log("PACKAGE ", IRPackage)
+    }, [IRPackage])
     useEffect(() => {
         console.log("ERROR CHANGED")
         if (error !== '') {
@@ -420,20 +491,6 @@ const Rental = () => {
                             </TouchableOpacity>
                         }}
                     />
-                    {/*(permanentCost !== '') ?
-                        <View>
-                            <View>
-                                <Text style={styles.Packagetext}>Permanent Cost: {permanentCost}</Text>
-                            </View>
-                            <View>
-                                <Text style={styles.Packagetext}>Extra Distance: {extraDis}</Text>
-                            </View>
-                            <View>
-                                <Text style={styles.Packagetext}>Extra Hour: {extraHr}</Text>
-                            </View>
-                        </View> : ''
-                    */}
-
                 </View>
                 {/*Budget*/}
                 <View style={styles.marginContainer}>
@@ -448,6 +505,151 @@ const Rental = () => {
                             placeholderTextColor={'gray'}
                             onChangeText={v => setBudget(v)}
                         />
+                    </View>
+                </View>
+                {/**Extra Info */}
+                <View style={{ backgroundColor: 'white',marginTop : 20}}>
+                    <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'red', marginLeft: 25, marginTop: 10 }}>Extra Charges</Text>
+                    <View style={{ justifyContent: 'center', alignItems: 'flex-end', marginRight: 70 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 25, marginTop: 10, }}>
+                            <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'black' }}>Toll Tax <Text style={{ color: 'red', position: 'relative', top: -3 }}>*</Text> : </Text>
+                            <Dropdown
+                                style={styles.fieldDD}
+                                itemTextStyle={{ color: 'black' }}
+                                placeholderStyle={{ color: 'black' }}
+                                activeColor={BgColor}
+                                fontFamily='serif'
+                                selectedTextProps={{ style: { color: 'black', fontSize: 16, fontFamily: 'serif' } }}
+                                selectedTextStyle={{ color: 'white', fontSize: 16, fontFamily: 'serif' }}
+                                data={[{ label: 'Included', value: 'included' }, { label: 'Extra', value: 'extra' }, { label: 'Amount', value: 'amount' }]}
+                                placeholder='Select'
+                                value={tollExtra}
+                                labelField="label"
+                                valueField="value"
+                                onChange={item => {
+                                    setTollExtra(item.value);
+                                }}
+                            />
+
+                        </View>
+                        {tollExtra === 'amount' ? <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginRight: -50 }}>
+                            <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'black' }}>Toll Tax Amount<Text style={{ color: 'red', position: 'relative', top: -3 }}> *</Text> :</Text>
+
+                            <TextInput
+                                placeholder='Enter Amount'
+                                style={styles.textInputToll}
+                                inputMode='numeric'
+                                underlineColorAndroid={BgColor}
+                                onChangeText={v => { setTollExtraAmount(v) }}
+                            />
+                        </View> : ''}
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 25, marginTop: 10, }}>
+                            <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'black' }}>Border Tax <Text style={{ color: 'red', position: 'relative', top: -3 }}>*</Text> : </Text>
+                            <Dropdown
+                                style={styles.fieldDD}
+                                itemTextStyle={{ color: 'black' }}
+                                placeholderStyle={{ color: 'black' }}
+                                activeColor={BgColor}
+                                fontFamily='serif'
+                                selectedTextProps={{ style: { color: 'black', fontSize: 16, fontFamily: 'serif' } }}
+                                selectedTextStyle={{ color: 'white', fontSize: 16, fontFamily: 'serif' }}
+                                data={[{ label: 'Included', value: 'included' }, { label: 'Extra', value: 'extra' }, { label: 'Amount', value: 'amount' }]}
+                                placeholder='Select'
+                                value={borderExtra}
+                                labelField="label"
+                                valueField="value"
+                                onChange={item => {
+                                    setBorderExtra(item.value);
+                                }}
+                            />
+
+                        </View>
+                        {borderExtra === 'amount' ? <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginRight: -50 }}>
+                            <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'black' }}>Border Tax Amount<Text style={{ color: 'red', position: 'relative', top: -3 }}> *</Text> :</Text>
+
+                            <TextInput
+                                placeholder='Enter Amount'
+                                style={styles.textInputToll}
+                                inputMode='numeric'
+                                underlineColorAndroid={BgColor}
+                                onChangeText={v => { setBorderExtraAmount(v) }}
+                            />
+                        </View> : ''}
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 25, marginTop: 10, }}>
+                            <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'black' }}>Parking <Text style={{ color: 'red', position: 'relative', top: -3 }}>*</Text> : </Text>
+                            <Dropdown
+                                style={styles.fieldDD}
+                                itemTextStyle={{ color: 'black' }}
+                                placeholderStyle={{ color: 'black' }}
+                                activeColor={BgColor}
+                                fontFamily='serif'
+                                selectedTextProps={{ style: { color: 'black', fontSize: 16, fontFamily: 'serif' } }}
+                                selectedTextStyle={{ color: 'white', fontSize: 16, fontFamily: 'serif' }}
+                                data={[{ label: 'Included', value: 'included' }, { label: 'Extra', value: 'extra' }, { label: 'Amount', value: 'amount' }]}
+                                placeholder='Select'
+                                value={parkingExtra}
+                                labelField="label"
+                                valueField="value"
+                                onChange={item => {
+                                    setParkingExtra(item.value);
+                                }}
+                            />
+
+                        </View>
+                        {parkingExtra === 'amount' ? <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginRight: -50 }}>
+                            <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'black' }}>Parking Amount<Text style={{ color: 'red', position: 'relative', top: -3 }}> *</Text> :</Text>
+
+                            <TextInput
+                                placeholder='Enter Amount'
+                                style={styles.textInputToll}
+                                inputMode='numeric'
+                                underlineColorAndroid={BgColor}
+                                onChangeText={v => { setParkingExtraAmount(v) }}
+                            />
+                        </View> : ''}
+                    </View>
+
+                    <View style={{ backgroundColor: 'rgba(0,0,0,0.05)', marginTop: 10 }}>
+                        <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'red', marginLeft: 25, marginTop: 10 }}>Extra's Info</Text>
+                        <View style={{ alignItems: 'flex-end', display: 'flex', gap: 10, justifyContent: 'center', marginRight: 100 }}>
+                            {/*<View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 25, marginTop: 10 }}>
+                                <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'black' }}>Total Km :</Text>
+                                <TextInput
+                                    placeholder='Enter Km'
+                                    style={styles.textInputToll}
+                                    inputMode='numeric'
+                                    value={distance}
+                                    onChangeText={v => { setReset(true); v.trim().endsWith('k') ? setDistance(v + 'm') : v.trim().endsWith('km') ? setDistance(v) : setDistance(v + 'km') }}
+                                />{reset && <TouchableOpacity style={{ position: 'absolute', right: -30 }} onPress={() => handleReset(false)}><Icon name="reset-tv" size={24} color="#000" /></TouchableOpacity>}
+                            </View>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 25 }}>
+                                <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'black' }}>Extra Km <Text style={{ color: 'red', position: 'relative', top: -3 }}>*</Text> :</Text>
+                                <TextInput
+                                    placeholder='Enter Km'
+                                    style={styles.textInputToll}
+                                    inputMode='numeric'
+                                    onChangeText={v => { setExtraKm(v) }}
+                                />
+                            </View>*/}
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 25 }}>
+                                <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'black' }}>Per Extra Km  Cost<Text style={{ color: 'red', position: 'relative', top: -3 }}>*</Text> :</Text>
+                                <TextInput
+                                    placeholder='Enter Km'
+                                    style={styles.textInputToll}
+                                    inputMode='numeric'
+                                    onChangeText={v => { setExtraKm(v) }}
+                                />
+                            </View>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 25 }}>
+                                <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'black' }}>Extra Hours<Text style={{ color: 'red', position: 'relative', top: -3 }}>*</Text> :</Text>
+                                <TextInput
+                                    placeholder='Enter Km'
+                                    style={styles.textInputToll}
+                                    inputMode='numeric'
+                                    onChangeText={v => { setExtraHours(v) }}
+                                />
+                            </View>
+                        </View>
                     </View>
                 </View>
                 {/*Submit*/}
@@ -526,6 +728,28 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: 'black',
         backgroundColor: `white`,
+    },
+    fieldDD: {
+        padding: 5,
+        marginLeft: 10,
+        color: 'black',
+        width: '30%',
+        color: 'black',
+        borderWidth: 1,
+        borderColor: BgColor,
+        width: 150
+        // backgroundColor : BgColor
+    },
+    textInputToll: {
+        padding: 5,
+        marginLeft: 10,
+        color: 'black',
+        width: '40%',
+        color: 'black',
+        fontFamily: 'serif',
+        // borderBottomWidth: 1,
+        // borderColor: 'green',
+        backgroundColor: 'white'
     },
     vehicleImageContainer: {
         margin: 5,

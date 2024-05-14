@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useState } from 'react'
-import { StyleSheet, Text, View , TouchableOpacity, ScrollView} from 'react-native'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, BackHandler } from 'react-native'
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import Semicircle from '../../../adOns/atoms/SemiCircle'
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -14,7 +14,7 @@ import YesNoModal from '../../../adOns/molecules/YesNoModal';
 const Setting = () => {
 
   const navigation = useNavigation()
-  const {profileState, profileDispatch} = useProfile()
+  const { profileState, profileDispatch } = useProfile()
   const [showModal, setShowModal] = useState(false)
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const delRef = useRef(null)
@@ -34,49 +34,61 @@ const Setting = () => {
         email: profileState.email
       })
       // console.log('7887798 ',profileState.email)
-    }, []))
-    const handleYes = async () => {
-      await AsyncStorage.removeItem('token')
-      // profileDispatch({type:'REFRESH', payload:!profileState.refresh})
-      setShowModal(false);
-      navigation.closeDrawer();
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'LoginScreen' }],
-      });
-    };
+    }, [profileState]))
+  const handleYes = async () => {
+    await AsyncStorage.removeItem('token')
+    // profileDispatch({type:'REFRESH', payload:!profileState.refresh})
+    setShowModal(false);
+    navigation.closeDrawer();
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'LoginScreen' }],
+    });
+  };
   const handleDelete = () => {
     console.log("DELETE PRESSED")
     deleteAccount()
       .then(async data => {
-        console.log(data.data.message , data.status)
+        console.log(data.data.message, data.status)
         setShowModal(false)
         // profileDispatch({type:'REFRESH', payload:!profileState.refresh})
-        if(data.status!==200){
-          showNoty(data.data.message,"danger")
-        }else{
-          showNoty("Account deleted successfully","success")
+        if (data.status !== 200) {
+          showNoty(data.data.message, "danger")
+        } else {
+          showNoty("Account deleted successfully", "success")
         }
         await AsyncStorage.clear()
-        setTimeout(()=>{
+        setTimeout(() => {
           navigation.reset({
             index: 0,
             routes: [{ name: 'LoginScreen' }],
           });
-        },2500)
+        }, 2500)
       }).catch(error => {
         console.log("ERROR DELETING ACCOUNCT", error)
         setShowModal(false)
       })
   }
+  useEffect(() => {
+    const backFuntion = () => {
+      navigation.goBack()
+      return true
+    }
+    console.log("BACKHANDLER SET IN HOME PAGE")
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backFuntion);
+    return () => {
+      console.log('BACKHANDLER REMOVED FROM HOME PAGE')
+      backHandler.remove()
+    };
+  }, []);
 
   return (
     <AuthenticatedLayout title={'Setting'}>
-    <Semicircle item = {profileDetails} editMode={false}/>
-      <View style={{flex : 1 ,display : 'flex', flexDirection : 'column',justifyContent : 'space-between' , width : '100%'}}>
+      <Semicircle item={profileDetails} editMode={false} showEdit={true} />
+      <View style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '100%' }}>
         <View style={styles.settingBox}>
-        <FlashMessage ref={delRef} />
-          <TouchableOpacity style={styles.listItem1} onPress = {() => navigation.navigate('Profile')}>
+          <FlashMessage ref={delRef} />
+          <TouchableOpacity style={styles.listItem1} onPress={() => navigation.navigate('Profile')}>
             <Icon name="edit" size={30} color="#ffea00" />
             <Text style={styles.text}>Edit Profile</Text>
           </TouchableOpacity>
@@ -88,24 +100,24 @@ const Setting = () => {
             handleYes={handleDelete}
             yesText={'Delete'}
             noText={'Cancel'} />
-            <YesNoModal
+          <YesNoModal
             show={showLogoutModal}
             setShow={setShowLogoutModal}
             title={'EXIT ?'}
             message={'Are You Sure Want To Logout ?'}
             handleYes={handleYes}
             yesText={'Yes'}
-            noText={'No'}/>
+            noText={'No'} />
           <TouchableOpacity style={styles.listItem1} onPress={() => { setShowModal(true) }}>
             <Icon name="delete" size={30} color="#ffea00" />
             <Text style={styles.text}>Delete My Account</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.listItem2} onPress={()=>setShowLogoutModal(true)}>
+          <TouchableOpacity style={styles.listItem2} onPress={() => setShowLogoutModal(true)}>
             <Icon name="exit-to-app" size={30} color="#ffea00" />
             <Text style={styles.text}>Log Out</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={{width : '100%'}} onPress={() => {navigation.navigate('Terms')}}>
+        <TouchableOpacity style={{ width: '100%' }} onPress={() => { navigation.navigate('Terms') }}>
           <Text style={styles.textStyle}>Terms and Conditions</Text>
         </TouchableOpacity>
       </View>
@@ -141,12 +153,12 @@ const styles = StyleSheet.create({
     marginLeft: 0,
     padding: 5
   },
-  textStyle:{
+  textStyle: {
     textAlign: 'center',
     color: 'black',
     fontSize: 18,
     fontWeight: '800',
-    padding:15,
+    padding: 15,
     textDecorationLine: 'underline'
   }
 })

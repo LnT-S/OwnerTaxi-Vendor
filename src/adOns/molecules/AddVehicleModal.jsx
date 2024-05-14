@@ -53,17 +53,20 @@ export default function AddVehicleModal(props) {
                     <View style={{ width: '90%' }}>
                         <TextInput
                             placeholder="Enter Vehicle Type {Sedan Mini etc)"
+                            placeholderTextColor={"gray"}
                             onChangeText={v => { setType(v) }}
                             style={styles.textInput}
                         />
                         <TextInput
                             placeholder="Enter Specific Name (Verna Wagonr etc)"
+                            placeholderTextColor={"gray"}
                             onChangeText={v => setSubType(v)}
                             style={styles.textInput}
 
                         />
                         <TextInput
                             placeholder="Enter Capacity"
+                            placeholderTextColor={"gray"}
                             value={!isNaN(capacity) ? capacity.toString() : ''}
                             onChangeText={v => { setError(''); !isNaN(v) ? setCapacity(parseInt(v)) : setError("Only Numeric Characters !!") }}
                             style={styles.textInput}
@@ -71,6 +74,7 @@ export default function AddVehicleModal(props) {
                         />
                         <TextInput onChangeText={v => setVehicleNo(v)}
                             placeholder="Enter Vehicle No"
+                            placeholderTextColor={"gray"}
                             style={styles.textInput}
 
                         />
@@ -115,7 +119,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginVertical: 10,
         borderColor: BgColor,
-        padding: 10
+        padding: 10,color : 'black'
     },
     row: {
         flexDirection: 'row',

@@ -4,7 +4,7 @@ import { BgColor } from '../../styles/colors';
 import AuthenticatedLayout from '../../Driver/common/layout/AuthenticatedLayout';
 
 const LoadingScreen = (props) => {
-    const { cs , showHeader , showFooter} = props
+    const { cs , showHeader , showFooter , title} = props
     const [zoomValue] = useState(new Animated.Value(1));
 
     useEffect(() => {
@@ -32,7 +32,7 @@ const LoadingScreen = (props) => {
     }, [zoomValue]);
 
     return (
-        <AuthenticatedLayout showFooter={showFooter} showHeader={showHeader}>
+        <AuthenticatedLayout title={title} showFooter={showFooter} showHeader={showHeader} >
             {props.children}
             <View style={styles.container}>
                 <Animated.Image

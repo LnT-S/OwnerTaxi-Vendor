@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { BackHandler, ScrollView, Text, View, TouchableOpacity, StyleSheet, FlatList, Image } from 'react-native'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
 import SearchBox from '../../../adOns/atoms/Search'
@@ -15,6 +15,11 @@ import { getIntercityBookingFromPostVendor, getLocalBooking } from '../../../ser
 import LoadingScreen from '../../../adOns/organisms/LoadingScreen'
 import { getProfile } from '../../../services/profileServices'
 import { useProfile } from '../../../context/ContextProvider'
+import BookingAccepted from '../active Booking/BookingAccepted'
+import ActiveBooking from '../active Booking/ActiveBooking'
+import { BgColor } from '../../../styles/colors'
+import { showNoty } from '../../../common/flash/flashNotification'
+import FlashMessage from 'react-native-flash-message'
 const HomePageDriver = () => {
     const activeList = [
         {
@@ -86,6 +91,7 @@ const HomePageDriver = () => {
     ];
     const navigation = useNavigation()
     const route = useRoute();
+    const ref = useRef()
     const { profileState, profileDispatch } = useProfile()
     const { reload, option } = route?.params ? route.params : ''
     const [showSearchResult, setShowSearchResults] = useState(true)
@@ -98,6 +104,21 @@ const HomePageDriver = () => {
     const [localList, setLocalList] = useState([])
     const [intercityList, setIntercityList] = useState([])
 
+    const [optionIndex, setOptionIndex] = useState(0);
+    const optionList = {
+        option1: {
+            name: "All",
+            action: () => { }
+        },
+        option2: {
+            name: "Accepted Bookings",
+            action: () => { }
+        },
+        option3: {
+            name: "Posted Bookings",
+            action: () => { }
+        },
+    }
     const fetchLocal = () => {
         setPageIsLoading(true)
         setSelectedOption('InterCity')
@@ -105,6 +126,7 @@ const HomePageDriver = () => {
             .then(data => {
                 console.log("**", data.data.data)
                 setLocalList(data.data.data)
+                setPageIsLoading(false)
             })
             .catch(err => {
                 console.log("ERROR IN GETTING LOCAL DATA ", err);
@@ -112,12 +134,17 @@ const HomePageDriver = () => {
         getIntercityBookingFromPostVendor()
             .then(data => {
                 console.log("INTERCITY DATA ", data.data.data)
-                setIntercityList(data.data.data)
+                if (data.status === 200) {
+                    setIntercityList(data.data.data)
+                    setPageIsLoading(false)
+                } else {
+                    showNoty(data.data.message, "danger")
+                }
             })
             .catch(err => {
                 console.log("ERROR IN FETCHING INTERCITY DATA ", err)
+                showNoty(err.data.message || err, "danger")
             })
-        setPageIsLoading(false)
     }
     useFocusEffect(
         useCallback(() => {
@@ -166,11 +193,12 @@ const HomePageDriver = () => {
             .catch(err => {
                 console.log("ERROR IN RETRIVING PROFILE ", err)
             })
-            setPageIsLoading(false)
+        setPageIsLoading(false)
     }, [])
     useEffect(() => {
         const backFuntion = () => {
             setShowModal(true)
+            return true
         }
         console.log("BACKHANDLER SET IN HOME PAGE")
         const backHandler = BackHandler.addEventListener('hardwareBackPress', backFuntion);
@@ -179,15 +207,16 @@ const HomePageDriver = () => {
             backHandler.remove()
         };
     }, []);
-    const leftCenterJsx = (<View style={{ height: 100, width: 100, position : 'relative', top : 5,marginRight : -10}}><Image resizeMode='contain' source={require('../../../assets/imgaes/Taxilogo.png')} style={{ height: '100%', width: '100%' }} /></View>)
+    const leftCenterJsx = (<View style={{ height: 80, width: 100, position: 'relative', top: 0, marginLeft: 40, marginRight: -10 }}><Image resizeMode='contain' source={require('../../../assets/imgaes/Taxilogo.png')} style={{ height: '100%', width: '100%' }} /></View>)
 
     if (pageIsLoading) {
         return (
             <LoadingScreen cs={false} />)
     } else {
         return (
-            <AuthenticatedLayout title={'Owner Taxi'} showFooter={false} showBackIcon={false} leftCenterJsx={leftCenterJsx}>
+            <AuthenticatedLayout title={'Onwer Taxi'} showFooter={false} showBackIcon={false} >
                 <View style={{ position: 'relative', flex: 1 }}>
+                    <FlashMessage ref={ref} />
                     <FunctionalModal
                         show={showPostBookingModal}
                         setShow={setShowPostBookingModal}
@@ -205,24 +234,48 @@ const HomePageDriver = () => {
                     <View style={styles.viewStyle}>
                         <View style={styles.liststyle}>
                             <View style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '90%' }}>
-                                <TwoWayPushButton option1={'InterCity'} option2={'Local'} setter={setSelectedOption} />
+                                <TwoWayPushButton option1={'InterCity'} option2={'Taxi'} setter={setSelectedOption} />
                             </View>
                             <TouchableOpacity onPress={fetchLocal}><RefreshButton action={fetchLocal} /></TouchableOpacity>
+                        </View>
+                        <View style={{ width: '100%', padding: 15, marginBottom: 10, marginTop: -10, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', }}>
+                            {
+                                Object.values(optionList).map((el, i) => {
+                                    return (
+                                        <TouchableOpacity key={i} style={{ borderBottomWidth: 2, borderBottomColor: optionIndex === i ? "black" : 'rgba(255,255,255,0.05)', padding: 5 }} onPress={() => setOptionIndex(i)}>
+                                            <Text style={{ fontWeight: optionIndex === i ? '700' : '300', fontSize: optionIndex === i ? 18 : 16, fontFamily: 'serif' }}>{el.name}</Text>
+                                        </TouchableOpacity>
+                                    )
+                                })
+                            }
                         </View>
                         {/*<View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <TwoWayPushButton option1={'Local'} option2={'InterCity'} setter={setSelectedOption} />
     </View>*/}
-                        <View style={{ height: '81%' }}>
-
-                            {selectedOption !== 'Local' ? <FlatList
-                                keyExtractor={(item, index) => (index)}
-                                data={selectedOption === 'Local' ? localList : intercityList}
-                                renderItem={({ item }) => {
-                                    return <View style={styles.FlatListviewStyle}><LazyLoadActiveRequestCard item={selectedOption === 'Local' ? item.passiveBookingId : item} type={selectedOption} /></View>
-                                }}
-                            /> : <LoadingScreen cs={true} showHeader={false} showFooter={false} />}
-                        </View>
-                        <View style={{ marginTop: 8 }}>
+                        {
+                            (selectedOption === 'Taxi') ?
+                                <LoadingScreen cs={true} showHeader={false} showFooter={false} />
+                                : (optionIndex === 0) ?
+                                    <View style={{ flex: 1 }}>
+                                        <FlatList
+                                            keyExtractor={(item, index) => (index)}
+                                            data={selectedOption === 'Taxi' ? localList : intercityList}
+                                            renderItem={({ item }) => {
+                                                return <View style={styles.FlatListviewStyle}><LazyLoadActiveRequestCard item={selectedOption === 'Taxi' ? item.passiveBookingId : item} type={selectedOption} /></View>
+                                            }}
+                                        />
+                                    </View> :
+                                    (optionIndex === 1)
+                                        ?
+                                        <View style={{ flex: 1 }}>
+                                            <BookingAccepted showHeader={false} showFooter={false} />
+                                        </View>
+                                        :
+                                        <View style={{ flex: 1 }}>
+                                            <ActiveBooking showHeader={false} showFooter={false} />
+                                        </View>
+                        }
+                        <View style={{ marginTop: 0 }}>
                             <PressButton name={'            Post Booking            '}
                                 onPress={() => { setShowPostBookingModal(true) }} />
                         </View>
@@ -238,6 +291,8 @@ const styles = StyleSheet.create({
         zIndex: 1,
         height: '100%',
         flex: 1,
+        justifyContent: 'space-between',
+        marginBottom: 10
     },
     liststyle: {
         marginHorizontal: 10,

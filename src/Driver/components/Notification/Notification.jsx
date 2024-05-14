@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Text, FlatList, ActivityIndicator, TouchableOpacity, RefreshControl } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Text, FlatList, ActivityIndicator, TouchableOpacity, RefreshControl, BackHandler } from 'react-native';
 import NotificationBox from './NotificationBox';
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout';
 import { useNavigation } from '@react-navigation/native';
+import LoadingScreen from '../../../adOns/organisms/LoadingScreen';
 
 const Notification = () => {
 
     const navigation = useNavigation()
+    const [comingSoon , setComingSoon] = useState(true)
 
     const NotificationList = [
         {
-            notificationType: 'Vendor Notification',
+            notificationType: 'Bail Notification',
             content: 'This is just a example of Vendor Notification Click here to see more Notification related to vendor This is just a example of Vendor Notification Click here to see more Notification related to vendor',
             time: '10:00 PM'
         },
@@ -86,7 +88,22 @@ const Notification = () => {
     const handleNotificationPage = (item) => {
         navigation.navigate('notificationScreen',{item})
     }
-    return (
+    useEffect(() => {
+        const backFuntion = () => {
+            navigation.goBack()
+            return true
+        }
+        console.log("BACKHANDLER SET IN HOME PAGE")
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backFuntion);
+        return () => {
+            console.log('BACKHANDLER REMOVED FROM HOME PAGE')
+            backHandler.remove()
+        };
+    }, []);
+    if(comingSoon===true){
+        return <LoadingScreen cs={true} title={"Notification"}/>
+    }
+    else return (
         <AuthenticatedLayout title={'Notification'} showNotification={false}>
             <View style={{ marginTop: 10 }}>
             {isRefreshing && <ActivityIndicator  size={'large'} color={'black'}/>}

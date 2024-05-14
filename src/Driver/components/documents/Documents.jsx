@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, BackHandler, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import ThreeWayPushButton from '../../../adOns/molecules/ThreeWayPushButton'
 import DocumentCard from './DocumentCard'
@@ -13,10 +13,11 @@ import { showNoty } from '../../../common/flash/flashNotification'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { BgColor, WHITEBG } from '../../../styles/colors'
 import { useProfile } from '../../../context/ContextProvider'
-import { useFocusEffect } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 
 const Documents = () => {
   const [carSubArray, setCarSubArray] = useState([])
+  const navigation = useNavigation()
   const [showAddModal, setShowAddModal] = useState(false)
   const [loading, setLoading] = useState(true)
   const [driverArray, setDriverArray] = useState(null)
@@ -81,6 +82,18 @@ const Documents = () => {
       })
     setLoading(false)
   }, [refresh])
+  useEffect(() => {
+    const backFuntion = () => {
+        navigation.goBack()
+        return true
+    }
+    console.log("BACKHANDLER SET IN HOME PAGE")
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backFuntion);
+    return () => {
+        console.log('BACKHANDLER REMOVED FROM HOME PAGE')
+        backHandler.remove()
+    };
+}, []);
 
   return (
     <AuthenticatedLayout title={'Document'}>

@@ -30,18 +30,26 @@ export const getIntercityBookingFromPostVendor = async () => {
 
     // Authorization: auth_token ? `Bearer ${auth_token}` : ''
     try {
-        let res = await fetch(URL, {
+        const timeOut = 7000
+        const timeoutPromise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                reject({data : {message : "Server Unreachable"},status : 400});
+            }, timeOut);
+        });
+        let fetchPromise = fetch(URL, {
             method: 'get',
             mode: 'cors',
             headers: {
                 'Authorization': auth_token ? `Bearer ${auth_token}` : '',
             }
         })
+        const res = await Promise.race([fetchPromise, timeoutPromise]);
         let data = await res.json()
         console.log('DATA RECIVED ', data)
         return { status: res.status, data: data }
     } catch (error) {
         console.log('GET_OTP ERROR', error)
+            return error
     }
 }
 export const getIntercityBookingFromCustomer = async () => {
@@ -122,6 +130,23 @@ export const getDriverHistory = async () => {
 }
 export const getBookingsDriverHasAccepted = async () => {
     const URL = `${server.server}/driver/get-bookings-i-have-accepted`
+    console.log('URL ', URL)
+    let auth_token = await AsyncStorage.getItem('token')
+
+    let res = await fetch(URL, {
+        method: 'get',
+        mode: 'cors',
+        headers: {
+            'Authorization': auth_token ? `Bearer ${auth_token}` : '',
+            'Content-Type': 'application/json',
+        }
+    })
+    let data = await res.json()
+    console.log('DATA RECIVED ', data)
+    return { status: res.status, data: data }
+}
+export const getTransactionInfo = async ()=>{
+    const URL = `${server.server}/driver/get-transaction-info`
     console.log('URL ', URL)
     let auth_token = await AsyncStorage.getItem('token')
 

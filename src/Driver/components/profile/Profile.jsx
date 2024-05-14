@@ -29,7 +29,7 @@ const Profile = () => {
         email: profileState.email
       })
       // console.log('7887798 ',profileState.email)
-    }, []))
+    }, [profileState]))
 
   const handleRefresh = () => {
     setLoading(true)
@@ -84,7 +84,7 @@ const Profile = () => {
         handleYes={handleShow}
         yesText={'Hide'}
         noText={'Show'} />
-      <Semicircle item={profileDetails} editMode={false} />
+      <Semicircle item={profileDetails} editMode={false} showEdit={false}/>
       <View style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '100%' }}>
         <View style={styles.settingBox}>
           <TouchableOpacity style={styles.listItem1} onPress={() => setShowModal(true)}>

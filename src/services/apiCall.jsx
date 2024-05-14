@@ -2,7 +2,7 @@ import axios from "axios";
 import server from './server.tsx'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const getOtp = async (phoneNo , type) => {
+export const getOtp = async (phoneNo, type) => {
     const URL = `${server.server}/authentication/get-otp`
     console.log('URL ', URL, phoneNo)
 
@@ -14,7 +14,7 @@ export const getOtp = async (phoneNo , type) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ phone: phoneNo, type : type })
+            body: JSON.stringify({ phone: phoneNo, type: type })
 
         })
         let data = await res.json()
@@ -22,6 +22,9 @@ export const getOtp = async (phoneNo , type) => {
         return { status: res.status, data: data }
     } catch (error) {
         console.log('GET_OTP ERROR', error)
+        if(error==='[TypeError: Network request failed]'){
+            return{status:400,data:null}
+        }
     }
 }
 export const verifyOtp = async (phone, otp) => {
@@ -29,18 +32,24 @@ export const verifyOtp = async (phone, otp) => {
     console.log('URL ', URL, otp)
 
     // Authorization: auth_token ? `Bearer ${auth_token}` : ''
-    let res = await fetch(URL, {
-        method: 'post',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ phoneNo: phone, otp: otp })
-
-    })
-    let data = await res.json()
-    console.log('DATA RECIVED ', data)
-    return { status: res.status, data: data }
+    try {
+        let res = await fetch(URL, {
+            method: 'post',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ phoneNo: phone, otp: otp })
+    
+        })
+        let data = await res.json()
+        console.log('DATA RECIVED ', data)
+        return { status: res.status, data: data }
+    } catch (error) {
+        if(error==='[TypeError: Network request failed]'){
+            return{status:400,data:null}
+        }
+    }
 }
 export const deleteAccount = async () => {
     const URL = `${server.server}/authentication/delete-account`
@@ -78,7 +87,7 @@ export const activeBookingInfo = async () => {
 }
 export const booking = async (formData) => {
     const URL = `${server.server}/driver/booking`
-    console.log('URL ', URL)
+    console.log('URL ', URL, formData)
     let auth_token = await AsyncStorage.getItem('token')
 
     let res = await fetch(URL, {
@@ -114,36 +123,36 @@ export const addVehicle = async (formData) => {
     console.log('DATA RECIVED ', data)
     return { status: res.status, data: data }
 }
-export const uploadDocumentDriver = async (rawFormData)=>{
+export const uploadDocumentDriver = async (rawFormData) => {
     try {
         const URL = `${server.server}/driver/upload-document`
         console.log('URL ', URL)
         let auth_token = await AsyncStorage.getItem('token')
         let formData = new FormData();
-        formData.append('documentNo',rawFormData.documentNo)
-        formData.append('documentName',rawFormData.documentName)
-        {rawFormData.vehicleNo ? formData.append('vehicleNo',rawFormData.vehicleNo) : ''}
-        formData.append('documentFor',rawFormData.documentFor)
-        formData.append('document',{
+        formData.append('documentNo', rawFormData.documentNo)
+        formData.append('documentName', rawFormData.documentName)
+        { rawFormData.vehicleNo ? formData.append('vehicleNo', rawFormData.vehicleNo) : '' }
+        formData.append('documentFor', rawFormData.documentFor)
+        formData.append('document', {
             name: rawFormData.document.name,
-            type: rawFormData.document.type ,
+            type: rawFormData.document.type,
             uri:
                 Platform.OS === "android"
                     ? rawFormData.document.uri
                     : rawFormData.document.uri.replace("file://", "")
         })
-        console.log("FORM DATA" , rawFormData)
+        console.log("FORM DATA", rawFormData)
         let res = await fetch(URL, {
             method: 'post',
             mode: 'cors',
             headers: {
                 'Authorization': auth_token ? `Bearer ${auth_token}` : '',
             },
-            body : formData
+            body: formData
         })
         let data = await res.json()
         console.log('DATA RECIVED ', data)
-        return { status: res.status, data: data } 
+        return { status: res.status, data: data }
     } catch (error) {
         console.log("ERROR IN UPDATING PROFILE ", error)
     }
@@ -273,5 +282,54 @@ export const deleteBooking = async (formData) => {
     let data = await res.json()
     console.log('DATA RECIVED ', data)
     return { status: res.status, data: data }
+}
+export const closeBooking = async (formData) => {
+    const URL = `${server.server}/driver/close-booking`
+    console.log('URL ', URL)
+    let auth_token = await AsyncStorage.getItem('token')
+
+    let res = await fetch(URL, {
+        method: 'post',
+        mode: 'cors',
+        headers: {
+            'Authorization': auth_token ? `Bearer ${auth_token}` : '',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    })
+    let data = await res.json()
+    console.log('DATA RECIVED ', data)
+    return { status: res.status, data: data }
+}
+export const uprollTransaction = async (rawFormData)=>{
+    try {
+        const URL = `${server.server}/driver/uproll-transaction`
+        console.log('URL ', URL)
+        let auth_token = await AsyncStorage.getItem('token')
+        let formData = new FormData();
+        rawFormData.amount ? formData.append('amount', rawFormData.amount) : ''
+        rawFormData.ss ? formData.append('ss', {
+            name: rawFormData.ss.fileName,
+            type: rawFormData.ss.type,
+            uri:
+                Platform.OS === "android"
+                    ? rawFormData.ss.uri
+                    : rawFormData.ss.uri.replace("file://", "")
+        }) : ''
+        console.log("FORM DATA", formData)
+        let res = await fetch(URL, {
+            method: 'post',
+            mode: 'cors',
+            headers: {
+                'Authorization': auth_token ? `Bearer ${auth_token}` : '',
+            },
+            body: formData
+        })
+        let data = await res.json()
+        console.log('DATA RECIVED ', data)
+        return { status: res.status, data: data }
+    } catch (error) {
+        console.log("ERROR IN UPDATING PROFILE ", error)
+    }
 }
 

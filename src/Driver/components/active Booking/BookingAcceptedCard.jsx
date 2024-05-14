@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Linking } from 'react-native';
 import CheckLeadsModal from '../../../adOns/molecules/CheckLeadsModal';
+import { showNoty } from '../../../common/flash/flashNotification';
 
 const BookingAcceptedCard = (props) => {
 
@@ -22,8 +23,14 @@ const BookingAcceptedCard = (props) => {
         Linking.openURL(messageUrl);
     };
     const handlenavigation = () => {
-        if (activeItem.status === 'bidstarted') {
-            navigation.navigate('Bidding', { item: activeItem })
+        if (activeItem.status === 'accepted') {
+            navigation.navigate('CloseBooking', { item: props.item })
+        } else {
+            if (activeItem.status === 'closed') {
+                showNoty("This booking is now closed !! You will see it in history now", "danger")
+            }else{
+                showNoty("Booking Not yet assigned to you", "danger")
+            }
         }
     }
     const checkLeads = () => {
@@ -36,7 +43,7 @@ const BookingAcceptedCard = (props) => {
                 show={showLeads}
                 setShow={setShowLeads}
                 driversArray={props.item.driverResponse}
-                 />
+            />
             <View style={styles.activeBar}>
                 <TouchableOpacity onPress={handlenavigation}>
                     <View style={{ display: 'flex ', flexDirection: 'row', alignItems: 'center' }}>

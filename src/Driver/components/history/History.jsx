@@ -1,14 +1,15 @@
-import React, { useCallback, useState } from 'react'
-import { Text, View, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Text, View, FlatList, StyleSheet, ActivityIndicator, RefreshControl, BackHandler } from 'react-native'
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import HistoryRequestCard from './HistoryRequestCard';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getDriverHistory } from '../../../services/getDataServices';
 import { showNoty } from '../../../common/flash/flashNotification';
 
 const History = () => {
   const [historyList, setHistoryList] = useState([])
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const navigation = useNavigation()
 
   const fetchData = async () => {
     setIsRefreshing(true)
@@ -28,6 +29,18 @@ const History = () => {
       fetchData()
     }, [])
   )
+  useEffect(() => {
+    const backFuntion = () => {
+        navigation.goBack()
+        return true
+    }
+    console.log("BACKHANDLER SET IN HOME PAGE")
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backFuntion);
+    return () => {
+        console.log('BACKHANDLER REMOVED FROM HOME PAGE')
+        backHandler.remove()
+    };
+}, []);
 
   return (
     <AuthenticatedLayout title={'History'}>

@@ -22,7 +22,7 @@ export default function FunctionalModal(props) {
             <View style={styles.modalContainer}>
                 <View style={{ ...styles.modalContent, ...props.extContStyle }}>
                     <View style={{ width: '100%', marginBottom: 15 }}>
-                        <Text style={{ fontSize: 26, color: 'black' }}>{title.toUpperCase()}</Text>
+                        <Text style={{ fontSize: 26, color: 'black' }}>{title}</Text>
                     </View>
                     <View style={styles.modalContentScreen}>
                         {Object.values(functionalObject).map((item, index) => {
