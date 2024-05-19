@@ -661,7 +661,7 @@ const Intercity = () => {
 
                         <View style={{ backgroundColor: 'rgba(0,0,0,0.05)', marginTop: 10 }}>
                             <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'red', marginLeft: 25, marginTop: 10 }}>Extra's Info</Text>
-                            <View style={{ alignItems: 'flex-end', display: 'flex', gap: 10, justifyContent: 'center', marginRight: 100 }}>
+                            <View style={{ alignItems: 'flex-end', display: 'flex', gap: 10, justifyContent: 'center', marginRight: 40 }}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 25, marginTop: 10 }}>
                                     <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'black' }}>Total Km :</Text>
                                     <TextInput

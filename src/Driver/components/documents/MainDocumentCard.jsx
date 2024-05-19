@@ -8,12 +8,12 @@ import { WHITEBG } from '../../../styles/colors';
 import server from '../../../services/server.tsx'
 
 const MainDocumentCard = (props) => {
-    const { status, documentId, documentName,image } = props.item
-    const {reload} = props
+    const { status, documentId, documentName, image } = props.item
+    const { reload } = props
 
     const [modalVisible, setModalVisible] = useState(false);
-    const [infoModalVisible , setInfoModalVisible ] = useState(false)
-    const [viewDocument , setViewDocument] = useState(false)
+    const [infoModalVisible, setInfoModalVisible] = useState(false)
+    const [viewDocument, setViewDocument] = useState(false)
 
     const backgroundColorMapper = {
         Missing: styles.missingContainer,
@@ -31,21 +31,21 @@ const MainDocumentCard = (props) => {
     return (
 
         <View style={{ ...styles.container }}>
-            <CustomDocumentPicker 
-            documentDetails={props.item}
-            documentName={documentName}
-            visible = {modalVisible}
-            setVisible = {setModalVisible}
-            vehicleNo={props.vehicleNo}
-            reload={reload}
-             />
-             <InfoModal 
-             show = {infoModalVisible} 
-             setShow = {setInfoModalVisible}
-             title= {status} 
-             message = {infoMessage[status]}
-             />
-             <InfoModal
+            <CustomDocumentPicker
+                documentDetails={props.item}
+                documentName={documentName}
+                visible={modalVisible}
+                setVisible={setModalVisible}
+                vehicleNo={props.vehicleNo}
+                reload={reload}
+            />
+            <InfoModal
+                show={infoModalVisible}
+                setShow={setInfoModalVisible}
+                title={status}
+                message={infoMessage[status]}
+            />
+            <InfoModal
                 show={viewDocument}
                 setShow={setViewDocument}
                 title={documentName}
@@ -53,24 +53,24 @@ const MainDocumentCard = (props) => {
                 serverImageSource={server.server + image}
             />
             <View style={styles.section1}>
-                <TouchableOpacity 
-                style={{ ...styles.statusContainer, ...backgroundColorMapper[status] }}
-                onPress={()=>setInfoModalVisible(true)}
+                <TouchableOpacity
+                    style={{ ...styles.statusContainer, ...backgroundColorMapper[status] }}
+                    onPress={() => setInfoModalVisible(true)}
                 >
                     <Text style={styles.statusContainerText}>{status}</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.section2}>
-                {(status==='Uploaded' || status==='Accept' || status==='Reject')?<TouchableOpacity style={styles.viewButtonContainer} onPress={()=>{setViewDocument(true)}}>
+                {(status === 'Uploaded' || status === 'Accept' || status === 'Reject') ? <TouchableOpacity style={styles.viewButtonContainer} onPress={() => { setViewDocument(true) }}>
                     <Text style={styles.viewButtonContainerText}> View </Text>
-                </TouchableOpacity>:''}
-                {(status==='Missing' || status==='Reject')?
-                <TouchableOpacity 
-                style={styles.uploadButtonContainer}
-                onPress={()=>setModalVisible(true)}
-                >
-                    <Text style={styles.uploadButtonContainerText}> Upload </Text>
-                </TouchableOpacity>:''}
+                </TouchableOpacity> : ''}
+                {(status === 'Missing' || status === 'Reject') ?
+                    <TouchableOpacity
+                        style={styles.uploadButtonContainer}
+                        onPress={() => setModalVisible(true)}
+                    >
+                        <Text style={styles.uploadButtonContainerText}> Upload </Text>
+                    </TouchableOpacity> : ''}
             </View>
             <View style={styles.section3}>
                 <View style={styles.documentNameTextContainer}>
@@ -86,16 +86,16 @@ const MainDocumentCard = (props) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor : WHITEBG,
+        backgroundColor: WHITEBG,
         position: 'relative',
         display: 'flex',
         justifyContent: 'space-between',
         width: '45%',
-        height: 170, //adjust,
+        // height: 170, //adjust,
         flexWrap: 'wrap',
         borderWidth: 1,
         flexDirection: 'column',
-        borderRadius : 15
+        borderRadius: 15
     },
     crossButton: {
         position: 'absolute',
@@ -115,8 +115,8 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        flexBasis: '40%',
-        marginTop: 10,
+        marginTop: 25,
+        marginBottom : 30
 
     },
     statusContainer: {
@@ -133,19 +133,18 @@ const styles = StyleSheet.create({
         width: '100%',
         display: 'flex',
         justifyContent: 'space-evenly',
-        flexBasis: 'auto',
         flexDirection: 'row',
+        marginBottom : 30
 
     },
     section3: {
-        widht: '100%',
-        flexBasis: '25%',
+        width: '100%',
         backgroundColor: 'black',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        borderBottomLeftRadius : 15,
-        borderBottomRightRadius : 15
+        borderBottomLeftRadius: 15,
+        borderBottomRightRadius: 15
 
     },
     documentNameTextContainer: {

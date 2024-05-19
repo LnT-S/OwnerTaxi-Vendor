@@ -54,7 +54,7 @@ const LoginPage = () => {
     useEffect(() => {
         setError('')
         console.log('selected Option ', selectedOption)
-        if(selectedOption==='Vendor'){
+        if (selectedOption === 'Vendor') {
             setError("Coming Soon ...")
         }
     }, [selectedOption])
@@ -75,14 +75,20 @@ const LoginPage = () => {
     }
     const handleLogin = async () => {
         setLoading(true)
+
         try {
-            if(selectedOption==='Vendor'){
+            if (selectedOption === 'Vendor') {
                 setError("Coming Soon ...")
-                showNoty("Vendor Module will soon be available","info")
+                showNoty("Vendor Module will soon be available", "info")
                 setLoading(false)
-                return 
+                return
             }
-            if (phone.length === 10 ) {
+            let phoneNo = phone
+            if (phone.startsWith("+91")) {
+                phoneNo = phone.replace("+91", "")
+            }
+            console.log(phoneNo,phone);
+            if (phoneNo.length === 10) {
                 let otpSent = await AsyncStorage.getItem('otpSent')
                 otpSent = parseInt(otpSent)
                 console.log('otp', otpSent)
@@ -90,21 +96,21 @@ const LoginPage = () => {
                     console.log('OTPSENT ', otpSent, new Date(otpSent).getTime())
                     profileDispatch({
                         type: 'PHONE',
-                        payload: phone
+                        payload: phoneNo
                     })
-                    let resObj = await getOtp(phone , selectedOption)
-                    await AsyncStorage.setItem('userIs' , selectedOption)
+                    let resObj = await getOtp(phoneNo, selectedOption)
+                    await AsyncStorage.setItem('userIs', selectedOption)
                     await AsyncStorage.setItem('otpSent', new Date().getTime().toString())
                     if (resObj.status === 200) {
                         setLoading(false)
-                        navigation.navigate('OTPScreen',{preOtp : undefined})
-                    }else{
-                        if(resObj.status===202){
-                            showNoty(resObj.data.message , "info")
-                            setTimeout(()=>navigation.navigate('OTPScreen',{preOtp : resObj.data.otp}),2000)
+                        navigation.navigate('OTPScreen', { preOtp: undefined })
+                    } else {
+                        if (resObj.status === 202) {
+                            showNoty(resObj.data.message, "info")
+                            setTimeout(() => navigation.navigate('OTPScreen', { preOtp: resObj.data.otp }), 2000)
                             setLoading(false)
-                        }else{
-                            showNoty(resObj.data.message , "danger")
+                        } else {
+                            showNoty(resObj.data.message, "danger")
                             setLoading(false)
                         }
                     }
@@ -149,7 +155,7 @@ const LoginPage = () => {
             style={{ flex: 1 }}>
             <ScrollView style={{ flex: 1 }}>
                 <SafeAreaView style={{ flex: 1 }}>
-                <FlashMessage ref={flashRef} />
+                    <FlashMessage ref={flashRef} />
                     <View style={styles.loginpage}>
                         <YesNoModal
                             show={showModal}
@@ -177,7 +183,7 @@ const LoginPage = () => {
                                     setPhone(v)
                                 }}
                             />
-                            {error !== '' ? <Text style={{ textAlign : 'center',marginTop: -15, marginBottom: 15, fontSize: 14, color: "red" }}>{error}</Text> : ''}
+                            {error !== '' ? <Text style={{ textAlign: 'center', marginTop: -15, marginBottom: 15, fontSize: 14, color: "red" }}>{error}</Text> : ''}
                             {/*<PassInput
                             placeholder='Password'
                         />
@@ -192,7 +198,7 @@ const LoginPage = () => {
                                 disabled={loading}
                                 loading={loading}
                             />
-                            {timer&&<Text style={{fontSize : 14 , fontFamily : 'serif' , color : 'red'}}>You can retry after {seconds} seconds</Text>}
+                            {timer && <Text style={{ fontSize: 14, fontFamily: 'serif', color: 'red' }}>You can retry after {seconds} seconds</Text>}
                             {/*} <View style={styles.content}>
                             <View style={styles.signupContainer}>
                                 <Text style={styles.createAccount}>Don't have an account?</Text>

@@ -9,6 +9,8 @@ const ActiveRequestCard = (props) => {
     const navigation = useNavigation()
     const { item, type } = props;
 
+    console.log("INTERCIRY REQUEST CARD ",item)
+    console.log("88888888" , item?.id?.verifiedBy);
     const handlePressOverCard = () => {
         console.log('TYPE ', type)
         if (type === 'Local')
@@ -26,9 +28,9 @@ const ActiveRequestCard = (props) => {
                 />
             </View>}
             <View style={{ ...styles.activeBar, backgroundColor: '#E7EEF6', opacity: item.status === "accepted" ? 0.9 : 1 }}>
-                {type !== 'Local' && item.verifiedBy && <View style={{ ...styles.label, backgroundColor: item?.verifiedBy?.toLowerCase() === 'owner taxi' ? '#8EF433' : BgColor }}>
+                {type !== 'Local' && item?.id?.verifiedBy!=="" && <View style={{ ...styles.label, backgroundColor: item?.id?.verifiedBy !== 'Owner Taxi' ? '#8EF433' : BgColor }}>
                     <Text style={{ ...styles.textColor, ...styles.textHeading, fontSize: 12, letterSpacing: -0.5 }}>Verified By</Text>
-                    <Text style={{ ...styles.textColor, ...styles.textHeading, fontSize: 16, fontWeight: '500' }}>{item.verifiedBy}</Text>
+                    <Text style={{ ...styles.textColor, ...styles.textHeading, fontSize: 16, fontWeight: '500' }}>{item?.id?.verifiedBy}</Text>
                 </View>}
                 <View style={{ display: 'flex ', flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
                     <Text style={{ color: 'black', ...styles.textHeading, fontSize: 18, letterSpacing: 0.5 }}>Booking No : </Text>
