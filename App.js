@@ -7,6 +7,8 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import {
+  Alert,
+  PermissionsAndroid,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -67,6 +69,7 @@ import ActiveBooking from './src/Driver/components/active Booking/ActiveBooking'
 import BidingPage from './src/Driver/components/active Booking/BidingPage';
 import BookingAccepted from './src/Driver/components/active Booking/BookingAccepted';
 import CloseBooking from './src/Driver/components/active Booking/CloseBooking';
+import { OneSignal } from 'react-native-onesignal';
 
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator();
@@ -79,7 +82,7 @@ function DrawerNavigatorDriver() {
       <Drawer.Screen name="Intercity" component={Intercity} options={{ headerShown: false }} />
       <Drawer.Screen name="Local" component={LocalForm} options={{ headerShown: false }} />
       <Drawer.Screen name="Sharing" component={Sharing} options={{ headerShown: false }} />
-      <Drawer.Screen name='Bidding' component={BidingPage} options={{ headerShown: false }}/>
+      <Drawer.Screen name='Bidding' component={BidingPage} options={{ headerShown: false }} />
       <Drawer.Screen name="Rental" component={Rental} options={{ headerShown: false }} />
       <Drawer.Screen name="Recharge" component={Recharge} options={{ headerShown: false }} />
       <Drawer.Screen name="ActiveBooking" component={ActiveBooking} options={{ headerShown: false }} />
@@ -141,7 +144,38 @@ function App() {
   }
 
   useEffect(() => {
-    isTokenAvailable().then(is => {
+    try {
+      PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        {
+          title: 'Notification Permission',
+          message: 'This app needs access to send you notifications',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'Allow',
+        },
+      ).then(granted => {
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          // Alert.alert('Permission Granted', 'You can now receive notifications');
+          OneSignal.initialize("6a48b3bc-d5bd-4246-9b8e-d453e8373a70")
+          OneSignal.Notifications.addEventListener('click', (event) => {
+            console.log('OneSignal: notification clicked:', event);
+          });
+          OneSignal.Notifications.addEventListener('received', (event) => {
+            console.log('OneSignal: notification clicked:', event);
+          });
+          // OneSignal.initialize('6a48b3bc-d5bd-4246-9b8e-d453e8373a70')
+        } else {
+          Alert.alert('Permission Denied', 'You cannot receive notifications');
+        }
+      })
+        .catch(err => {
+          console.log("PERMISSION ERROR ", err);
+        })
+    } catch (error) {
+      console.log("ERROR IN PERMISSIONS ", error)
+    }
+    isTokenAvailable().then(async is => {
       if (is) {
         userIs().then(data => {
           console.log('USER TYPE IS ', data)

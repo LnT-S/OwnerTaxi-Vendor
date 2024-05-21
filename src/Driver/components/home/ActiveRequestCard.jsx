@@ -9,8 +9,8 @@ const ActiveRequestCard = (props) => {
     const navigation = useNavigation()
     const { item, type } = props;
 
-    console.log("INTERCIRY REQUEST CARD ",item)
-    console.log("88888888" , item?.id?.verifiedBy);
+    // console.log("INTERCIRY REQUEST CARD ",item)
+    // console.log("88888888" , item?.id?.verifiedBy);
     const handlePressOverCard = () => {
         console.log('TYPE ', type)
         if (type === 'Local')

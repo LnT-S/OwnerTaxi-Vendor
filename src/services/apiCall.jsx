@@ -85,6 +85,25 @@ export const activeBookingInfo = async () => {
     console.log('DATA RECIVED ', data)
     return { status: res.status, data: data }
 }
+export const updateSubscription = async (formData) => {
+    const URL = `${server.server}/authentication/update-subscription`
+    console.log('URL ', URL, formData)
+    let auth_token = await AsyncStorage.getItem('token')
+
+    let res = await fetch(URL, {
+        method: 'post',
+        mode: 'cors',
+        headers: {
+            'Authorization': auth_token ? `Bearer ${auth_token}` : '',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+
+    })
+    let data = await res.json()
+    console.log('DATA RECIVED ', data)
+    return { status: res.status, data: data }
+}
 export const booking = async (formData) => {
     const URL = `${server.server}/driver/booking`
     console.log('URL ', URL, formData)

@@ -12,6 +12,10 @@ import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.flipper.ReactNativeFlipper
 import com.facebook.soloader.SoLoader
 import com.oblador.vectoricons.VectorIconsPackage;
+import com.onesignal.OneSignal
+import com.onesignal.debug.LogLevel
+
+const val ONESIGNAL_APP_ID = "6a48b3bc-d5bd-4246-9b8e-d453e8373a70"
 
 class MainApplication : Application(), ReactApplication {
 

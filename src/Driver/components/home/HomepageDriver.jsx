@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { BackHandler, ScrollView, Text, View, TouchableOpacity, StyleSheet, FlatList, Image } from 'react-native'
+import { BackHandler, ScrollView, Text, View, TouchableOpacity, StyleSheet, FlatList, Image, Alert } from 'react-native'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
 import SearchBox from '../../../adOns/atoms/Search'
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
@@ -20,6 +20,8 @@ import ActiveBooking from '../active Booking/ActiveBooking'
 import { BgColor } from '../../../styles/colors'
 import { showNoty } from '../../../common/flash/flashNotification'
 import FlashMessage from 'react-native-flash-message'
+import ONE, { OneSignal } from 'react-native-onesignal'
+import { updateSubscription } from '../../../services/apiCall'
 const HomePageDriver = () => {
     const activeList = [
         {
@@ -196,6 +198,33 @@ const HomePageDriver = () => {
         setPageIsLoading(false)
     }, [])
     useEffect(() => {
+        
+        // OneSignal.Notifications.requestPermission(true);
+        // OneSignal.initialize("6a48b3bc-d5bd-4246-9b8e-d453e8373a70")
+        // OneSignal.Notifications.addEventListener('click', (event) => {
+        //     console.log('OneSignal: notification clicked:', event);
+        // });
+        // OneSignal.Notifications.addEventListener('received', (event) => {
+        //     console.log('OneSignal: notification clicked:', event);
+        // });
+        OneSignal.User.pushSubscription.getIdAsync()
+            .then(data => {
+                console.log("REQUESTEES ", data);
+                updateSubscription({sId : data})
+                .then(data =>{
+                    if(data.status===200){
+                        console.log("Subscribed To Notifications");
+                    }else{
+                        Alert.alert("Notifications","You have not been subscribed to notifications. Restart your application or login again")
+                    }
+                })
+                .catch(err=>{
+                    console.log("ERROR IN UPDATING SUBSCRIPTION ",err);
+                })
+            })
+            .catch(err => {
+                console.log("ERROR IN REQUESTEES ", err);
+            })
         const backFuntion = () => {
             setShowModal(true)
             return true
