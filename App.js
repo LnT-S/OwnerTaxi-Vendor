@@ -9,6 +9,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import {
   Alert,
   PermissionsAndroid,
+  Platform,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -164,9 +165,21 @@ function App() {
           OneSignal.Notifications.addEventListener('received', (event) => {
             console.log('OneSignal: notification clicked:', event);
           });
+
           // OneSignal.initialize('6a48b3bc-d5bd-4246-9b8e-d453e8373a70')
         } else {
-          Alert.alert('Permission Denied', 'You cannot receive notifications');
+          if (Platform.OS === 'android' && Platform.Version < 33) {
+            OneSignal.initialize("6a48b3bc-d5bd-4246-9b8e-d453e8373a70")
+            OneSignal.Notifications.addEventListener('click', (event) => {
+              console.log('OneSignal: notification clicked:', event);
+            });
+            OneSignal.Notifications.addEventListener('received', (event) => {
+              console.log('OneSignal: notification clicked:', event);
+            });
+
+          } else {
+            Alert.alert('Permission Denied', 'You cannot receive notifications');
+          }
         }
       })
         .catch(err => {

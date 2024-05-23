@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { BackHandler, ScrollView, Text, View, TouchableOpacity, StyleSheet, FlatList, Image, Alert } from 'react-native'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
 import SearchBox from '../../../adOns/atoms/Search'
+import ESearchBox from '../../../adOns/atoms/ExternalSearch'
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 // const LazyLoadActiveRequestCard = React.lazy(() => import('../Driver/components/ActiveRequestCard.js'))
@@ -98,13 +99,32 @@ const HomePageDriver = () => {
     const { reload, option } = route?.params ? route.params : ''
     const [showSearchResult, setShowSearchResults] = useState(true)
     const [selectedOption, setSelectedOption] = useState('InterCity')
-    console.log('selection ', selectedOption)
+    // console.log('selection ', selectedOption)
     const [pageIsLoading, setPageIsLoading] = useState(true)
     const [showModal, setShowModal] = useState(false)
     const [showPostBookingModal, setShowPostBookingModal] = useState(false)
-
     const [localList, setLocalList] = useState([])
     const [intercityList, setIntercityList] = useState([])
+    const [showSearchBar, setShowSearchBar] = useState(false)
+    const [searchedTerm, setSearchedTerm] = useState('')
+    const [searchedData, setSearchedData] = useState([])
+    const toggleShowSearchBar = () => {
+        setShowSearchBar(!showSearchBar)
+    }
+    useEffect(() => {
+        // Filter data whenever the search query changes
+        if (searchedTerm === '') {
+            return setSearchedData(intercityList)
+        }
+        // console.log('Serched term', searchedTerm)
+        const filtered = intercityList.filter(item =>
+            (item.pickUp?.description && item.pickUp?.description?.toLowerCase().includes(searchedTerm?.toLowerCase() || '')) ||
+            (item.vehicle.type && item.vehicle.type?.toLowerCase().includes(searchedTerm?.toLowerCase() || '')) ||
+            (item.vehicle.subType && item.vehicle.subType?.toLowerCase().includes(searchedTerm?.toLowerCase() || '')) ||
+            (item.bookingType && item.bookingType?.toLowerCase().includes(searchedTerm?.toLowerCase() || ''))
+        );
+        setSearchedData(filtered);
+    }, [searchedTerm]);
 
     const [optionIndex, setOptionIndex] = useState(0);
     const optionList = {
@@ -138,6 +158,7 @@ const HomePageDriver = () => {
                 console.log("INTERCITY DATA ", data.data.data)
                 if (data.status === 200) {
                     setIntercityList(data.data.data)
+                    setSearchedData(data.data.data)
                     setPageIsLoading(false)
                 } else {
                     showNoty(data.data.message, "danger")
@@ -197,8 +218,18 @@ const HomePageDriver = () => {
             })
         setPageIsLoading(false)
     }, [])
+    useFocusEffect(
+        useCallback(()=>{
+            const backFuntion = () => {
+                setShowModal(true)
+                return true
+            }
+            console.log("BACKHANDLER SET IN HOME PAGE")
+            const backHandler = BackHandler.addEventListener('hardwareBackPress', backFuntion);
+        },[])
+    )
     useEffect(() => {
-        
+
         // OneSignal.Notifications.requestPermission(true);
         // OneSignal.initialize("6a48b3bc-d5bd-4246-9b8e-d453e8373a70")
         // OneSignal.Notifications.addEventListener('click', (event) => {
@@ -210,17 +241,17 @@ const HomePageDriver = () => {
         OneSignal.User.pushSubscription.getIdAsync()
             .then(data => {
                 console.log("REQUESTEES ", data);
-                updateSubscription({sId : data})
-                .then(data =>{
-                    if(data.status===200){
-                        console.log("Subscribed To Notifications");
-                    }else{
-                        Alert.alert("Notifications","You have not been subscribed to notifications. Restart your application or login again")
-                    }
-                })
-                .catch(err=>{
-                    console.log("ERROR IN UPDATING SUBSCRIPTION ",err);
-                })
+                updateSubscription({ sId: data })
+                    .then(data => {
+                        if (data.status === 200) {
+                            console.log("Subscribed To Notifications");
+                        } else {
+                            Alert.alert("Notifications", "You have not been subscribed to notifications. Restart your application or login again")
+                        }
+                    })
+                    .catch(err => {
+                        console.log("ERROR IN UPDATING SUBSCRIPTION ", err);
+                    })
             })
             .catch(err => {
                 console.log("ERROR IN REQUESTEES ", err);
@@ -243,7 +274,7 @@ const HomePageDriver = () => {
             <LoadingScreen cs={false} />)
     } else {
         return (
-            <AuthenticatedLayout title={'Onwer Taxi'} showFooter={false} showBackIcon={false} >
+            <AuthenticatedLayout title={'Onwer Taxi'} showFooter={false} showBackIcon={false} showSearch={true} searchAction={toggleShowSearchBar}>
                 <View style={{ position: 'relative', flex: 1 }}>
                     <FlashMessage ref={ref} />
                     <FunctionalModal
@@ -261,18 +292,22 @@ const HomePageDriver = () => {
                         yesText={'Exit'}
                         noText={'Cancel'} />
                     <View style={styles.viewStyle}>
-                        <View style={styles.liststyle}>
+                        {!showSearchBar ? <View style={styles.liststyle}>
                             <View style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '90%' }}>
                                 <TwoWayPushButton option1={'InterCity'} option2={'Taxi'} setter={setSelectedOption} />
                             </View>
                             <TouchableOpacity onPress={fetchLocal}><RefreshButton action={fetchLocal} /></TouchableOpacity>
-                        </View>
+                        </View> :
+                            <ESearchBox placeholder={'Search by Pick Up, Vehicle/Booking Type'}
+                                setSearchedTerm={setSearchedTerm}
+                                searchedTerm={searchedTerm} />
+                        }
                         <View style={{ width: '100%', padding: 15, marginBottom: 10, marginTop: -10, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', }}>
                             {
                                 Object.values(optionList).map((el, i) => {
                                     return (
                                         <TouchableOpacity key={i} style={{ borderBottomWidth: 2, borderBottomColor: optionIndex === i ? "black" : 'rgba(255,255,255,0.05)', padding: 5 }} onPress={() => setOptionIndex(i)}>
-                                            <Text style={{ fontWeight: optionIndex === i ? '700' : '300', fontSize: optionIndex === i ? 18 : 16, fontFamily: 'serif' }}>{el.name}</Text>
+                                            <Text style={{ color: "black", fontWeight: optionIndex === i ? '700' : '300', fontSize: optionIndex === i ? 18 : 16, fontFamily: 'serif' }}>{el.name}</Text>
                                         </TouchableOpacity>
                                     )
                                 })
@@ -288,7 +323,7 @@ const HomePageDriver = () => {
                                     <View style={{ flex: 1 }}>
                                         <FlatList
                                             keyExtractor={(item, index) => (index)}
-                                            data={selectedOption === 'Taxi' ? localList : intercityList}
+                                            data={selectedOption === 'Taxi' ? localList : searchedData}
                                             renderItem={({ item }) => {
                                                 return <View style={styles.FlatListviewStyle}><LazyLoadActiveRequestCard item={selectedOption === 'Taxi' ? item.passiveBookingId : item} type={selectedOption} /></View>
                                             }}

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, BackHandler, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import AuthenticatedLayout from '../../common/layout/AuthenticatedLayout'
 import ThreeWayPushButton from '../../../adOns/molecules/ThreeWayPushButton'
@@ -14,9 +14,11 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { BgColor, WHITEBG } from '../../../styles/colors'
 import { useProfile } from '../../../context/ContextProvider'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import FlashMessage from 'react-native-flash-message'
 
 const Documents = () => {
   const [carSubArray, setCarSubArray] = useState([])
+  const ref = useRef()
   const navigation = useNavigation()
   const [showAddModal, setShowAddModal] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -63,7 +65,6 @@ const Documents = () => {
     setVehicleNo(item.vehicleNo)
     setCarSubArray(item.document)
   }
-
   useEffect(() => {
     console.log("DRIVER ARRAY ", driverArray)
   }, [driverArray])
@@ -102,7 +103,9 @@ const Documents = () => {
         <AddVehicleModal
           show={showAddModal}
           setShow={setShowAddModal}
+          reload={fetchDocumentDetails}
         />
+        <FlashMessage ref={ref} />
         <View style={{justifyContent: 'center', alignItems: 'center', marginBottom : 20}}>
           <View style={{ backgroundColor: WHITEBG, width: '97%', borderRadius : 15}}>
             <View style={{ ...styles.textContainer, flexDirection: 'row', justifyContent: 'space-between', }}>

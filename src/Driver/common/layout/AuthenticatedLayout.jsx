@@ -18,6 +18,8 @@ const Stack = createNativeStackNavigator()
 const AuthenticatedLayout = (props) => {
     const {
         children,
+        showSearch,
+        searchAction,
         showHeader,
         showFooter,
         showBackIcon,
@@ -35,7 +37,7 @@ const AuthenticatedLayout = (props) => {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={{ flex: 1, backgroundColor: BgColor }}
             keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
-            <View style={{position : 'relative'}}>
+            <View style={{ position: 'relative' }}>
                 <View style={styles.layout}>
                     {/*NAVIGATION */}
                     {(showHeader === undefined || showHeader === true) ? <View style={styles.header}>
@@ -50,6 +52,8 @@ const AuthenticatedLayout = (props) => {
                             headerStyles={headerStyles}
                             headerTextStyles={headerTextStyles}
                             threeDotOptionObject={threeDotOptionObject}
+                            showSearch={showSearch}
+                            searchAction={searchAction}
                         />
                     </View> : ''}
                     {/*BODY*/}
@@ -73,8 +77,8 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'column'
     },
-    header :{
-        zIndex : 9999
+    header: {
+        zIndex: 9999
     },
     body: {
         flex: 1,

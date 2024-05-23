@@ -8,7 +8,7 @@ import { WHITEBG } from '../../../styles/colors';
 import server from '../../../services/server.tsx'
 
 const MainDocumentCard = (props) => {
-    const { status, documentId, documentName, image } = props.item
+    const { status, documentId, documentName, image, documentNo, required } = props.item
     const { reload } = props
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -46,9 +46,10 @@ const MainDocumentCard = (props) => {
                 message={infoMessage[status]}
             />
             <InfoModal
+                documentNo={documentNo}
                 show={viewDocument}
                 setShow={setViewDocument}
-                title={documentName}
+                title={documentName + ' '}
                 extContStyle={{ width: '85%' }}
                 serverImageSource={server.server + image}
             />
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 25,
-        marginBottom : 30
+        marginBottom: 30
 
     },
     statusContainer: {
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'space-evenly',
         flexDirection: 'row',
-        marginBottom : 30
+        marginBottom: 30
 
     },
     section3: {
@@ -194,5 +195,5 @@ const styles = StyleSheet.create({
     }
 })
 
-export default MainDocumentCard;
+export default React.memo(MainDocumentCard);
 

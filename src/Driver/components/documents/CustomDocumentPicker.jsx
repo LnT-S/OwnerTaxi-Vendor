@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, Text, View, StyleSheet, ImageBackground } from 'react-native';
+import { Button, Modal, Text, View, StyleSheet, ImageBackground, PermissionsAndroid } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import PressButton from '../../../adOns/atoms/PressButton';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Input from '../../../adOns/atoms/Input';
 import { uploadDocumentDriver } from '../../../services/apiCall';
+import CroppedImagePicker from 'react-native-image-crop-picker';
+import { BgColor } from '../../../styles/colors';
+import { showNoty } from '../../../common/flash/flashNotification';
 
 const CustomDocumentPicker = (props) => {
 
-    const { documentName, visible, setVisible,documentDetails,vehicleNo,reload } = props
+    const { documentName, visible, setVisible, documentDetails, vehicleNo, reload } = props
     const [input, setInput] = useState('')
     const [error, setError] = useState('')
     const [document, setDocument] = useState(null)
     const [isDocumentUploading, setIsDocumentUploading] = useState(false)
 
-    console.log("DOCUMENT DETAILS ",documentDetails , vehicleNo)
+    console.log("DOCUMENT DETAILS ", documentDetails, vehicleNo)
 
     const pickDocument = async () => {
         try {
@@ -23,7 +26,7 @@ const CustomDocumentPicker = (props) => {
                 type: [DocumentPicker.types.allFiles],
                 allowMultiSelection: false
             });
-
+            console.log("RESPONSE OF DOCUMENT PICKER ", res[0]);
             res[0] = { ...res[0], documentName: documentName }
             setDocument(res[0])
         } catch (err) {
@@ -34,39 +37,91 @@ const CustomDocumentPicker = (props) => {
             }
         }
     };
+    const openCamera = async () => {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.CAMERA,
+                {
+                    title: 'Camera Permission',
+                    message: 'App needs access to your camera',
+                    buttonNeutral: 'Ask Me Later',
+                    buttonNegative: 'Cancel',
+                    buttonPositive: 'Allow',
+                }
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                const response = await CroppedImagePicker.openCamera({
+                    cropperChooseColor: BgColor,
+                    cropperCircleOverlay: true,
+                    cropping: true,
+                    mediaType: "photo",
+                    multiple: false,
+                    useFrontCamera: true,
+                    freeStyleCropEnabled: true
+                })
+                let selectedImage = {
+                    fileName: `OwerTaxi${new Date().getTime()}`,
+                    name: `OwerTaxi${new Date().getTime()}`,
+                    fileSize: 0,
+                    height: 0,
+                    type: "image/png",
+                    uri: '',
+                    width: 0,
+                    data: ''
+                }
+
+                selectedImage.fileSize = response.size,
+                selectedImage.height = response.height,
+                selectedImage.width = response.width,
+                selectedImage.type = response.mime,
+                selectedImage.uri = response.path
+                console.log('Image Picked', selectedImage)
+                setDocument(selectedImage)
+            } else {
+                showNoty("CANNOT PICK DOCUMENT", "danger")
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
 
     const uploadDocument = () => {
         // API CALL FOR DOCUMENT UPLOAD
         if (input === '') {
             setError('Required')
-            return 
+            return
         }
         let documentFor = ''
-        if(documentDetails.documentFor==='' || documentDetails.documentFor==="Driver" || documentDetails.documentFor===undefined){
-            documentFor="Driver"
-        }else{
-            if(documentDetails.documentFor==='Vehicle'){
-                documentFor="Vehicle"
+        if (documentDetails.documentFor === '' || documentDetails.documentFor === "Driver" || documentDetails.documentFor === undefined) {
+            documentFor = "Driver"
+        } else {
+            if (documentDetails.documentFor === 'Vehicle') {
+                documentFor = "Vehicle"
             }
         }
         let data = {
-            vehicleNo : vehicleNo,
+            vehicleNo: vehicleNo,
             document,
             documentName,
             documentFor,
-            documentNo :  input,
+            documentNo: input,
         }
         uploadDocumentDriver(data)
-        .then(data=>{
-            console.log(data.data.message)
-            if(data.status===200){
-                reload()
-                setVisible(false)
-            }
-        })
-        .catch(err=>{
-            console.log("ERROR IS ", err)
-        })
+            .then(data => {
+                console.log(data.data.message)
+                    reload()
+                    // showMessage(data.data.message , data.status)
+                    if(data.status===200){
+                        setTimeout(()=>{showNoty(data.data.message , "success")},1000)
+                    }else{
+                        setTimeout(()=>{showNoty(data.data.message , "danger")},1000)
+                    }
+                    setVisible(false)
+            })
+            .catch(err => {
+                console.log("ERROR IS ", err)
+            })
         setIsDocumentUploading(true)
         setTimeout(() => { setIsDocumentUploading(false); setVisible(false) }, 2000)
         setDocument(null)
@@ -79,9 +134,9 @@ const CustomDocumentPicker = (props) => {
         setVisible(false)
     }
 
-    useEffect(()=>{
-        console.log("DOCUMENT SELECTED ",document)
-    },[document])
+    useEffect(() => {
+        console.log("DOCUMENT SELECTED ", document)
+    }, [document])
 
     return (
         <Modal
@@ -105,12 +160,12 @@ const CustomDocumentPicker = (props) => {
                                 value: input
                             }}
                         />
-                        {error!==''?<Text style={{ color: 'red', textAlign: 'center', fontSize: 12, fontWeight: '300' }}>* {error}</Text> : ''}
+                        {error !== '' ? <Text style={{ color: 'red', textAlign: 'center', fontSize: 12, fontWeight: '300' }}>* {error}</Text> : ''}
                     </View>
                     {document !== null ? <PressButton name="Upload Document" onPress={uploadDocument} /> :
                         <PressButton
                             name="Pick Document"
-                            onPress={() => pickDocument().then(() => { }).catch(err => { console.log('ERROR PICKING DOCUMENT') })}
+                            onPress={() => openCamera().then((data) => { console.log(data); }).catch(err => { console.log('ERROR PICKING DOCUMENT', err) })}
                             loading={isDocumentUploading}
                             disabled={isDocumentUploading} />}
                     <PressButton name="Close" onPress={cancelUpload} disabled={isDocumentUploading} />

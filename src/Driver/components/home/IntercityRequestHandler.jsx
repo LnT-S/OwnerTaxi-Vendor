@@ -17,8 +17,8 @@ const IntercityRequestHandler = () => {
     const navigation = useNavigation()
     const { item, reload } = route.params
     const ref = useRef()
-    // console.log("ITEM IS ",item)
-    const [phone, setPhone] = useState(null)
+    console.log("ITEM IS ",item)
+    const [phone, setPhone] = useState(item.id.phoneNo)
     const [callButton, showCallButton] = useState(false)
 
     useFocusEffect(
@@ -28,7 +28,7 @@ const IntercityRequestHandler = () => {
             checkWhetherAcceptedTheBooking({ bookingId: item._id })
                 .then(data => {
                     if (data.data.data.accepted) {
-                        setPhone(data.data.data.phoneNo)
+                        // setPhone(data.data.data.phoneNo)
                         showCallButton(true)
                     } else {
                         showCallButton(false)
@@ -59,7 +59,7 @@ const IntercityRequestHandler = () => {
         isDocumentVerified()
             .then(data => {
                 console.log(data.data.data)
-                if (data.data.data.verified === true || true) {
+                if (data.data.data.verified === true) {
                     acceptIntercityBooking(formData)
                         .then(data => {
                             if (data.status === 300) {

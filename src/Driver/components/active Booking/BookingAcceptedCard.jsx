@@ -5,12 +5,14 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Linking } from 'react-native';
 import CheckLeadsModal from '../../../adOns/molecules/CheckLeadsModal';
 import { showNoty } from '../../../common/flash/flashNotification';
+import { useProfile } from '../../../context/ContextProvider';
 
 const BookingAcceptedCard = (props) => {
 
+    let {profileState, profileDispatch } = useProfile()
     const activeItem = props.item?.passiveBookingId
-    // console.log("ACTIVE ORP ",activeItem)
-    // console.log("ACTIVE ORP ", props.item)
+    console.log("ACTIVE ORP 456 ",activeItem)
+    console.log("ACTIVE ORP ", props.item)
     const navigation = useNavigation()
     const [showLeads, setShowLeads] = useState(false)
 
@@ -23,7 +25,7 @@ const BookingAcceptedCard = (props) => {
         Linking.openURL(messageUrl);
     };
     const handlenavigation = () => {
-        if (activeItem.status === 'accepted') {
+        if (activeItem.status === 'accepted' && activeItem?.acceptor?.phone===profileState.phone) {
             navigation.navigate('CloseBooking', { item: props.item })
         } else {
             if (activeItem.status === 'closed') {

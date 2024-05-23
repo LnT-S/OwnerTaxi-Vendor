@@ -4,10 +4,11 @@ import PressButton from "../atoms/PressButton";
 import { BgColor } from "../../styles/colors";
 import { addVehicle } from "../../services/apiCall";
 import { showNoty } from "../../common/flash/flashNotification";
+import { Dropdown } from 'react-native-element-dropdown';
 
 export default function AddVehicleModal(props) {
 
-    const { show, setShow } = props
+    const { show, setShow, reload } = props
     const [error, setError] = useState('')
     const [type, setType] = useState('')
     const [subType, setSubType] = useState('')
@@ -24,17 +25,20 @@ export default function AddVehicleModal(props) {
             vehicleNo,
             documents: []
         }
-        if(type===''||subType===''||capacity===''||vehicleNo===''){
+        if (type === '' || subType === '' || capacity === '' || vehicleNo === '') {
             setError("Enter All Details");
-            return 
+            return
         }
         addVehicle(obj)
             .then(data => {
                 console.log(data.data.message);
+                reload()
                 if (data.status === 200) {
-                    showNoty(data.data.message, "success")
+                    setTimeout(() => showNoty(data.data.message, "success"), 100)
+                    setShow(false)
                 } else {
-                    showNoty(data.data.message, "danger")
+                    setTimeout(() => showNoty(data.data.message, "danger"), 100)
+                    setShow(false)
                 }
             })
             .catch(err => {
@@ -51,11 +55,24 @@ export default function AddVehicleModal(props) {
                 <View style={styles.modalContent}>
                     <Text style={styles.modalText}>ENTER VEHICLE INFO</Text>
                     <View style={{ width: '90%' }}>
-                        <TextInput
+                        {/*<TextInput
                             placeholder="Enter Vehicle Type {Sedan Mini etc)"
                             placeholderTextColor={"gray"}
                             onChangeText={v => { setType(v) }}
                             style={styles.textInput}
+    />*/}
+                        <Dropdown
+                            style={styles.textInput}
+                            data={[{ label: 'Auto 3+1', value: 'Auto', capacity: 3 }, { label: 'Mini 4+1', value: 'Mini', capacity: 4 }, { label: 'Sedan 4+1', value: 'Sedan', capacity: 4 }, { label: 'SUV 6+1', value: 'SUV', capacity: 6 }, { label: 'SUV 10+1', value: 'SUV', capacity: 10 }]}
+                            placeholder='Select Document For'
+                            placeholderStyle={{ color: 'black' }}
+                            value={type}
+                            labelField="label"
+                            valueField="value"
+                            onChange={item => {
+                                setType(item.value);
+                                setCapacity(item.capacity)
+                            }}
                         />
                         <TextInput
                             placeholder="Enter Specific Name (Verna Wagonr etc)"
@@ -64,14 +81,14 @@ export default function AddVehicleModal(props) {
                             style={styles.textInput}
 
                         />
-                        <TextInput
+                        {/*<TextInput
                             placeholder="Enter Capacity"
                             placeholderTextColor={"gray"}
                             value={!isNaN(capacity) ? capacity.toString() : ''}
                             onChangeText={v => { setError(''); !isNaN(v) ? setCapacity(parseInt(v)) : setError("Only Numeric Characters !!") }}
                             style={styles.textInput}
 
-                        />
+    />*/}
                         <TextInput onChangeText={v => setVehicleNo(v)}
                             placeholder="Enter Vehicle No"
                             placeholderTextColor={"gray"}
@@ -119,7 +136,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginVertical: 10,
         borderColor: BgColor,
-        padding: 10,color : 'black'
+        padding: 10, color: 'black'
     },
     row: {
         flexDirection: 'row',

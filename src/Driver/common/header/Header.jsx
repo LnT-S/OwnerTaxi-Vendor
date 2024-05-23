@@ -17,7 +17,9 @@ const Header = (props) => {
         showBackIcon,
         leftCenterJsx,
         headerStyles,
-        headerTextStyles
+        headerTextStyles,
+        showSearch,
+        searchAction
     } = props
 
     const openDrawer = () => {
@@ -37,6 +39,9 @@ const Header = (props) => {
                     <Text style={{ ...{ fontSize: 20, paddingLeft: 10, color: 'black', fontWeight: '600' }, ...headerTextStyles }}>{title}</Text>
                 </View>
                 <View style={styles.right}>
+                    {(showSearch === true) ? <TouchableOpacity style={{ marginRight: 10 }} onPress={searchAction}>
+                        <Icon name="search" size={26} color="black" style={headerTextStyles} />
+                    </TouchableOpacity> : ''}
                     {(showMessageIcon === undefined || showMessageIcon === true) ? <TouchableOpacity style={{ marginRight: 10 }} onPress={() => navigation.navigate('message')}>
                         <Icon name="chat-bubble" size={26} color="black" style={headerTextStyles} />
                     </TouchableOpacity> : ''}
@@ -52,7 +57,7 @@ const Header = (props) => {
                 </View>
                 {(threeDotOptionObject && showOptions) ? <View style={styles.optionContainer}>
                     {Object.values(threeDotOptionObject).map((item, index) => {
-                        return <TouchableOpacity style={styles.optionList} onPress={()=>{item.action();setShowOptions(false)}}>
+                        return <TouchableOpacity style={styles.optionList} onPress={() => { item.action(); setShowOptions(false) }}>
                             <Text style={styles.optionText} key={index}>{item.name}</Text>
                         </TouchableOpacity>
                     })}
@@ -73,7 +78,7 @@ const styles = StyleSheet.create({
         position: 'relative'
     },
     left: {
-        width: '70%',
+        width: '60%',
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center'
@@ -94,17 +99,17 @@ const styles = StyleSheet.create({
         right: 0,
         width: 180,
         backgroundColor: 'black',
-        padding:10,
-        borderRadius:10
+        padding: 10,
+        borderRadius: 10
     },
     optionList: {
         width: '100%'
     },
     optionText: {
         color: 'white',
-        fontSize:18,
+        fontSize: 18,
         fontWeight: '500',
-        marginVertical:10
+        marginVertical: 10
     }
 })
 

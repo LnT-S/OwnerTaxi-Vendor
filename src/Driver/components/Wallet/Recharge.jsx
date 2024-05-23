@@ -12,6 +12,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { showNoty } from '../../../common/flash/flashNotification';
 import { uprollTransaction } from '../../../services/apiCall';
 import FlashMessage from 'react-native-flash-message';
+import { useNavigation } from '@react-navigation/native';
 
 const Recharge = () => {
 
@@ -20,13 +21,16 @@ const Recharge = () => {
     const [showCopied, setShowCopied] = useState(false)
     const [screenShot, setScreenShot] = useState(null)
     const [amount, setAmount] = useState('')
-    const ref=useRef()
+    const [loading, setLoading] = useState(false)
+    const navigation = useNavigation()
+    const ref = useRef()
 
     const showCopiedHandler = () => {
         setShowCopied(true);
         setTimeout(() => { setShowCopied(false) }, 800)
     }
     const request = () => {
+        setLoading(true)
         if (screenShot === null) {
             showNoty("Screen Not Selected", "danger")
             return
@@ -35,21 +39,28 @@ const Recharge = () => {
             showNoty("Enter Amount you have payed", "danger")
             return
         }
-       try {
-         uprollTransaction({ ss: screenShot, amount: parseInt(amount) })
-             .then(data => {
-                 if (data.status === 200) {
-                     showNoty(data.data.message, "success")
-                 } else {
-                     showNoty(data.data.message, "danger")
-                 }
-             })
-             .catch(err => {
-                 console.log("ERROR UPLOADING SCREENSHOT ", err);
-             })
-       } catch (error) {
+        try {
+            uprollTransaction({ ss: screenShot, amount: parseInt(amount) })
+                .then(data => {
+                    if (data.status === 200) {
+                        showNoty(data.data.message, "success")
+                        setTimeout(() => {
+                            setLoading(false)
+                            navigation.goBack()
+                        }, 1500)
+                    } else {
+                        showNoty(data.data.message, "danger")
+                    }
+                })
+                .catch(err => {
+                    console.log("ERROR UPLOADING SCREENSHOT ", err);
+                })
+        } catch (error) {
             showNoty("SOME ERROR OCCURED !! Try after some time")
-       }
+        }
+        setTimeout(() => {
+            setLoading(false)
+        }, 1500)
     }
 
     useState(() => {
@@ -60,8 +71,8 @@ const Recharge = () => {
 
     return (
         <AuthenticatedLayout title={'Payments'}>
-            <View style={{ height: '100%'}}>
-            <FlashMessage ref={ref}/>
+            <View style={{ height: '100%' }}>
+                <FlashMessage ref={ref} />
                 <ScrollView
                     style={{ flex: 1 }}
                 >
@@ -133,7 +144,7 @@ const Recharge = () => {
                             </View>
                             <View style={{ ...styles.optionRow, paddingHorizontal: 16 }}>
                                 <View><Text style={styles.verifyText}>Upload Screenshot</Text></View>
-                                {screenShot === null ? <TouchableOpacity onPress={() => { imagePicker().then(data => { setScreenShot(data) }).catch(err => { console.log('ERRON IN UPLOAD SS',err) }) }}><Icon name='document-scanner' size={30} color={'black'} /></TouchableOpacity> : <View style={styles.docNameConatainer}><Text style={{ fontSize: 16 }}>{screenShot?.name?.substring(0, 10)}...</Text><TouchableOpacity onPress={() => setScreenShot(null)}><Icon name='cancel' size={18} color={'black'} /></TouchableOpacity></View>}
+                                {screenShot === null ? <TouchableOpacity onPress={() => { imagePicker().then(data => { setScreenShot(data) }).catch(err => { console.log('ERRON IN UPLOAD SS', err) }) }}><Icon name='document-scanner' size={30} color={'black'} /></TouchableOpacity> : <View style={styles.docNameConatainer}><Text style={{ fontSize: 16 }}>{screenShot?.name?.substring(0, 10)}...</Text><TouchableOpacity onPress={() => setScreenShot(null)}><Icon name='cancel' size={18} color={'black'} /></TouchableOpacity></View>}
                             </View>
                             <View style={{ ...styles.optionRow, paddingHorizontal: 16 }}>
                                 <View>
@@ -143,14 +154,14 @@ const Recharge = () => {
                                     <TextInput
                                         placeholder='Enter Amount'
                                         keyboardType='number-pad'
-                                        style={{ fontSize: 16,color : 'red'}}
+                                        style={{ fontSize: 16, color: 'red' }}
                                         placeholderTextColor={"red"}
-                                        onChangeText={v=>setAmount(v)}
+                                        onChangeText={v => setAmount(v)}
                                     />
                                 </View>
                             </View>
                             <View style={{ marginTop: 15 }}>
-                                <PressButton name={'Request For Confirmation'} onPress={request} />
+                                <PressButton name={'Request For Confirmation'} onPress={request} loading={loading} disabled={loading} />
                             </View>
                         </View>
                     </View>
