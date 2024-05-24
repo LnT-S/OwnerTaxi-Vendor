@@ -234,7 +234,7 @@ const IntercityRequestHandler = () => {
                             </View>
                         </View>
                         <View style={{ padding: 5 }}>
-                            <Text style={{ fontFamily: 'serif', fontSize: 20, paddingHorizontal: 15 }}>Extras Information</Text>
+                            <Text style={{ fontFamily: 'serif', fontSize: 20, paddingHorizontal: 15 }}>Extra Information</Text>
                             <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '90%', padding: 5, borderRadius: 10, marginVertical: 5 }}>
                                 <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
                                     <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>
@@ -249,6 +249,19 @@ const IntercityRequestHandler = () => {
                                 </View>
                             </View>
                         </View>
+                        {item.IRPackage!==undefined && item.IRPackage!==null ? <View style={{ padding: 5 }}>
+                            <Text style={{ fontFamily: 'serif', fontSize: 20, paddingHorizontal: 15 }}>Package Information</Text>
+                            <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '90%', padding: 5, borderRadius: 10, marginVertical: 5 }}>
+                                <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                                    <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>
+                                    Extra Distance  : <Text style={{ color: 'red' }}>&#x20B9; {item?.IRPackage?.extraDistance} km</Text>
+                                    </Text>
+                                    <Text style={{ fontSize: 16, fontWeight: 500, color: 'black' }}>
+                                        Extra Hours    : <Text style={{ color: 'red' }}>{item?.IRPackage?.extraTime} Hours</Text>
+                                    </Text>
+                                </View>
+                            </View>
+                        </View> : ''}
                         {/* <View style={{ ...styles.optionContainer.section, flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: 15 , borderBottomWidth : 0}}>
                             <Text style={{ color: 'gray', ...styles.textHeading, fontSize: 22, letterSpacing: 0.5, textAlign: 'left'}}>Enter your budget :    </Text>
                             <Text style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'center'  }}>&#x20B9;</Text><TextInput style={{ color: 'red', ...styles.textHeading, fontSize: 18, fontWeight: '500', textAlign: 'left', borderBottomWidth: 0.5, borderBottomColor: 'gray', width: 120 }}> </TextInput>

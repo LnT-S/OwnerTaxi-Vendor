@@ -12,8 +12,8 @@ import { showNoty } from '../../../common/flash/flashNotification';
 
 const CustomDocumentPicker = (props) => {
 
-    const { documentName, visible, setVisible, documentDetails, vehicleNo, reload } = props
-    const [input, setInput] = useState('')
+    const { documentName, visible, setVisible, documentDetails, vehicleNo, reload, autoGenerateNo } = props
+    const [input, setInput] = useState(autoGenerateNo ? new Date().getTime().toString() : '')
     const [error, setError] = useState('')
     const [document, setDocument] = useState(null)
     const [isDocumentUploading, setIsDocumentUploading] = useState(false)
@@ -71,10 +71,10 @@ const CustomDocumentPicker = (props) => {
                 }
 
                 selectedImage.fileSize = response.size,
-                selectedImage.height = response.height,
-                selectedImage.width = response.width,
-                selectedImage.type = response.mime,
-                selectedImage.uri = response.path
+                    selectedImage.height = response.height,
+                    selectedImage.width = response.width,
+                    selectedImage.type = response.mime,
+                    selectedImage.uri = response.path
                 console.log('Image Picked', selectedImage)
                 setDocument(selectedImage)
             } else {
@@ -88,7 +88,7 @@ const CustomDocumentPicker = (props) => {
 
     const uploadDocument = () => {
         // API CALL FOR DOCUMENT UPLOAD
-        if (input === '') {
+        if (input === '' ) {
             setError('Required')
             return
         }
@@ -110,14 +110,14 @@ const CustomDocumentPicker = (props) => {
         uploadDocumentDriver(data)
             .then(data => {
                 console.log(data.data.message)
-                    reload()
-                    // showMessage(data.data.message , data.status)
-                    if(data.status===200){
-                        setTimeout(()=>{showNoty(data.data.message , "success")},1000)
-                    }else{
-                        setTimeout(()=>{showNoty(data.data.message , "danger")},1000)
-                    }
-                    setVisible(false)
+                reload()
+                // showMessage(data.data.message , data.status)
+                if (data.status === 200) {
+                    setTimeout(() => { showNoty(data.data.message, "success") }, 1000)
+                } else {
+                    setTimeout(() => { showNoty(data.data.message, "danger") }, 1000)
+                }
+                setVisible(false)
             })
             .catch(err => {
                 console.log("ERROR IS ", err)
@@ -157,7 +157,9 @@ const CustomDocumentPicker = (props) => {
                             containerStyles={{ width: 230 }}
                             textInputProps={{
                                 onChangeText: (v) => { setInput(v) },
-                                value: input
+                                value:input,
+                                editable : !autoGenerateNo
+                            
                             }}
                         />
                         {error !== '' ? <Text style={{ color: 'red', textAlign: 'center', fontSize: 12, fontWeight: '300' }}>* {error}</Text> : ''}

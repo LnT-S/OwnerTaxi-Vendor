@@ -17,6 +17,7 @@ import {
   Text,
   useColorScheme,
   View,
+  NativeModules
 } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { ContextProvider } from './src/context/ContextProvider';
@@ -71,6 +72,9 @@ import BidingPage from './src/Driver/components/active Booking/BidingPage';
 import BookingAccepted from './src/Driver/components/active Booking/BookingAccepted';
 import CloseBooking from './src/Driver/components/active Booking/CloseBooking';
 import { OneSignal } from 'react-native-onesignal';
+import NewLoginPage from './src/components/Login/NewLogin';
+import EditableOTPInput from './src/adOns/molecules/EditableOTPInput';
+import NewOtpScreen from './src/components/Login/NewOTP';
 
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator();
@@ -143,8 +147,7 @@ function App() {
     }
     return false
   }
-
-  useEffect(() => {
+  const getPermission = () => {
     try {
       PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
@@ -157,7 +160,7 @@ function App() {
         },
       ).then(granted => {
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          // Alert.alert('Permission Granted', 'You can now receive notifications');
+        //   Alert.alert('Permission Granted', 'You can now receive notifications');
           OneSignal.initialize("6a48b3bc-d5bd-4246-9b8e-d453e8373a70")
           OneSignal.Notifications.addEventListener('click', (event) => {
             console.log('OneSignal: notification clicked:', event);
@@ -165,7 +168,7 @@ function App() {
           OneSignal.Notifications.addEventListener('received', (event) => {
             console.log('OneSignal: notification clicked:', event);
           });
-
+          setIsLoading(false); 
           // OneSignal.initialize('6a48b3bc-d5bd-4246-9b8e-d453e8373a70')
         } else {
           if (Platform.OS === 'android' && Platform.Version < 33) {
@@ -176,9 +179,10 @@ function App() {
             OneSignal.Notifications.addEventListener('received', (event) => {
               console.log('OneSignal: notification clicked:', event);
             });
-
+            setIsLoading(false); 
           } else {
             Alert.alert('Permission Denied', 'You cannot receive notifications');
+            setIsLoading(false); 
           }
         }
       })
@@ -188,6 +192,9 @@ function App() {
     } catch (error) {
       console.log("ERROR IN PERMISSIONS ", error)
     }
+  }
+
+  useEffect(() => {
     isTokenAvailable().then(async is => {
       if (is) {
         userIs().then(data => {
@@ -208,7 +215,8 @@ function App() {
 
 
     setTimeout(() => {
-      setIsLoading(false); // Set isLoading to false when the loading task is complete
+      getPermission()
+      // Set isLoading to false when the loading task is complete
     }, 2500); // Simulate loading for 2 seconds, replace this with your actual loading logic
   }, []);
 
@@ -229,7 +237,7 @@ function App() {
           >
             <Stack.Screen
               name='LoginScreen'
-              component={LoginPage}
+              component={NewLoginPage}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -239,7 +247,7 @@ function App() {
             />
             <Stack.Screen
               name='OTPScreen'
-              component={OtpScreen}
+              component={NewOtpScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Image, StyleSheet, View, Text, Pressable, KeyboardAvoidingView, BackHandler, ScrollView, StatusBar } from 'react-native'
+import { Image, StyleSheet, View, Text, Pressable, KeyboardAvoidingView, BackHandler, ScrollView, StatusBar, TouchableOpacity, PermissionsAndroid, Alert } from 'react-native'
 import { getResponsiveValue, height } from '../../styles/responsive';
 import { BgColor } from '../../styles/colors';
 import TwoWayPushButton from '../../adOns/molecules/TwoWayPushButton';
@@ -14,17 +14,22 @@ import { useProfile } from '../../context/ContextProvider';
 import { getOtp } from '../../services/apiCall';
 import FlashMessage from 'react-native-flash-message';
 import { showNoty } from '../../common/flash/flashNotification';
-
-const LoginPage = () => {
+import SmsRetriever from 'react-native-sms-retriever';
+import SimCardsManagerModule from 'react-native-sim-cards-manager';
+import PhoneNumberModal from '../../adOns/molecules/PhoneNumberModal';
+import { OneSignal } from 'react-native-onesignal';
+const NewLoginPage = () => {
 
     const navigation = useNavigation()
     const route = useRoute()
     let errOnRoute = route.params?.error
     const { profileState, profileDispatch } = useProfile()
     const [showModal, setShowModal] = useState(false)
+    const [showPModal, setShowPModal] = useState(false)
     const [selectedOption, setSelectedOption] = useState('Vendor')
     const flashRef = useRef(null)
     const [phone, setPhone] = useState('')
+    const [phoneArray, setPhoneArray] = useState([])
     const [error, setError] = useState(errOnRoute || '')
     useEffect(() => {
         setError(errOnRoute)
@@ -84,8 +89,12 @@ const LoginPage = () => {
                 return
             }
             let phoneNo = phone
+            console.log(phoneNo, phone);
             if (phone.startsWith("+91")) {
-                phoneNo = phone.replace("+91", "")
+                phoneNo = phone.replace("+91","")
+            }
+            if (phone.startsWith("+1")) {
+                phoneNo = phone.replace("+1","")
             }
             console.log(phoneNo, phone);
             if (phoneNo.length === 10) {
@@ -129,7 +138,74 @@ const LoginPage = () => {
             setLoading(false)
         }
     }
-
+    const _onPhoneNumberPressed = async () => {
+        try {
+            // const phoneNumber = await SmsRetriever.requestPhoneNumber();
+            const phoneNumber = await SimCardsManagerModule.getSimCards({
+                title: 'App Permission',
+                message: 'Custom message',
+                buttonNeutral: 'Not now',
+                buttonNegative: 'Not OK',
+                buttonPositive: 'OK',
+            })
+            // console.log(phoneNumber);
+            setPhoneArray(phoneNumber)
+            setShowPModal(true)
+            return phoneNumber
+        } catch (error) {
+            console.log(JSON.stringify(error));
+            return error
+        }
+    };
+    const getPermission = () => {
+        try {
+          PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+            {
+              title: 'Notification Permission',
+              message: 'This app needs access to send you notifications',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'Allow',
+            },
+          ).then(granted => {
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            //   Alert.alert('Permission Granted', 'You can now receive notifications');
+              OneSignal.initialize("6a48b3bc-d5bd-4246-9b8e-d453e8373a70")
+              OneSignal.Notifications.addEventListener('click', (event) => {
+                console.log('OneSignal: notification clicked:', event);
+              });
+              OneSignal.Notifications.addEventListener('received', (event) => {
+                console.log('OneSignal: notification clicked:', event);
+              });
+    
+              // OneSignal.initialize('6a48b3bc-d5bd-4246-9b8e-d453e8373a70')
+            } else {
+              if (Platform.OS === 'android' && Platform.Version < 33) {
+                OneSignal.initialize("6a48b3bc-d5bd-4246-9b8e-d453e8373a70")
+                OneSignal.Notifications.addEventListener('click', (event) => {
+                  console.log('OneSignal: notification clicked:', event);
+                });
+                OneSignal.Notifications.addEventListener('received', (event) => {
+                  console.log('OneSignal: notification clicked:', event);
+                });
+    
+              } else {
+                Alert.alert('Permission Denied', 'You cannot receive notifications');
+              }
+            }
+          })
+            .catch(err => {
+              console.log("PERMISSION ERROR ", err);
+            })
+        } catch (error) {
+          console.log("ERROR IN PERMISSIONS ", error)
+        }
+      }
+    useEffect(() => {
+        console.log("QWERTY");
+        _onPhoneNumberPressed().then(data => { console.log(data);getPermission() }).catch(err => console.log(err))
+    }, [])
 
     useEffect(() => {
         const backFuntion = () => {
@@ -165,6 +241,14 @@ const LoginPage = () => {
                             handleYes={handleYes}
                             yesText={'Exit'}
                             noText={'Cancel'} />
+
+                        <PhoneNumberModal
+                            show={showPModal}
+                            setShow={setShowPModal}
+                            title={"Choose Phone Number"}
+                            phoneArray={phoneArray}
+                            setPhone={setPhone}
+                        />
                         <View style={styles.logoPart}>
                             <Image
                                 source={require('../../assets/imgaes/DriverAppLogo.png')}
@@ -176,13 +260,14 @@ const LoginPage = () => {
                         <TwoWayPushButton option1={'Driver'} option2={'Vendor'} setter={setSelectedOption} />
 
                         <View style={styles.formpart}>
+                        <TouchableOpacity onPress={()=>setShowPModal(true)}>
                             <UserInput
                                 placeholder='Phone Number'
                                 icon={'person'}
-                                onChangeText={(v) => {
-                                    setPhone(v)
-                                }}
-                            />
+                                editable={false}
+                                value={phone}
+                                
+                            /></TouchableOpacity>
                             {error !== '' ? <Text style={{ textAlign: 'center', marginTop: -15, marginBottom: 15, fontSize: 14, color: "red" }}>{error}</Text> : ''}
                             {/*<PassInput
                             placeholder='Password'
@@ -265,4 +350,4 @@ const styles = StyleSheet.create({
         marginRight: 5,
     }
 })
-export default LoginPage
+export default NewLoginPage

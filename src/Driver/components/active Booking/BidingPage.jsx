@@ -93,11 +93,11 @@ const BidingPage = (props) => {
                                                     &#9733; {item.rating}
                                                 </Text>
                                             </View>
-                                            {/*<View>
+                                            {item?.verifiedBy&&<View>
                                                 <Text style={{ ...styles.text, color: 'gray' }}>
-                                                    ({item.satisfiedCustomer})
+                                                    ({item?.verifiedBy})
                                                 </Text>
-                </View>*/}
+                                            </View>}
                                         </View>
                                     </View>
                                 </View>

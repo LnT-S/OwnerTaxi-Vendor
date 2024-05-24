@@ -8,7 +8,7 @@ import { WHITEBG } from '../../../styles/colors';
 import server from '../../../services/server.tsx'
 
 const MainDocumentCard = (props) => {
-    const { status, documentId, documentName, image, documentNo, required } = props.item
+    const { status, documentId, documentName, image, documentNo, required,autoGenerateNo } = props.item
     const { reload } = props
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -38,6 +38,7 @@ const MainDocumentCard = (props) => {
                 setVisible={setModalVisible}
                 vehicleNo={props.vehicleNo}
                 reload={reload}
+                autoGenerateNo={autoGenerateNo}
             />
             <InfoModal
                 show={infoModalVisible}
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
         position: 'relative',
         display: 'flex',
         justifyContent: 'space-between',
-        width: '45%',
+        width: '100%',
         // height: 170, //adjust,
         flexWrap: 'wrap',
         borderWidth: 1,

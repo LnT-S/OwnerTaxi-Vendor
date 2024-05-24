@@ -22,7 +22,7 @@ import { BgColor } from '../../../styles/colors'
 import { showNoty } from '../../../common/flash/flashNotification'
 import FlashMessage from 'react-native-flash-message'
 import ONE, { OneSignal } from 'react-native-onesignal'
-import { updateSubscription } from '../../../services/apiCall'
+import { isDocumentVerified, updateSubscription } from '../../../services/apiCall'
 const HomePageDriver = () => {
     const activeList = [
         {
@@ -166,7 +166,22 @@ const HomePageDriver = () => {
             })
             .catch(err => {
                 console.log("ERROR IN FETCHING INTERCITY DATA ", err)
-                showNoty(err.data.message || err, "danger")
+                showNoty(err?.data?.message || JSON.stringify(err), "danger")
+            })
+    }
+    const handlePostBooking = ()=>{
+        isDocumentVerified()
+            .then(data => {
+                console.log(data.data.data)
+                if (data.data.data.verified === true ) {
+                    setShowPostBookingModal(true) 
+                } else {
+                    showNoty(data.data.message, "warning")
+                    setTimeout(() => navigation.navigate("Document"), 2000)
+                }
+            })
+            .catch(err => {
+                console.log("ERROR CHECKING DOCUMENT VWERIFICATION ", err)
             })
     }
     useFocusEffect(
@@ -175,7 +190,6 @@ const HomePageDriver = () => {
             setSelectedOption(option)
         }, [])
     );
-
     const postBookingFunctionalObject = {
         function1: {
             name: 'Intercity',
@@ -190,7 +204,6 @@ const HomePageDriver = () => {
             }
         },
     }
-
     const handleYes = async () => {
         setShowModal(false);
         BackHandler.exitApp();
@@ -229,7 +242,6 @@ const HomePageDriver = () => {
         },[])
     )
     useEffect(() => {
-
         // OneSignal.Notifications.requestPermission(true);
         // OneSignal.initialize("6a48b3bc-d5bd-4246-9b8e-d453e8373a70")
         // OneSignal.Notifications.addEventListener('click', (event) => {
@@ -341,7 +353,7 @@ const HomePageDriver = () => {
                         }
                         <View style={{ marginTop: 0 }}>
                             <PressButton name={'            Post Booking            '}
-                                onPress={() => { setShowPostBookingModal(true) }} />
+                                onPress={handlePostBooking} />
                         </View>
                     </View>
                 </View>
