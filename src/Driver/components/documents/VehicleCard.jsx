@@ -1,16 +1,19 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 import { WHITEBG } from '../../../styles/colors'
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const VehicleCard = (props) => {
-    const { type, subType, capacity, pending,vehicleNo } = props.item
+    const { type, subType, capacity, pending,vehicleNo,locality } = props.item
+    console.log("CARS ",props.item);
 
     return (
-        <View style={{ width: '100%', borderRadius: 10, borderWidth: 1,backgroundColor : WHITEBG, }}>
+        <View style={{ width: '100%', borderRadius: 10, borderWidth: 1,backgroundColor : WHITEBG}}>
             <Text style={{fontSize : 26, color : 'black' , fontFamily : 'serif'}}> Vehicle {props.index} </Text>
             <View style={styles.container}>
                 <View style={styles.left}>
                     <Text style={styles.text}>TYPE : {type}</Text>
+                    <Text style={styles.text}>{locality?.toUpperCase()}</Text>
                     <Text style={styles.text}>SUB TYPE  : {subType}</Text>
                     <Text style={styles.text}>CAPACITY : {capacity}</Text>
                     <Text style={{...styles.text , color :  'gray'}}>NO : {vehicleNo}</Text>

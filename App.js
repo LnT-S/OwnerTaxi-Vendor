@@ -27,11 +27,9 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
 import SplashScreen from './src/screens/static/SplashScreen';
-import LoginPage from './src/components/Login/Login';
 import SignupScreen from './src/components/Login/SignUp';
 import Forget from './src/components/Login/Forget';
 import { BgColor } from './src/styles/colors';
-import OtpScreen from './src/components/Login/OTP';
 import NewPassword from './src/components/Login/NewPassword';
 import HomePageDriver from './src/Driver/components/home/HomepageDriver';
 import Settting from './src/Driver/components/setting/Settting';

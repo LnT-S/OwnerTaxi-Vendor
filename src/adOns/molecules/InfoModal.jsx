@@ -5,7 +5,7 @@ import PressButton from "../atoms/PressButton";
 const InfoModal =  function (props) {
 
     const { show, setShow, title, message, messageJsx, imageSource , serverImageSource, comment, documentNo} = props
-console.log("sssss",documentNo);
+// console.log("sssss",documentNo);
     const handleCancel = () => {
         setShow(false);
     };

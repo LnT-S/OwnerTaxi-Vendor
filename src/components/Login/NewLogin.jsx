@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Image, StyleSheet, View, Text, Pressable, KeyboardAvoidingView, BackHandler, ScrollView, StatusBar, TouchableOpacity, PermissionsAndroid, Alert } from 'react-native'
+import { Image, StyleSheet, View, Text, Pressable, KeyboardAvoidingView, BackHandler, ScrollView, StatusBar, TouchableOpacity, PermissionsAndroid, Alert, Platform } from 'react-native'
 import { getResponsiveValue, height } from '../../styles/responsive';
 import { BgColor } from '../../styles/colors';
 import TwoWayPushButton from '../../adOns/molecules/TwoWayPushButton';
@@ -14,12 +14,13 @@ import { useProfile } from '../../context/ContextProvider';
 import { getOtp } from '../../services/apiCall';
 import FlashMessage from 'react-native-flash-message';
 import { showNoty } from '../../common/flash/flashNotification';
-import SmsRetriever from 'react-native-sms-retriever';
-import SimCardsManagerModule from 'react-native-sim-cards-manager';
+// import SmsRetriever from 'react-native-sms-retriever';
+// import SimCardsManagerModule from 'react-native-sim-cards-manager';
 import PhoneNumberModal from '../../adOns/molecules/PhoneNumberModal';
 import { OneSignal } from 'react-native-onesignal';
-const NewLoginPage = () => {
+import DeviceInfo from 'react-native-device-info';
 
+const NewLoginPage = () => {
     const navigation = useNavigation()
     const route = useRoute()
     let errOnRoute = route.params?.error
@@ -90,12 +91,12 @@ const NewLoginPage = () => {
             }
             let phoneNo = phone
             console.log(phoneNo, phone);
-            if (phone.startsWith("+91")) {
-                phoneNo = phone.replace("+91","")
+            if (phone.length >= 10) {
+                phoneNo = phone.slice(-10)
+            } else {
+                showNoty("Number is Invalid")
             }
-            if (phone.startsWith("+1")) {
-                phoneNo = phone.replace("+1","")
-            }
+
             console.log(phoneNo, phone);
             if (phoneNo.length === 10) {
                 let otpSent = await AsyncStorage.getItem('otpSent')
@@ -138,73 +139,107 @@ const NewLoginPage = () => {
             setLoading(false)
         }
     }
-    const _onPhoneNumberPressed = async () => {
-        try {
-            // const phoneNumber = await SmsRetriever.requestPhoneNumber();
-            const phoneNumber = await SimCardsManagerModule.getSimCards({
-                title: 'App Permission',
-                message: 'Custom message',
-                buttonNeutral: 'Not now',
-                buttonNegative: 'Not OK',
-                buttonPositive: 'OK',
-            })
-            // console.log(phoneNumber);
-            setPhoneArray(phoneNumber)
-            setShowPModal(true)
-            return phoneNumber
-        } catch (error) {
-            console.log(JSON.stringify(error));
-            return error
-        }
-    };
-    const getPermission = () => {
-        try {
-          PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-            {
-              title: 'Notification Permission',
-              message: 'This app needs access to send you notifications',
-              buttonNeutral: 'Ask Me Later',
-              buttonNegative: 'Cancel',
-              buttonPositive: 'Allow',
-            },
-          ).then(granted => {
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            //   Alert.alert('Permission Granted', 'You can now receive notifications');
-              OneSignal.initialize("6a48b3bc-d5bd-4246-9b8e-d453e8373a70")
-              OneSignal.Notifications.addEventListener('click', (event) => {
-                console.log('OneSignal: notification clicked:', event);
-              });
-              OneSignal.Notifications.addEventListener('received', (event) => {
-                console.log('OneSignal: notification clicked:', event);
-              });
-    
-              // OneSignal.initialize('6a48b3bc-d5bd-4246-9b8e-d453e8373a70')
-            } else {
-              if (Platform.OS === 'android' && Platform.Version < 33) {
-                OneSignal.initialize("6a48b3bc-d5bd-4246-9b8e-d453e8373a70")
-                OneSignal.Notifications.addEventListener('click', (event) => {
-                  console.log('OneSignal: notification clicked:', event);
-                });
-                OneSignal.Notifications.addEventListener('received', (event) => {
-                  console.log('OneSignal: notification clicked:', event);
-                });
-    
-              } else {
-                Alert.alert('Permission Denied', 'You cannot receive notifications');
-              }
-            }
-          })
-            .catch(err => {
-              console.log("PERMISSION ERROR ", err);
-            })
-        } catch (error) {
-          console.log("ERROR IN PERMISSIONS ", error)
-        }
-      }
+    // const _onPhoneNumberPressed = async () => {
+    //     try {
+    //         // const phoneNumber = await SmsRetriever.requestPhoneNumber();
+    //         const granted = await PermissionsAndroid.requestMultiple([
+    //             PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
+    //             PermissionsAndroid.PERMISSIONS.READ_PHONE_NUMBERS,
+    //         ]);
+    //         if (
+    //             granted['android.permission.READ_PHONE_STATE'] === PermissionsAndroid.RESULTS.GRANTED &&
+    //             granted['android.permission.READ_PHONE_NUMBERS'] === PermissionsAndroid.RESULTS.GRANTED
+    //         ) {
+    //             console.log('You can use the SIM card manager');
+    //             const phoneNumber = await SimCardsManagerModule.getSimCards()
+    //             // console.log(phoneNumber);
+    //             setPhoneArray(phoneNumber)
+    //             setShowPModal(true)
+    //             return phoneNumber
+    //         } else {
+    //             console.log('Permission denied');
+    //             Alert.alert('Permissions Required For fetching phone numbers');
+    //         }
+    //         if (Platform.OS === 'android') {
+    //             const androidVersion = DeviceInfo.getSystemVersion();
+    //             if (parseInt(androidVersion, 10) >= 22) {
+    //                 const granted = await PermissionsAndroid.requestMultiple([
+    //                     PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
+    //                     PermissionsAndroid.PERMISSIONS.READ_PHONE_NUMBERS,
+    //                 ]);
+    //                 if (
+    //                     granted['android.permission.READ_PHONE_STATE'] === PermissionsAndroid.RESULTS.GRANTED &&
+    //                     granted['android.permission.READ_PHONE_NUMBERS'] === PermissionsAndroid.RESULTS.GRANTED
+    //                 ) {
+    //                     console.log('You can use the SIM card manager');
+    //                     const phoneNumber = await SimCardsManagerModule.getSimCards()
+    //                     // console.log(phoneNumber);
+    //                     setPhoneArray(phoneNumber)
+    //                     setShowPModal(true)
+    //                     return phoneNumber
+    //                 } else {
+    //                     console.log('Permission denied');
+    //                     Alert.alert('Permissions Required For fetching phone numbers');
+    //                 }
+    //             } else {
+    //                 Alert.alert('Permissions are not required for Android versions below 6.0');
+    //             }
+    //         }
+
+
+    //     } catch (error) {
+    //         console.log(JSON.stringify(error));
+    //         return error
+    //     }
+    // };
+    // const getPermission = () => {
+    //     try {
+    //         PermissionsAndroid.request(
+    //             PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    //             {
+    //                 title: 'Notification Permission',
+    //                 message: 'This app needs access to send you notifications',
+    //                 buttonNeutral: 'Ask Me Later',
+    //                 buttonNegative: 'Cancel',
+    //                 buttonPositive: 'Allow',
+    //             },
+    //         ).then(granted => {
+    //             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    //                 //   Alert.alert('Permission Granted', 'You can now receive notifications');
+    //                 OneSignal.initialize("6a48b3bc-d5bd-4246-9b8e-d453e8373a70")
+    //                 OneSignal.Notifications.addEventListener('click', (event) => {
+    //                     console.log('OneSignal: notification clicked:', event);
+    //                 });
+    //                 OneSignal.Notifications.addEventListener('received', (event) => {
+    //                     console.log('OneSignal: notification clicked:', event);
+    //                 });
+
+    //                 // OneSignal.initialize('6a48b3bc-d5bd-4246-9b8e-d453e8373a70')
+    //             } else {
+    //                 if (Platform.OS === 'android' && Platform.Version < 33) {
+    //                     OneSignal.initialize("6a48b3bc-d5bd-4246-9b8e-d453e8373a70")
+    //                     OneSignal.Notifications.addEventListener('click', (event) => {
+    //                         console.log('OneSignal: notification clicked:', event);
+    //                     });
+    //                     OneSignal.Notifications.addEventListener('received', (event) => {
+    //                         console.log('OneSignal: notification clicked:', event);
+    //                     });
+
+    //                 } else {
+    //                     Alert.alert('Permission Denied', 'You cannot receive notifications');
+    //                 }
+    //             }
+    //         })
+    //             .catch(err => {
+    //                 console.log("PERMISSION ERROR ", err);
+    //             })
+    //     } catch (error) {
+    //         console.log("ERROR IN PERMISSIONS ", error)
+    //     }
+    // }
     useEffect(() => {
         console.log("QWERTY");
-        _onPhoneNumberPressed().then(data => { console.log(data);getPermission() }).catch(err => console.log(err))
+        // _onPhoneNumberPressed().then(data => { console.log(data); getPermission() }).catch(err => console.log(err))
     }, [])
 
     useEffect(() => {
@@ -242,13 +277,13 @@ const NewLoginPage = () => {
                             yesText={'Exit'}
                             noText={'Cancel'} />
 
-                        <PhoneNumberModal
+                        {/*<PhoneNumberModal
                             show={showPModal}
                             setShow={setShowPModal}
                             title={"Choose Phone Number"}
                             phoneArray={phoneArray}
                             setPhone={setPhone}
-                        />
+    />*/}
                         <View style={styles.logoPart}>
                             <Image
                                 source={require('../../assets/imgaes/DriverAppLogo.png')}
@@ -260,14 +295,16 @@ const NewLoginPage = () => {
                         <TwoWayPushButton option1={'Driver'} option2={'Vendor'} setter={setSelectedOption} />
 
                         <View style={styles.formpart}>
-                        <TouchableOpacity onPress={()=>setShowPModal(true)}>
-                            <UserInput
-                                placeholder='Phone Number'
-                                icon={'person'}
-                                editable={false}
-                                value={phone}
-                                
-                            /></TouchableOpacity>
+                            <TouchableOpacity onPress={() => setShowPModal(true)}>
+                                <UserInput
+                                    placeholder='Phone Number'
+                                    icon={'person'}
+                                    editable={true}
+                                    value={phone}
+                                    keyboardType={"numeric"}
+                                    onChangeText = {v=>{setPhone(v.replaceAll(" ","").trim())}}
+
+                                /></TouchableOpacity>
                             {error !== '' ? <Text style={{ textAlign: 'center', marginTop: -15, marginBottom: 15, fontSize: 14, color: "red" }}>{error}</Text> : ''}
                             {/*<PassInput
                             placeholder='Password'

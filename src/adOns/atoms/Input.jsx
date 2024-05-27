@@ -13,7 +13,7 @@ const Input = (props) => {
                 style={{...styles.input , ...props.containerStyles}}
                 placeholder={props.placeholder}
                 placeholderTextColor='gray'
-                maxLength={props.length || 15}
+                maxLength={props.length || 25}
                 {...props.textInputProps}
             // Other TextInput props go here
             />

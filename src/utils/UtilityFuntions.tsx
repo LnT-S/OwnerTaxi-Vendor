@@ -119,3 +119,7 @@ export const copyToClipboard = (text: string) => {
         return false
     }
 }
+
+export const spacedText = (text : string)=>{
+    return text.replace(/(.{4})/g, '$1 ');
+}

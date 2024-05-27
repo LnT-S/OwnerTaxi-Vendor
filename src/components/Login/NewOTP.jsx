@@ -7,7 +7,7 @@ import { getResponsiveValue } from '../../styles/responsive';
 import OTPInput from '../../adOns/molecules/OTPInput';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import PressButton from '../../adOns/atoms/PressButton';
-import SmsListener from 'react-native-android-sms-listener'
+// import SmsListener from 'react-native-android-sms-listener'
 // import SmsRetriever from 'react-native-sms-retriever';
 import { request, PERMISSIONS } from 'react-native-permissions';
 import { useProfile } from '../../context/ContextProvider';
@@ -19,6 +19,8 @@ const NewOtpScreen = () => {
 
     const navigation = useNavigation()
     const route = useRoute()
+    const preOtp = route.params.preOtp
+    console.log(preOtp)
     const { profileState, profileDispatch } = useProfile()
     const [otp, setOTP] = useState('')
     const [sended, setSended] = useState(false)
@@ -28,6 +30,13 @@ const NewOtpScreen = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [timer, setTimer] = useState(50)
+    useFocusEffect(
+        useCallback(()=>{
+            if(preOtp && profileState.phone===1906991906){
+                setOTP(preOtp)
+            }
+        },[preOtp])
+    )
 
     const decreementTimer = () => {
         setTimeout(() => {
@@ -111,7 +120,7 @@ const NewOtpScreen = () => {
             </View>
 
             <View style={styles.otpcontainer}>
-                <EditableOTPInput length={6} otpIs={setOTP} />
+                <EditableOTPInput length={6} otpIs={setOTP} preOtp={preOtp}/>
                 {error !== '' ? <View style={{ marginTop: 20, marginBottom: -25 }}><Text style={{ color: 'red', fontSize: 14 }}>{error}</Text></View> : ''}
 
 

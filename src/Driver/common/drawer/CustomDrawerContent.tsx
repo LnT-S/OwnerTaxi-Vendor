@@ -100,7 +100,7 @@ const CustomDrawerContent: React.FC<CustomDrawerProps> = ({ state, navigation })
         <Text style={[
           styles.text,
           activeRouteName === 'ActiveBooking' && styles.activeItemColor,
-        ]}>Active Booking</Text>
+        ]}>Post Booking</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={[

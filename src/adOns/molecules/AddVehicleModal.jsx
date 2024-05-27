@@ -5,6 +5,7 @@ import { BgColor } from "../../styles/colors";
 import { addVehicle } from "../../services/apiCall";
 import { showNoty } from "../../common/flash/flashNotification";
 import { Dropdown } from 'react-native-element-dropdown';
+import { spacedText } from "../../utils/UtilityFuntions";
 
 export default function AddVehicleModal(props) {
 
@@ -12,6 +13,7 @@ export default function AddVehicleModal(props) {
     const [error, setError] = useState('')
     const [type, setType] = useState('')
     const [subType, setSubType] = useState('')
+    const [locality , setLocality] = useState('')
     const [capacity, setCapacity] = useState('')
     const [vehicleNo, setVehicleNo] = useState('')
     const handleCancel = () => {
@@ -23,6 +25,7 @@ export default function AddVehicleModal(props) {
             subType,
             capacity,
             vehicleNo,
+            locality,
             documents: []
         }
         if (type === '' || subType === '' || capacity === '' || vehicleNo === '') {
@@ -63,7 +66,7 @@ export default function AddVehicleModal(props) {
     />*/}
                         <Dropdown
                             style={styles.textInput}
-                            data={[{ label: 'Auto 3+1', value: 'Auto', capacity: 3 }, { label: 'Mini 4+1', value: 'Mini', capacity: 4 }, { label: 'Sedan 4+1', value: 'Sedan', capacity: 4 }, { label: 'SUV 6+1', value: 'SUV', capacity: 6 }, { label: 'SUV 10+1', value: 'SUV', capacity: 10 }]}
+                            data={[{ label: 'Auto 3+1', value: 'Auto', capacity: 3 }, { label: 'Mini 4+1', value: 'Mini', capacity: 4 }, { label: 'Sedan 4+1', value: 'Sedan', capacity: 4 }, { label: 'SUV 6+1', value: 'SUV', capacity: 6 }, { label: 'SUV 10+1', value: 'SUV ', capacity: 10 }]}
                             placeholder='Select Document For'
                             placeholderStyle={{ color: 'black' }}
                             value={type}
@@ -72,6 +75,18 @@ export default function AddVehicleModal(props) {
                             onChange={item => {
                                 setType(item.value);
                                 setCapacity(item.capacity)
+                            }}
+                        />
+                        <Dropdown
+                            style={styles.textInput}
+                            data={[{ label: 'Permit', value: 'Permit', capacity: 3 }, { label: 'Private', value: 'Private', capacity: 4 }]}
+                            placeholder='Select Vehicle Type'
+                            placeholderStyle={{ color: 'black' }}
+                            value={locality}
+                            labelField="label"
+                            valueField="value"
+                            onChange={item => {
+                                setLocality(item.value);
                             }}
                         />
                         <TextInput
@@ -89,10 +104,11 @@ export default function AddVehicleModal(props) {
                             style={styles.textInput}
 
     />*/}
-                        <TextInput onChangeText={v => setVehicleNo(v)}
+                        <TextInput onChangeText={v =>setVehicleNo(v.toUpperCase().replaceAll(" ",""))} 
                             placeholder="Enter Vehicle No"
                             placeholderTextColor={"gray"}
-                            style={styles.textInput}
+                            style={styles.textInput}  
+                            value={vehicleNo}
 
                         />
                     </View>

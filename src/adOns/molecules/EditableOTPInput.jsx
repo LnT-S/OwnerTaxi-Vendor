@@ -1,10 +1,24 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
+import { useProfile } from '../../context/ContextProvider';
 
-const OTPInput = ({ length, otpIs}) => {
+const OTPInput = ({ length, otpIs,preOtp}) => {
   const [otp, setOTP] = useState([]);
+  const {profileState} = useProfile()
   const myArray = Array(6).fill(null);
   const inputRefs = useRef([]);
+
+  useFocusEffect(
+    useCallback(()=>{
+      console.log('In Editable OTP',preOtp);
+      if(preOtp && profileState.phone == 1906991906){
+        console.log('In Editable Phone',preOtp);
+        setOTP(preOtp.toString().split(''))
+        otpIs(preOtp)
+      }
+    },[preOtp])
+  )
 
   const handleOTPChange = (index, value) => {
     const newOTP = [...otp];

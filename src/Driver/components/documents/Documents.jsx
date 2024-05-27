@@ -15,17 +15,21 @@ import { BgColor, WHITEBG } from '../../../styles/colors'
 import { useProfile } from '../../../context/ContextProvider'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import FlashMessage from 'react-native-flash-message'
+import YesNoModal from '../../../adOns/molecules/YesNoModal'
+import { deleteVehicle } from '../../../services/apiCall'
 
 const Documents = () => {
   const [carSubArray, setCarSubArray] = useState([])
   const ref = useRef()
   const navigation = useNavigation()
   const [showAddModal, setShowAddModal] = useState(false)
+  const [showModal, setShowModal] = useState(false)
   const [loading, setLoading] = useState(true)
   const [driverArray, setDriverArray] = useState(null)
   const [carArray, setCarArray] = useState([])
   const [vehicleNo, setVehicleNo] = useState('')
   const [refresh, setRefresh] = useState(false)
+  const [vehicleNoToDelete, setNoOfVehicleToDelete] = useState('')
   const { profileState, profileDispatch } = useProfile()
   const [profileDetails, setProfileDetails] = useState({
     image: profileState.avatar,
@@ -48,9 +52,9 @@ const Documents = () => {
     getDocumentInfo()
       .then(data => {
         setDriverArray(data.data.data.driverDocuments)
-        console.log(data.data.data.driverDocuments)
+        // console.log(data.data.data.driverDocuments)
         setCarArray(data.data.data.vehicleDocument)
-        console.log(data.data.data.vehicleDocument)
+        // console.log(data.data.data.vehicleDocument)
         setCarSubArray([])
       })
       .catch(err => {
@@ -65,9 +69,30 @@ const Documents = () => {
     setVehicleNo(item.vehicleNo)
     setCarSubArray(item.document)
   }
+  const handleYes = () => {
+    console.log("DELETE VEHICLE ", vehicleNoToDelete)
+    deleteVehicle({ vehicleNo: vehicleNoToDelete })
+      .then(data => {
+        console.log(data.data.message);
+        if (data.status === 200) {
+          showNoty(data.data.message, "success")
+          fetchDocumentDetails()
+          setShowModal(false)
+        } else {
+          showNoty(data.data.message, "danger")
+        }
+      })
+      .catch(err=>{
+        console.log("ERROR DELETING VEHICLE ");
+        showNoty(err,"danger")
+      })
+  }
+  // useEffect(() => {
+  //   console.log("DRIVER ARRAY ", driverArray)
+  // }, [driverArray])
   useEffect(() => {
-    console.log("DRIVER ARRAY ", driverArray)
-  }, [driverArray])
+    console.log("CAR ARRAY ", driverArray)
+  }, [carArray])
 
   useEffect(() => {
     setLoading(true)
@@ -105,21 +130,29 @@ const Documents = () => {
           setShow={setShowAddModal}
           reload={fetchDocumentDetails}
         />
+        <YesNoModal
+          show={showModal}
+          setShow={setShowModal}
+          title={'EXIT ?'}
+          message={'Are You Sure Want To Delete the vehicle ?'}
+          handleYes={handleYes}
+          yesText={'Delete'}
+          noText={'Cancel'} />
         <FlashMessage ref={ref} />
         <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
           <View style={{ backgroundColor: WHITEBG, width: '97%', borderRadius: 15 }}>
-            <View style={{ ...styles.textContainer, flexDirection: 'row', justifyContent: 'space-between',alignItems: 'center', }}>
+            <View style={{ ...styles.textContainer, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
               <Text style={styles.text}>Driver Documents</Text>
               {!loading ? <TouchableOpacity onPress={fetchDocumentDetails} style={{ position: 'relative', right: 20 }}><Icon name="refresh" size={30} color="#000" /></TouchableOpacity> : <ActivityIndicator />}
             </View>
             <View style={styles.document}>
               {!loading && driverArray?.map((item, index) => {
                 return <View style={{ position: "relative", width: "45%" }} key={index}>
-                  {item.required && <View  style={{ position: "absolute", top: 5, right: 10, zIndex: 10 }}>
+                  {item.required && <View style={{ position: "absolute", top: 5, right: 10, zIndex: 10 }}>
                     <Text style={{ fontSize: 24, color: "red" }}>*</Text>
                   </View>}
                   <View style={{ width: '100%' }}>
-                    <MainDocumentCard item={item}  reload={fetchDocumentDetails} />
+                    <MainDocumentCard item={item} reload={fetchDocumentDetails} />
                   </View>
                 </View>
               })}
@@ -137,7 +170,10 @@ const Documents = () => {
             </View>
             <View style={styles.document}>
               {carSubArray.length === 0 && carArray !== undefined && (carArray.length > 0) && carArray.map((item, index) => {
-                return <TouchableOpacity style={{ width: '100%' }} key={index} onPress={() => { setArray(item, index) }}>
+                return <TouchableOpacity style={{ width: '100%', position: "relative" }} key={index} onPress={() => { setArray(item, index) }}>
+                  <TouchableOpacity style={{ position: "absolute", top: 5, right: 5, zIndex: 5 }} onPress={() => { setNoOfVehicleToDelete(item.vehicleNo); setShowModal(true) }}>
+                    <Icon name='delete' size={24} />
+                  </TouchableOpacity>
                   <VehicleCard item={item} index={index + 1} />
                 </TouchableOpacity>
               })}

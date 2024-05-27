@@ -9,6 +9,7 @@ import { uploadDocumentDriver } from '../../../services/apiCall';
 import CroppedImagePicker from 'react-native-image-crop-picker';
 import { BgColor } from '../../../styles/colors';
 import { showNoty } from '../../../common/flash/flashNotification';
+import { spacedText } from '../../../utils/UtilityFuntions';
 
 const CustomDocumentPicker = (props) => {
 
@@ -18,7 +19,7 @@ const CustomDocumentPicker = (props) => {
     const [document, setDocument] = useState(null)
     const [isDocumentUploading, setIsDocumentUploading] = useState(false)
 
-    console.log("DOCUMENT DETAILS ", documentDetails, vehicleNo)
+    // console.log("DOCUMENT DETAILS ", documentDetails, vehicleNo)
 
     const pickDocument = async () => {
         try {
@@ -84,11 +85,13 @@ const CustomDocumentPicker = (props) => {
             console.log(err);
         }
     }
-
+    useEffect(()=>{
+        console.log(input);
+    },[input])
 
     const uploadDocument = () => {
         // API CALL FOR DOCUMENT UPLOAD
-        if (input === '' ) {
+        if (input.replaceAll(" ","") === '' ) {
             setError('Required')
             return
         }
@@ -156,8 +159,8 @@ const CustomDocumentPicker = (props) => {
                         <Input
                             containerStyles={{ width: 230 }}
                             textInputProps={{
-                                onChangeText: (v) => { setInput(v) },
-                                value:input,
+                                onChangeText: (v) => { setInput(v.toUpperCase().replaceAll(" ","")) },
+                                value:spacedText(input).trim(),
                                 editable : !autoGenerateNo
                             
                             }}
