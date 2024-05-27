@@ -16,6 +16,6 @@ else if (env === "staging")
 else if (env === "production")
     envData = config.production;
 else
-    envData = config.development;
+    envData = config.production;
 
 export default envData;
