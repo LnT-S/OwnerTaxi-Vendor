@@ -5,7 +5,7 @@ import Semicircle from '../../../adOns/atoms/SemiCircle'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useProfile } from '../../../context/ContextProvider';
-import { deleteAccount } from '../../../services/apiCall';
+import { deleteAccount, manageNotifications } from '../../../services/apiCall';
 import { showNoty } from '../../../common/flash/flashNotification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FlashMessage from 'react-native-flash-message';
@@ -16,6 +16,7 @@ const Setting = () => {
   const navigation = useNavigation()
   const { profileState, profileDispatch } = useProfile()
   const [showModal, setShowModal] = useState(false)
+  const [showNotificationModal, setShowNotificationModal] = useState(false)
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const delRef = useRef(null)
   const [loading, setLoading] = useState(false)
@@ -69,6 +70,31 @@ const Setting = () => {
         setShowModal(false)
       })
   }
+  const turnOnNotification = () => {
+    manageNotifications({ state: true })
+      .then(data => {
+        profileDispatch({
+          type: 'NOTIFICATION',
+          payload: true
+        })
+        setShowNotificationModal(false)
+      })
+      .catch(err => {
+        console.log("ERROR IN SETIING NOTIFICATION ", err);
+      })
+  }
+  const turnOffNotification = () => {
+    manageNotifications({ state: false })
+      .then(data => {
+        profileDispatch({
+          type: 'NOTIFICATION',
+          payload: false
+        })
+      })
+      .catch(err => {
+        console.log("ERROR IN SETIING NOTIFICATION ", err);
+      })
+  }
   useEffect(() => {
     const backFuntion = () => {
       navigation.goBack()
@@ -101,6 +127,15 @@ const Setting = () => {
             yesText={'Delete'}
             noText={'Cancel'} />
           <YesNoModal
+            show={showNotificationModal}
+            setShow={setShowNotificationModal}
+            title={'Notification Sound '}
+            message={'Are You Sure Want To MUTE your notification ?'}
+            handleYes={turnOnNotification}
+            handleNo={turnOffNotification}
+            yesText={'Mute'}
+            noText={'UnMute'} />
+          <YesNoModal
             show={showLogoutModal}
             setShow={setShowLogoutModal}
             title={'EXIT ?'}
@@ -108,6 +143,10 @@ const Setting = () => {
             handleYes={handleYes}
             yesText={'Yes'}
             noText={'No'} />
+          <TouchableOpacity style={styles.listItem1} onPress={() => { setShowNotificationModal(true) }}>
+            <Icon name="delete" size={30} color="#ffea00" />
+            <Text style={styles.text}>Manage Notifications</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.listItem1} onPress={() => { setShowModal(true) }}>
             <Icon name="delete" size={30} color="#ffea00" />
             <Text style={styles.text}>Delete My Account</Text>

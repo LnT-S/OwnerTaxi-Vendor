@@ -245,6 +245,7 @@ const Intercity = () => {
         const response = await axios.get(
             `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${origin}&destinations=${destination}&key=${apiKey}`
         );
+
         const distances = response.data.rows[0].elements[0].distance?.text;
         console.log("DISTANCE ", distances, response.data.rows[0].elements[0])
         if (!(vehicle.type !== '' && vehicle.subType !== '')) {
@@ -558,8 +559,8 @@ const Intercity = () => {
                         </View>
                     </View>
                     {/**Note */}
-                    <View style={{ backgroundColor: 'white',marginTop : 20}}>
-                    <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'red', marginLeft: 25, marginTop: 10 }}>Extra Charges</Text>
+                    <View style={{ backgroundColor: 'white', marginTop: 20 }}>
+                        <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'red', marginLeft: 25, marginTop: 10 }}>Extra Charges</Text>
                         <View style={{ justifyContent: 'center', alignItems: 'flex-end', marginRight: 70 }}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 25, marginTop: 10, }}>
                                 <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'black' }}>Toll Tax <Text style={{ color: 'red', position: 'relative', top: -3 }}>*</Text> : </Text>
@@ -614,7 +615,7 @@ const Intercity = () => {
                                 />
 
                             </View>
-                            {borderExtra === 'amount' ? <View style={{ flexDirection: 'row',alignItems: 'center', justifyContent: 'center', marginRight: -50 }}>
+                            {borderExtra === 'amount' ? <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginRight: -50 }}>
                                 <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'black' }}>Border Tax Amount<Text style={{ color: 'red', position: 'relative', top: -3 }}> *</Text> :</Text>
 
                                 <TextInput
@@ -646,7 +647,7 @@ const Intercity = () => {
                                 />
 
                             </View>
-                            {parkingExtra === 'amount' ? <View style={{ flexDirection: 'row',alignItems: 'center', justifyContent: 'center', marginRight: -50 }}>
+                            {parkingExtra === 'amount' ? <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginRight: -50 }}>
                                 <Text style={{ fontSize: 18, fontFamily: 'serif', color: 'black' }}>Parking Amount<Text style={{ color: 'red', position: 'relative', top: -3 }}> *</Text> :</Text>
 
                                 <TextInput

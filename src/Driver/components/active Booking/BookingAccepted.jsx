@@ -21,6 +21,9 @@ const BookingAccepted = (props) => {
         setIsRefreshing(true)
         getBookingsDriverHasAccepted().then(data => {
             console.log(data.data.data)
+            if(data.status!==200){
+                Alert.alert(data.data.message)
+            }
             setActiveBookingArray(data.data.data)
             // showNoty("Refreshed", "info")
         })

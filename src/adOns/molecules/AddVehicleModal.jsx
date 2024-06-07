@@ -28,7 +28,7 @@ export default function AddVehicleModal(props) {
             locality,
             documents: []
         }
-        if (type === '' || subType === '' || capacity === '' || vehicleNo === '') {
+        if (type === '' || subType === '' || capacity === '' || vehicleNo === '' || locality==="") {
             setError("Enter All Details");
             return
         }

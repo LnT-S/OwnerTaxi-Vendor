@@ -11,6 +11,7 @@ export const ContextProvider = ({ children }) => {
         phone: 1000000000,
         email: '',
         avatar : '',
+        notification : true,
         bookingForm: {
             pickUp: {
                 description: '',
@@ -79,6 +80,8 @@ export const ContextProvider = ({ children }) => {
                 return { ...state, avatar: action.payload }
             case 'BOOKINGFORM':
                 return { ...state, bookingForm : action.payload }
+            case 'NOTIFICATION':
+                return { ...state, notification : action.payload }
             default:
                 return state
         }

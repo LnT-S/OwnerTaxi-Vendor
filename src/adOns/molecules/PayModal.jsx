@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Button, StyleSheet, View, Modal, Text, Image,TextInput } from "react-native";
+import { Button, StyleSheet, View, Modal, Text, Image, TextInput } from "react-native";
 import PressButton from "../atoms/PressButton";
 import { BgColor } from "../../styles/colors";
 import { payToSuperAdmin } from "../../services/apiCall";
+import { Dropdown } from 'react-native-element-dropdown';
 
 export default function PayModal(props) {
 
     const { show, setShow, title, message, messageJsx, imageSource, serverImageSource, comment } = props
     const [amount, setAmount] = useState(0)
-    const [loading,setLoading] = useState(false)
-    const [error , setError] = useState('')
-    const [errorColor , setErrorColor] = useState('black')
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
+    const [reason ,setReason] = useState('')
+    const [errorColor, setErrorColor] = useState('black')
     const handleCancel = () => {
         setShow(false);
     };
@@ -19,47 +21,51 @@ export default function PayModal(props) {
     //         setError("Amount Should Be greater than Zero")
     //     }
     // }, [amount]);
-    const handlePay = ()=>{
-        if(error!==''){
+    const handlePay = () => {
+        if (error !== '') {
             setErrorColor("red")
-            setTimeout(()=>{setErrorColor("orange")},200)
-            setTimeout(()=>{setErrorColor("red")},400)
-            setTimeout(()=>{setErrorColor("orange")},600)
-            setTimeout(()=>{setErrorColor("red")},800)
-            setTimeout(()=>{setErrorColor("orange")},1000)
-            setTimeout(()=>{setErrorColor("red")},1200)
+            setTimeout(() => { setErrorColor("orange") }, 200)
+            setTimeout(() => { setErrorColor("red") }, 400)
+            setTimeout(() => { setErrorColor("orange") }, 600)
+            setTimeout(() => { setErrorColor("red") }, 800)
+            setTimeout(() => { setErrorColor("orange") }, 1000)
+            setTimeout(() => { setErrorColor("red") }, 1200)
             return
         }
         console.log(amount);
-        if(amount=== 0 || isNaN(amount)){
+        if (amount === 0 || isNaN(amount)) {
             setError("Amount Should Be greater than Zero")
             setErrorColor("red")
-            setTimeout(()=>{setErrorColor("orange")},200)
-            setTimeout(()=>{setErrorColor("red")},400)
-            setTimeout(()=>{setErrorColor("orange")},600)
-            setTimeout(()=>{setErrorColor("red")},800)
-            setTimeout(()=>{setErrorColor("orange")},1000)
-            setTimeout(()=>{setErrorColor("red")},1200)
+            setTimeout(() => { setErrorColor("orange") }, 200)
+            setTimeout(() => { setErrorColor("red") }, 400)
+            setTimeout(() => { setErrorColor("orange") }, 600)
+            setTimeout(() => { setErrorColor("red") }, 800)
+            setTimeout(() => { setErrorColor("orange") }, 1000)
+            setTimeout(() => { setErrorColor("red") }, 1200)
             return
         }
+        if(reason === ''){
+            setError("Choose A reason")
+            return 
+        }
         setLoading(true)
-        payToSuperAdmin({amount})
-        .then(data=>{
-            setError('')
-            if(data.status ===200){
-                setErrorColor("green")
-                setError("Payment Successfull")
-                setLoading(false)
-            }else{
-                setErrorColor('red')
-                setError(data.data.message)
-                setLoading(false)
-            }
-        })
-        .catch(err=>{
-            console.log("ERROR IN PAY  ",err);
-        })
-        setTimeout(()=>{setLoading(false)},1500)
+        payToSuperAdmin({ amount,reason })
+            .then(data => {
+                setError('')
+                if (data.status === 200) {
+                    setErrorColor("green")
+                    setError("Payment Successfull")
+                    setLoading(false)
+                } else {
+                    setErrorColor('red')
+                    setError(data.data.message)
+                    setLoading(false)
+                }
+            })
+            .catch(err => {
+                console.log("ERROR IN PAY  ", err);
+            })
+        setTimeout(() => { setLoading(false) }, 1500)
     }
     return (
         <Modal
@@ -77,6 +83,19 @@ export default function PayModal(props) {
                         <Text style={styles.modalText}>{message}</Text>
                     </View> : messageJsx}
                     <View>
+
+                        <Dropdown
+                            style={{...styles.textInput , width : 250}}
+                            data={[{ label: 'Activate My Account', value: 'Activate'},{ label: 'Buy Verify Tag', value: 'Verify'}]}
+                            placeholder='Select Document For'
+                            placeholderStyle={{ color: 'black' }}
+                            value={reason}
+                            labelField="label"
+                            valueField="value"
+                            onChange={item => {
+                                setReason(item.value);
+                            }}
+                        />
                         <TextInput
                             placeholder="Enter Amount"
                             placeholderTextColor={"gray"}
@@ -85,13 +104,13 @@ export default function PayModal(props) {
                             keyboardType="number-pad"
                         />
                     </View>
-                    <Text style={{color : errorColor}}>{error}</Text>
+                    <Text style={{ color: errorColor }}>{error}</Text>
                     <View style={styles.row}>
                         <View style={styles.r1}>
                             <PressButton name={'Close'} onPress={handleCancel} />
                         </View>
                         <View style={styles.r1}>
-                            <PressButton name={'Pay'} onPress={handlePay} loading={loading} disabled={loading}/>
+                            <PressButton name={'Pay'} onPress={handlePay} loading={loading} disabled={loading} />
                         </View>
                     </View>
                 </View>

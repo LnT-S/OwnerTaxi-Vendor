@@ -40,7 +40,7 @@ const Recharge = () => {
             return
         }
         try {
-            uprollTransaction({ ss: screenShot, amount: parseInt(amount) })
+            uprollTransaction({ ss: screenShot, amount: parseInt(amount), reason: 'Recharge'})
                 .then(data => {
                     if (data.status === 200) {
                         showNoty(data.data.message, "success")

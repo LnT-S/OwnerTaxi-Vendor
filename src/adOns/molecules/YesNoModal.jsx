@@ -6,6 +6,9 @@ export default function YesNoModal(props) {
 
     const { show ,setShow, title, message, handleYes, handleNo, yesText, noText } = props
     const handleCancel = () => {
+        if(handleNo!==undefined && handleNo !== null){
+            handleNo()
+        }
         setShow(false);
     };
     return (

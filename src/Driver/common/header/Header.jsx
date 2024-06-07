@@ -1,12 +1,19 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView, StyleSheet, View, Text, TouchableOpacity } from 'react-native'
 import { BgColor } from '../../../styles/colors'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { DrawerActions, useNavigation } from '@react-navigation/native';
 import global from '../../../styles/global'
+import { manageNotifications } from '../../../services/apiCall';
+import { useProfile } from '../../../context/ContextProvider';
 const Header = (props) => {
 
     const navigation = useNavigation()
+    const {profileState, profileDispatch} = useProfile()
+    const [notificationState , setNotificationState] = useState(profileState.notification)
+    useEffect(()=>{
+        setNotificationState(profileState.notification)
+    },[profileState.notification])
     const {
         title,
         showNotification,
@@ -25,6 +32,19 @@ const Header = (props) => {
     const openDrawer = () => {
         navigation.openDrawer()
     };
+    const manageNotification = () => {
+        manageNotifications({ state: !profileState.notification })
+          .then(data => {
+            console.log('8888***888',!profileState.notification);
+            profileDispatch({
+              type: 'NOTIFICATION',
+              payload: !profileState.notification
+            })
+          })
+          .catch(err => {
+            console.log("ERROR IN SETIING NOTIFICATION ", err);
+          })
+      }
 
     const [showOptions, setShowOptions] = useState(false)
 
@@ -45,8 +65,8 @@ const Header = (props) => {
                     {(showMessageIcon === undefined || showMessageIcon === true) ? <TouchableOpacity style={{ marginRight: 10 }} onPress={() => navigation.navigate('message')}>
                         <Icon name="chat-bubble" size={26} color="black" style={headerTextStyles} />
                     </TouchableOpacity> : ''}
-                    {(showNotification === undefined || showNotification === true) ? <TouchableOpacity style={{ marginRight: 10 }} onPress={() => navigation.navigate('notification')}>
-                        <Icon name="notifications" size={26} color="black" style={headerTextStyles} />
+                    {(showNotification === undefined || showNotification === true) ? <TouchableOpacity style={{ marginRight: 10 }} onPress={manageNotification}>
+                        {notificationState ? <Icon name="notifications-on" size={26} color="black" style={headerTextStyles} /> : <Icon name="notifications-off" size={26} color="black" style={headerTextStyles} />}
                     </TouchableOpacity> : ''}
                     {(showHMIcon === undefined || showHMIcon === true) ? <TouchableOpacity onPress={openDrawer}>
                         <Icon name="menu" size={30} color="#000" style={headerTextStyles} />

@@ -42,6 +42,9 @@ const ActiveBooking = (props) => {
         getBookingsDriverHasPosted()
             .then(data => {
                 console.log(data.data.data)
+                if(data.status!==200){
+                    Alert.alert(data.data.message)
+                }
                 if(data.data.data?.length===0){
                     Alert.alert("No Active Booking")
                 }
@@ -68,7 +71,7 @@ const ActiveBooking = (props) => {
             {isRefreshing && <ActivityIndicator size={'large'} color={'black'} />}
            
                 <FlashMessage ref={ref} />
-                {activeBookingArray.length > 0 ? <FlatList
+                {activeBookingArray?.length > 0 ? <FlatList
                     style={{ flex: 1, backgroundColor: BgColor, height: height, marginBottom: 35 }}
                     keyExtractor={(item, index) => (index)}
                     data={activeBookingArray}

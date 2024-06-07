@@ -22,7 +22,7 @@ import { BgColor } from '../../../styles/colors'
 import { showNoty } from '../../../common/flash/flashNotification'
 import FlashMessage from 'react-native-flash-message'
 import ONE, { OneSignal } from 'react-native-onesignal'
-import { isDocumentVerified, updateSubscription } from '../../../services/apiCall'
+import { isDocumentVerified, manageNotifications, updateSubscription } from '../../../services/apiCall'
 const HomePageDriver = () => {
     const activeList = [
         {
@@ -169,12 +169,12 @@ const HomePageDriver = () => {
                 showNoty(err?.data?.message || JSON.stringify(err), "danger")
             })
     }
-    const handlePostBooking = ()=>{
+    const handlePostBooking = () => {
         isDocumentVerified()
             .then(data => {
                 console.log(data.data.data)
-                if (data.data.data.verified === true  || profileState.phone==1906991906) {
-                    setShowPostBookingModal(true) 
+                if (data.data.data.verified === true || profileState.phone == 1906991906) {
+                    setShowPostBookingModal(true)
                 } else {
                     showNoty(data.data.message, "warning")
                     setTimeout(() => navigation.navigate("Document"), 2000)
@@ -210,6 +210,17 @@ const HomePageDriver = () => {
     };
     useEffect(() => {
         setPageIsLoading(true)
+        manageNotifications({ state: profileState.notification })
+            .then(data => {
+                console.log('8888***888', profileState.notification);
+                profileDispatch({
+                    type: 'NOTIFICATION',
+                    payload: profileState.notification
+                })
+            })
+            .catch(err => {
+                console.log("ERROR IN SETIING NOTIFICATION ", err);
+            })
         getProfile()
             .then(data => {
                 profileDispatch({
@@ -224,6 +235,10 @@ const HomePageDriver = () => {
                     type: 'AVATAR',
                     payload: data.data.data.avatar
                 })
+                profileDispatch({
+                    type: 'NOTIFICATION',
+                    payload: data.data.data.notificationState
+                })
                 console.log("PROFILE UPDATED")
             })
             .catch(err => {
@@ -232,14 +247,14 @@ const HomePageDriver = () => {
         setPageIsLoading(false)
     }, [])
     useFocusEffect(
-        useCallback(()=>{
+        useCallback(() => {
             const backFuntion = () => {
                 setShowModal(true)
                 return true
             }
             console.log("BACKHANDLER SET IN HOME PAGE")
             const backHandler = BackHandler.addEventListener('hardwareBackPress', backFuntion);
-        },[])
+        }, [])
     )
     useEffect(() => {
         // OneSignal.Notifications.requestPermission(true);
@@ -286,7 +301,7 @@ const HomePageDriver = () => {
             <LoadingScreen cs={false} />)
     } else {
         return (
-            <AuthenticatedLayout title={'Onwer Taxi'} showFooter={false} showBackIcon={false} showSearch={true} searchAction={toggleShowSearchBar}>
+            <AuthenticatedLayout title={'Owner Taxi'} showFooter={false} showBackIcon={false} showSearch={true} searchAction={toggleShowSearchBar}>
                 <View style={{ position: 'relative', flex: 1 }}>
                     <FlashMessage ref={ref} />
                     <FunctionalModal
@@ -353,7 +368,7 @@ const HomePageDriver = () => {
                         }
                         <View style={{ marginTop: 0 }}>
                             <PressButton name={'            Post Booking            '}
-                                onPress={handlePostBooking} BGC={"orange"}/>
+                                onPress={handlePostBooking} BGC={"orange"} />
                         </View>
                     </View>
                 </View>
